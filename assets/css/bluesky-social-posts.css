@@ -1,0 +1,93 @@
+.bluesky-social-integration-last-post {
+    --bluesky-card-bg: white;
+    --bluesky-card-txt: #0b0f14;
+    --bluesky-card-txt-alt: rgb(66, 87, 108);
+    --bluesky-image-br: var(--bluesky-card-avatar-size);
+    --bluesky-primary-color: #1083fe;
+    --bluesky-card-border: 1px solid rgb(212, 219, 226);
+    --bluesky-card-br: 8px;
+    --bluesky-card-spacing: 16px;
+    --bluesky-card-avatar-size: 90px;
+}
+
+.bluesky-social-integration-embedded-record,
+.bluesky-social-integration-last-post {
+    border: var(--bluesky-card-border);
+    padding: 0;
+    list-style: none!important;
+    border-radius: 8px;
+}
+
+.bluesky-social-integration-last-post-list,
+.bluesky-social-integration-last-post-item {
+    padding: 0;
+    margin: 0;
+    position: relative;
+    list-style: none!important;
+}
+
+.bluesky-social-integration-last-post-item,
+.bluesky-social-integration-embedded-record {
+    display: flex;
+    gap: 8px;
+    padding: 16px 8px;
+}
+
+.bluesky-social-integration-last-post-item + .bluesky-social-integration-last-post-item {
+    border-top: var(--bluesky-card-border);
+}
+
+.bluesky-social-integration-last-post-link {
+    position: absolute;
+    inset: 0;
+}
+
+.bluesky-social-integration-last-post-item p,
+.bluesky-social-integration-last-post-item .bluesky-social-integration-last-post-content a,
+.bluesky-social-integration-post-content-text {
+    position: relative;
+    z-index: 1;
+}
+
+.bluesky-social-integration-last-post-header .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 21px;
+}
+
+.bluesky-social-integration-post-account-info-names {
+    margin: 0;
+    font-size: 15px;
+    color: var(--bluesky-card-txt-alt);
+}
+
+.bluesky-social-integration-post-account-info-name {
+    color: var(--bluesky-card-txt);
+    font-weight: bold;
+}
+
+.bluesky-social-integration-post-account-info-handle {
+    /* Maybe some day */
+}
+
+.bluesky-social-integration-post-account-info-date::before {
+    content: ' · ';
+}
+
+.bluesky-social-integration-last-post-content {
+    font-size: 15px;
+}
+
+.bluesky-social-integration-last-post-content > :first-child {
+    margin-top: 0;
+}
+
+.bluesky-social-integration-last-post-content > :last-child {
+    margin-bottom: 0;
+}
+
+.bluesky-social-integration-embedded-record {
+    margin-top: 16px;
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,0 +1,73 @@
+.bluesky-social-integration-profile-card {
+    --bluesky-card-bg: white;
+    --bluesky-card-txt: #0b0f14;
+    --bluesky-card-txt-alt: rgb(66, 87, 108);
+    --bluesky-image-br: var(--bluesky-card-avatar-size);
+    --bluesky-primary-color: #1083fe;
+    --bluesky-card-border: 1px solid rgb(212, 219, 226);
+    --bluesky-card-br: 8px;
+    --bluesky-card-spacing: 16px;
+    --bluesky-card-avatar-size: 90px;
+
+    overflow: hidden;
+    border: var(--bluesky-card-border);
+    background: var(--bluesky-card-bg);
+    border-radius: var(--bluesky-card-br);
+}
+
+.bluesky-social-integration-image {
+    position: relative;
+    min-height: 187px; /* Banner has 3:1 ratio */
+    background-image: var(--bluesky-social-integration-banner);
+    background-size: cover;
+}
+
+.bluesky-social-integration-profile-card p {
+    margin: 0; 
+}
+
+.bluesky-social-integration-avatar {
+    position: absolute;
+    bottom: 0;
+    left: var(--bluesky-card-spacing);
+    width: var(--bluesky-card-avatar-size);
+    height: var(--bluesky-card-avatar-size);
+    border: var(--bluesky-card-border);
+    box-shadow: 0 0 0 4px var(--bluesky-card-bg);
+    transform: translateY(50%);
+    border-radius: var(--bluesky-image-br);
+}
+
+.bluesky-social-integration-content {
+    padding: calc( var(--bluesky-card-avatar-size)/2 + var(--bluesky-card-spacing)) var(--bluesky-card-spacing) var(--bluesky-card-spacing) var(--bluesky-card-spacing);
+}
+
+.bluesky-social-integration-name {
+    color: var(--bluesky-primary-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.bluesky-social-integration-handle {
+    color: var(--bluesky-card-txt);
+}
+
+.bluesky-social-integration-description.bluesky-social-integration-description {
+    margin-top: calc(var(--bluesky-card-spacing) / 2);
+}
+
+.bluesky-social-integration-followers {
+    color: var(--bluesky-card-txt-alt);    
+}
+
+
+
+.bluesky-social-integration-followers .nb {
+    font-weight: 700;
+    color: var(--bluesky-card-txt);
+}
+
+.bluesky-social-integration-followers span + span::before {
+    content: '• ';
+    opacity: 0.4;
+}
