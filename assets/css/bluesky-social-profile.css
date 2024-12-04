@@ -13,6 +13,13 @@
     border: var(--bluesky-card-border);
     background: var(--bluesky-card-bg);
     border-radius: var(--bluesky-card-br);
+    font-size: 1rem;
+}
+
+.no-banner.bluesky-social-integration-profile-card {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 .bluesky-social-integration-image {
@@ -20,6 +27,14 @@
     min-height: 187px; /* Banner has 3:1 ratio */
     background-image: var(--bluesky-social-integration-banner);
     background-size: cover;
+}
+
+.no-banner .bluesky-social-integration-image {
+    display: flex;
+    padding-top: var(--bluesky-card-spacing);
+    padding-left: var(--bluesky-card-spacing);
+    min-height: 0;
+    background: none;
 }
 
 .bluesky-social-integration-profile-card p {
@@ -38,8 +53,22 @@
     border-radius: var(--bluesky-image-br);
 }
 
+.no-banner .bluesky-social-integration-avatar {
+    position: static;
+    transform: translateY(0);
+}
+
+.no-avatar .bluesky-social-integration-avatar {
+    display: none;
+}
+
 .bluesky-social-integration-content {
     padding: calc( var(--bluesky-card-avatar-size)/2 + var(--bluesky-card-spacing)) var(--bluesky-card-spacing) var(--bluesky-card-spacing) var(--bluesky-card-spacing);
+}
+
+.no-avatar .bluesky-social-integration-content,
+.no-banner .bluesky-social-integration-content {
+    padding-top: var(--bluesky-card-spacing);
 }
 
 .bluesky-social-integration-name {
@@ -56,11 +85,17 @@
     margin-top: calc(var(--bluesky-card-spacing) / 2);
 }
 
+.no-bio .bluesky-social-integration-description {
+    display: none;
+}
+
 .bluesky-social-integration-followers {
     color: var(--bluesky-card-txt-alt);    
 }
 
-
+.no-counters .bluesky-social-integration-followers {
+    display: none;
+}
 
 .bluesky-social-integration-followers .nb {
     font-weight: 700;

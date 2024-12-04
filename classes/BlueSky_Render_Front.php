@@ -41,18 +41,37 @@ class BlueSky_Render_Front {
         return $this -> render_bluesky_posts_list();
     }
 
-    public function render_bluesky_posts_list() {
+    public function render_bluesky_posts_list( $attributes = [] ) {
+
         $limit = $this -> options['posts_limit'];
-        $posts = $this -> api_handler -> fetch_bluesky_posts( $limit );
+        // Set default attributes
+        $defaults = [
+            'displayEmbeds' => true,
+            'theme' => 'light',
+            'numberOfPosts' => $limit
+        ];
+
+        // Merge defaults with provided attributes
+        $attributes = wp_parse_args($attributes, $defaults);
+
+        // Extract variables
+        $display_embeds = $attributes['displayEmbeds'];
+        $theme = $attributes['theme'];
+        $number_of_posts = $attributes['numberOfPosts'];
+
+        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ) );
 
         if ( isset ( $posts ) && is_array( $posts ) ) {
-            // Start output buffering
+
+            // Apply theme class
+            $theme_class = 'bluesky-theme-' . esc_attr( $theme );
+
             ob_start();
-            echo '<pre>';
+            /* echo '<pre>';
             var_dump( $posts );
-            echo '</pre>';
+            echo '</pre>'; */
             ?>
-            <div class="bluesky-social-integration-last-post">
+            <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>">
                 <ul class="bluesky-social-integration-last-post-list">
                     <?php foreach ($posts as $post): ?>
                         <li class="bluesky-social-integration-last-post-item">
@@ -77,7 +96,7 @@ class BlueSky_Render_Front {
 
                                 <?php
                                 // print potential embeds
-                                if ( ! empty($post['embedded_media'] ) ):
+                                if ( ! empty( $post['embedded_media'] ) && $display_embeds ):
                                         if ( $post['embedded_media']['type'] === 'video' ): ?>
                                     <div class="embedded-video">
                                         <img src="<?php echo esc_url($post['embedded_media']['video_details']['thumbnail_url']); ?>" 
@@ -115,7 +134,7 @@ class BlueSky_Render_Front {
         return $this -> render_bluesky_profile_card();
     }
 
-    public function render_bluesky_profile_card() {
+    public function render_bluesky_profile_card( $attributes = [] ) {
         $profile = $this -> api_handler -> get_bluesky_profile();
         
         // TODO: write a fallback solution using cache
@@ -123,9 +142,25 @@ class BlueSky_Render_Front {
             return '<p class="bluesky-social-integration-error">' . __('Unable to fetch BlueSky profile.', 'bluesky-social') . '</p>';
         }
 
+        $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ];
+        
+        if ( isset( $attributes['theme'] ) ) {
+            $classes[] = 'theme-' . esc_attr( $attributes['theme'] );
+        }
+        
+        $display_elements = ['Banner', 'Avatar', 'Counters', 'Bio'];
+        foreach ( $display_elements as $element ) {
+            $option_key = 'display' . $element;
+            if ( isset( $attributes[ $option_key] ) && $attributes[ $option_key ] === false ) {
+                $classes[] = 'no-' . strtolower( $element );
+            }
+        }
+        
+        $aria_label = sprintf(__('BlueSky Social Card of %s', 'bluesky-social'), $profile['displayName']);
+        
         ob_start();
         ?>
-        <aside class="bluesky-social-integration-profile-card" aria-label="<?php echo esc_attr( sprintf( __('BlueSky Social Card of %s', 'bluesky-social'), $profile['displayName'] ) ); ?>">
+        <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr($aria_label); ?>">
             <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url('<?php echo esc_url( $profile['banner'] ); ?>')">
                 <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
             </div>

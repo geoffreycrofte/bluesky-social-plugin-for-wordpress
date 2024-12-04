@@ -34,3 +34,8 @@ require_once( 'classes/widgets/BlueSky_Profile_Widget.php' );
 $bluesky_api_handler = new BlueSky_API_Handler( get_option( BLUESKY_PLUGIN_OPTIONS ) ); // V.1
 $bluesky_social_integration = new BlueSky_Plugin_Setup( $bluesky_api_handler ); // V.1
 $bluesky_render_front = new BlueSky_Render_Front( $bluesky_api_handler ); // V.1
+
+//var_dump( $bluesky_social_integration -> bluesky_profile_block_render( [] ) );
+//die();
+//var_dump( $bluesky_social_integration -> bluesky_profile_posts_render( [] ) );
+//die();

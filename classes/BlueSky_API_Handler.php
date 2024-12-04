@@ -77,7 +77,7 @@ class BlueSky_API_Handler {
      * @return array|false Processed posts or false on failure
      */
     public function fetch_bluesky_posts( $limit = 10 ) {
-        $cache_key = BLUESKY_PLUGIN_TRANSIENT . '-posts';
+        $cache_key = BLUESKY_PLUGIN_TRANSIENT . '-posts-' . $limit; // get the cache key depending on the limit
         $cached_posts = get_transient( $cache_key );
 
         if ( $cached_posts !== false ) {
@@ -90,7 +90,7 @@ class BlueSky_API_Handler {
         }
 
         // Sanitize limit
-        $limit = max(1, min(10, intval( $limit)));
+        $limit = max(1, min(10, intval( $limit ) ) );
 
         $response = wp_remote_get( $this -> bluesky_api_url . 'app.bsky.feed.getAuthorFeed', [
             'headers' => [
@@ -102,11 +102,11 @@ class BlueSky_API_Handler {
             ]
         ]);
 
-        if ( is_wp_error( $response )) {
+        if ( is_wp_error( $response ) ) {
             return false;
         }
 
-        $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true);
+        $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true );
 
         // Process and normalize posts
         $processed_posts = $this -> process_posts( $raw_posts['feed'] ?? [] );

@@ -53,7 +53,7 @@ class BlueSky_Plugin_Setup {
 
         // Widgets and Gutenberg blocks
         add_action('widgets_init', [$this, 'register_widgets']);
-        add_action('enqueue_block_editor_assets', [$this, 'register_gutenberg_blocks']);
+        add_action('init', [$this, 'register_gutenberg_blocks']);
 
         // Post syndication
         if (!empty($this->options['auto_syndicate'])) {
@@ -280,29 +280,135 @@ class BlueSky_Plugin_Setup {
      * Register Gutenberg blocks
      */
     public function register_gutenberg_blocks() {
+        // Register Posts Feed
         wp_register_script(
             'bluesky-posts-block',
             BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-posts-feed.js',
-            ['wp-blocks', 'wp-element', 'wp-components', 'jquery']
-        );
-
-        wp_register_script(
-            'bluesky-profile-block',
-            BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-profile-card.js',
-            ['wp-blocks', 'wp-element', 'wp-components', 'jquery']
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render']
         );
 
         register_block_type('bluesky-social/posts', [
-            'editor_script' => 'bluesky-posts-block'
+            'api_version' => 2,
+            'editor_script' => 'bluesky-posts-block',
+            'render_callback' => [$this, 'bluesky_posts_block_render'],
+            'attributes' => [
+                'displayEmbeds' => [
+                    'type' => 'boolean',
+                    'default' => true
+                ],
+                'theme' => [
+                    'type' => 'string',
+                    'default' => 'light'
+                ],
+                'numberOfPosts' => [
+                    'type' => 'integer',
+                    'default' => get_option(BLUESKY_PLUGIN_OPTIONS)['posts_limit'] ?? 5
+                ]
+            ]
         ]);
+
+        // Register Profile Card
+        wp_register_script(
+            'bluesky-profile-block',
+            BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-profile-card.js',
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render']
+        );
 
         register_block_type('bluesky-social/profile', [
-            'render_callback' => [ $this, 'bluesky_profile_block_render' ]
+            'api_version' => 2,
+            'attributes' => [
+                'displayBanner' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'displayAvatar' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'displayCounters' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'displayBio' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'theme' => [
+                    'type' => 'string',
+                    'default' => 'light'
+                ],
+                'className' => [
+                    'type' => 'string',
+                    'default' => ''
+                ],
+                'style' => [
+                    'type' => 'string',
+                    'default' => 'default'
+                ]
+            ],
+            'styles' => [
+                [
+                    'name' => 'default',
+                    'label' => __('Rounded', 'bluesky-social'),
+                    'isDefault' => true
+                ],
+                [
+                    'name' => 'outline',
+                    'label' => __('Outline', 'bluesky-social')
+                ],
+                [
+                    'name' => 'squared',
+                    'label' => __('Squared', 'bluesky-social')
+                ]
+            ],
+            'editor_script' => 'bluesky-profile-block',
+            'render_callback' => [$this, 'bluesky_profile_block_render'],
         ]);
+
+        // Register REST API routes
+        if ( function_exists( 'register_rest_field' ) ) {
+            register_rest_route( 'bluesky-social/v1', '/profile-data', [
+                'methods' => 'GET',
+                'callback' => [ $this, 'get_profile_data' ],
+                'permission_callback' => '__return_true'
+            ]);
+        }
     }
 
-    public function bluesky_profile_block_render() {
+    /**
+     * Renders the BlueSky profile card block
+     * 
+     * @param array $attributes Block attributes including:
+     *                         - displayBanner (bool) Whether to show the profile banner
+     *                         - displayAvatar (bool) Whether to show the profile avatar
+     *                         - displayCounters (bool) Whether to show follower/following counts
+     *                         - displayBio (bool) Whether to show the profile bio
+     *                         - theme (string) Color theme - 'light' or 'dark'
+     * @return string HTML markup for the profile card
+     */
+    public function bluesky_profile_block_render( $attributes = [] ) {
+        // Get the style class
+        $style_class = !empty($attributes['className']) ? $attributes['className'] : 'is-style-default';
+        
+        // Add the style class to the attributes for the render function
+        $attributes['styleClass'] = $style_class;
+
         $render_front = new BlueSky_Render_Front( $this -> api_handler );
-        return $render_front -> render_bluesky_profile_card();
+        return $render_front -> render_bluesky_profile_card( $attributes );
+    }
+    
+    /**
+     * Renders the BlueSky posts feed block
+     * 
+     * @param array $attributes Block attributes including:
+     *                         - displayEmbeds (bool) Whether to show embedded media in posts
+     *                         - theme (string) Color theme - 'light' or 'dark'
+     *                         - numberOfPosts (int) Number of posts to display (1-10)
+     * @return string HTML markup for the posts feed
+     */
+
+    public function bluesky_posts_block_render( $attributes = [] ) {
+        $render_front = new BlueSky_Render_Front( $this -> api_handler );
+        return $render_front -> render_bluesky_posts_list( $attributes );
     }
 }
