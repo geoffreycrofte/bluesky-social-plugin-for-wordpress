@@ -46,10 +46,14 @@ class BlueSky_API_Handler {
             return false;
         }
 
+        $password = $this -> options['app_password'];
+        $helpers = new BlueSky_Helpers();
+        $password = $helpers -> bluesky_decrypt( $password );
+
         $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.server.createSession', [
             'body' => json_encode([
                 'identifier' => $this -> options['handle'],
-                'password' => $this -> options['app_password']
+                'password' => $password
             ]),
             'headers' => [
                 'Content-Type' => 'application/json'

@@ -89,7 +89,11 @@ class BlueSky_Plugin_Setup {
      * Register plugin settings
      */
     public function register_settings() {
-        register_setting( 'bluesky_settings_group', BLUESKY_PLUGIN_OPTIONS );
+        register_setting( 
+            'bluesky_settings_group', 
+            BLUESKY_PLUGIN_OPTIONS,
+            ['sanitize_callback' => [$this, 'sanitize_settings']]
+        );
 
         add_settings_section(
             'bluesky_main_settings',
@@ -99,6 +103,35 @@ class BlueSky_Plugin_Setup {
         );
 
         $this->add_settings_fields();
+    }
+
+    /**
+     * Sanitize settings before saving
+     * @param array $input The settings array to sanitize
+     * @return array Sanitized settings
+     */
+    public function sanitize_settings( $input ) {
+        $sanitized = [];
+        
+        // Handle encryption for password
+        if ( isset( $input['app_password'] ) ) {
+            $helpers = new BlueSky_Helpers();
+            $sanitized['app_password'] = $helpers -> bluesky_encrypt( $input['app_password'] );
+        }
+
+        // Sanitize other fields
+        $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
+        $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
+        $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'light';
+        $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? 
+            min(10, max(1, intval($input['posts_limit']))) : 10;
+
+        $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
+        if ( empty( $secret_key ) || $secret_key === false ) {
+            add_option( BLUESKY_PLUGIN_OPTIONS . '_secret', bin2hex( random_bytes( 32 ) ) );
+        }
+        
+        return $sanitized;
     }
 
     /**
@@ -128,7 +161,7 @@ class BlueSky_Plugin_Setup {
             ]
         ];
 
-        foreach ($fields as $id => $field) {
+        foreach ( $fields as $id => $field ) {
             add_settings_field(
                 $id,
                 '<label for="' . BLUESKY_PLUGIN_OPTIONS . '_' . str_replace('bluesky_', '', $id) . '">' . $field['label'] . '</label>',
@@ -150,16 +183,23 @@ class BlueSky_Plugin_Setup {
      * Render handle field
      */
     public function render_handle_field() {
-        $handle = $this->options['handle'] ?? '';
-        echo "<input type='text' id='" . BLUESKY_PLUGIN_OPTIONS . "_handle' name='bluesky_settings[handle]' value='" . esc_attr($handle) . "' />";
+        $handle = $this -> options['handle'] ?? '';
+        echo "<input type='text' id='" . BLUESKY_PLUGIN_OPTIONS . "_handle' name='bluesky_settings[handle]' value='" . esc_attr( $handle ) . "' />";
     }
 
     /**
      * Render password field
      */
     public function render_password_field() {
-        $password = $this->options['app_password'] ?? '';
-        echo "<input type='password' id='" . BLUESKY_PLUGIN_OPTIONS . "_password' name='bluesky_settings[app_password]' value='" . esc_attr($password) . "' />";
+        $password = $this -> options['app_password'] ?? '';
+        // Don't show the actual password, just a placeholder if it exists
+        $placeholder = ! empty( $password ) ? '••••••••' : '';
+        
+        echo "<input type='password' id='" . BLUESKY_PLUGIN_OPTIONS . "_app_password' name='bluesky_settings[app_password]' value='' placeholder='" . esc_attr( $placeholder ) . "' />";
+        
+        if ( ! empty( $password ) ) {
+            echo "<p class='description'>" . __('Leave empty to keep the current password.', 'bluesky-social') . "</p>";
+        }
     }
 
     /**
@@ -167,7 +207,7 @@ class BlueSky_Plugin_Setup {
      */
     public function render_syndicate_field() {
         $auto_syndicate = $this->options['auto_syndicate'] ?? 0;
-        echo '<input id="' . BLUESKY_PLUGIN_OPTIONS . '_syndicate" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' />';
+        echo '<input id="' . BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' />';
     }
 
     /**
