@@ -36,9 +36,19 @@ class BlueSky_Render_Front {
         add_shortcode('bluesky_last_posts', [$this, 'bluesky_last_posts_shortcode']);
     }
 
-    // Shortcode for BlueSky profile card
-    public function bluesky_last_posts_shortcode() {
-        return $this -> render_bluesky_posts_list();
+    // Shortcode for BlueSky last posts
+    public function bluesky_last_posts_shortcode($atts = []) {
+        // Convert shortcode attributes to array and merge with defaults
+        $attributes = shortcode_atts([
+            'displayEmbeds' => true,
+            'theme' => 'system',
+            'numberOfPosts' => $this -> options['posts_limit']
+        ], $atts);
+
+        // Convert string boolean values to actual booleans
+        $attributes['displayEmbeds'] = filter_var( $attributes['displayEmbeds'], FILTER_VALIDATE_BOOLEAN);
+
+        return $this->render_bluesky_posts_list($attributes);
     }
 
     public function render_bluesky_posts_list( $attributes = [] ) {
@@ -64,7 +74,7 @@ class BlueSky_Render_Front {
         if ( isset ( $posts ) && is_array( $posts ) ) {
 
             // Apply theme class
-            $theme_class = 'bluesky-theme-' . esc_attr( $theme );
+            $theme_class = 'theme-' . esc_attr( $theme );
 
             ob_start();
             /* echo '<pre>';
@@ -130,10 +140,31 @@ class BlueSky_Render_Front {
     }
 
     // Shortcode for BlueSky profile card
-    public function bluesky_profile_card_shortcode() {
-        return $this -> render_bluesky_profile_card();
+    public function bluesky_profile_card_shortcode( $atts = [] ) {
+        // Convert shortcode attributes to array and merge with defaults
+        $attributes = shortcode_atts([
+            'theme' => 'system',
+            'styleClass' => '',
+            'displayBanner' => true,
+            'displayAvatar' => true,
+            'displayCounters' => true,
+            'displayBio' => true
+        ], $atts);
+
+        // Convert string boolean values to actual booleans
+        $boolean_attrs = ['displayBanner', 'displayAvatar', 'displayCounters', 'displayBio'];
+        foreach ( $boolean_attrs as $attr ) {
+            $attributes[ $attr ] = filter_var( $attributes[ $attr ], FILTER_VALIDATE_BOOLEAN );
+        }
+
+        return $this -> render_bluesky_profile_card( $attributes );
     }
 
+    /**
+     * Render the BlueSky profile card
+     * @param array $attributes Shortcode attributes
+     * @return string HTML output
+     */
     public function render_bluesky_profile_card( $attributes = [] ) {
         $profile = $this -> api_handler -> get_bluesky_profile();
         

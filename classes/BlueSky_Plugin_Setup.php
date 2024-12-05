@@ -56,20 +56,16 @@ class BlueSky_Plugin_Setup {
         add_action('init', [$this, 'register_gutenberg_blocks']);
 
         // Post syndication
-        if (!empty($this->options['auto_syndicate'])) {
-            add_action('publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1);
+        if ( ! empty( $this -> options['auto_syndicate'] ) ) {
+            add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
         }
-
-        // Shortcodes
-        add_shortcode('bluesky_profile', [$this, 'bluesky_profile_shortcode']);
-        add_shortcode('bluesky_last_posts', [$this, 'bluesky_last_posts_shortcode']);
     }
 
     /**
      * Load plugin text domain for internationalization
      */
     public function load_plugin_textdomain() {
-        load_plugin_textdomain('bluesky-social', false, BLUESKY_PLUGIN_DIRECTORY_NAME . '/languages');
+        load_plugin_textdomain( 'bluesky-social', false, BLUESKY_PLUGIN_DIRECTORY_NAME . '/languages' );
     }
 
     /**
@@ -113,23 +109,36 @@ class BlueSky_Plugin_Setup {
     public function sanitize_settings( $input ) {
         $sanitized = [];
         
-        // Handle encryption for password
-        if ( isset( $input['app_password'] ) ) {
-            $helpers = new BlueSky_Helpers();
-            $sanitized['app_password'] = $helpers -> bluesky_encrypt( $input['app_password'] );
-        }
-
-        // Sanitize other fields
-        $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
-        $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
-        $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'light';
-        $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? 
-            min(10, max(1, intval($input['posts_limit']))) : 10;
-
+        // Handle encryption for secret key
         $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
         if ( empty( $secret_key ) || $secret_key === false ) {
             add_option( BLUESKY_PLUGIN_OPTIONS . '_secret', bin2hex( random_bytes( 32 ) ) );
         }
+
+        // Handle encryption for password
+        if ( isset( $input['app_password'] ) && ! empty( $input['app_password'] ) ) {
+            $helpers = new BlueSky_Helpers();
+            $sanitized['app_password'] = $helpers -> bluesky_encrypt( $input['app_password'] );
+        } else {
+            $sanitized['app_password'] = $this -> options['app_password'] ?? '';
+        }   
+
+        // Sanitize other fields
+        $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
+        $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
+        $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'system';
+        $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? min( 10, max( 1, intval( $input['posts_limit'] ) ) ) : 5;
+
+        $minutes = isset( $input['cache_duration']['minutes'] ) ? absint( $input['cache_duration']['minutes'] ) : 0;
+        $hours = isset( $input['cache_duration']['hours'] ) ? absint( $input['cache_duration']['hours'] ) : 0;
+        $days = isset( $input['cache_duration']['days'] ) ? absint( $input['cache_duration']['days'] ) : 0;
+        
+        $sanitized['cache_duration'] = [
+            'minutes' => $minutes,
+            'hours' => $hours,
+            'days' => $days,
+            'total_seconds' => ( $minutes * 60 ) + ( $hours * 3600 ) + ( $days * 86400 )
+        ];
         
         return $sanitized;
     }
@@ -158,6 +167,10 @@ class BlueSky_Plugin_Setup {
             'bluesky_posts_limit' => [
                 'label' => __('Number of Posts to Display', 'bluesky-social'),
                 'callback' => 'render_posts_limit_field'
+            ],
+            'bluesky_cache_duration' => [
+                'label' => __('Cache Duration', 'bluesky-social'),
+                'callback' => 'render_cache_duration_field'
             ]
         ];
 
@@ -216,8 +229,9 @@ class BlueSky_Plugin_Setup {
     public function render_theme_field() {
         $theme = $this->options['theme'] ?? 'light';
         echo '<select name="bluesky_settings[theme]" id="' . BLUESKY_PLUGIN_OPTIONS . '_theme">';
-        echo '<option value="light" ' . selected('light', $theme, false) . '>Light</option>';
-        echo '<option value="dark" ' . selected('dark', $theme, false) . '>Dark</option>';
+        echo '<option value="system" ' . selected('system', $theme, false) . '>' . __('System Preference', 'bluesky-social') . '</option>';
+        echo '<option value="light" ' . selected('light', $theme, false) . '>' . __('Light', 'bluesky-social') . '</option>';
+        echo '<option value="dark" ' . selected('dark', $theme, false) . '>' . __('Dark', 'bluesky-social') . '</option>';
         echo '</select>';
     }
 
@@ -225,9 +239,152 @@ class BlueSky_Plugin_Setup {
      * Render posts limit field
      */
     public function render_posts_limit_field() {
-        $limit = $this->options['posts_limit'] ?? 10;
-        echo "<input type='number' min='1' max='10' id='" . BLUESKY_PLUGIN_OPTIONS . "_posts_limit' name='bluesky_settings[posts_limit]' value='" . esc_attr($limit) . "' />";
-        echo "<p class='description'>" . __('Enter the number of posts to display (1-10) - 10 is set by default', 'bluesky-social') . "</p>";
+        $limit = $this->options['posts_limit'] ?? 5;
+        echo "<input type='number' min='1' max='10' id='" . BLUESKY_PLUGIN_OPTIONS . "_posts_limit' name='bluesky_settings[posts_limit]' value='" . esc_attr( $limit ) . "' />";
+        echo "<p class='description'>" . __('Enter the number of posts to display (1-10) - 5 is set by default', 'bluesky-social') . "</p>";
+    }
+
+    /**
+     * Render cache duration field
+     */
+    public function render_cache_duration_field() {
+        $cache_duration = $this->options['cache_duration'] ?? [
+            'minutes' => 0,
+            'hours' => 1,
+            'days' => 0
+        ];
+
+        ?>
+        <div class="cache-duration-fields">
+            <label>
+                <input type="number" 
+                        min="0" 
+                        name="bluesky_settings[cache_duration][days]" 
+                        value="<?php echo esc_attr( $cache_duration['days'] ); ?>" 
+                        style="width: 60px;"> 
+                <?php _e('Days', 'bluesky-social'); ?>
+            </label>
+            <label>
+                <input type="number" 
+                        min="0" 
+                        name="bluesky_settings[cache_duration][hours]" 
+                        value="<?php echo esc_attr($cache_duration['hours']); ?>" 
+                        style="width: 60px;"> 
+                <?php _e('Hours', 'bluesky-social'); ?>
+            </label>
+            <label>
+                <input type="number" 
+                        min="0" 
+                        name="bluesky_settings[cache_duration][minutes]" 
+                        value="<?php echo esc_attr( $cache_duration['minutes'] ); ?>" 
+                        style="width: 60px;"> 
+                <?php _e('Minutes', 'bluesky-social'); ?>
+            </label>
+        </div>
+        <p class="description">
+            <?php _e('Set to 0 in all fields to disable caching. Current cache status:', 'bluesky-social'); ?>
+        </p>
+        <?php
+        $this->display_cache_status();
+    }
+
+    /**
+     * Display cache status
+     */
+    private function display_cache_status() {
+        $helpers = new BlueSky_Helpers();
+        $profile_transient = get_transient( $helpers -> get_profile_transient_key() );
+        $posts_transient = get_transient( $helpers -> get_posts_transient_key() );
+
+        echo '<div class="cache-status">';
+        echo '<style>.cache-duration-fields label {
+                    margin-right: 15px;
+                }
+
+                .cache-status {
+                    margin-top: 10px;
+                    padding: 10px;
+                    background: #f8f8f8;
+                    border-left: 4px solid #646970;
+                }
+
+                .cache-status p {
+                    margin: 5px 0;
+                }
+            </style>';
+        
+        // Profile cache status
+        echo '<p><strong>' . __('Profile Card Cache:', 'bluesky-social') . '</strong> ';
+        if ( $profile_transient !== false ) {
+            $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_profile_transient_key() );
+            echo sprintf(
+                __('Active (expires in %s)', 'bluesky-social'),
+                '<code>' . $this -> format_time_remaining( $time_remaining ) . '</code>'
+            );
+        } else {
+            echo __('Not cached', 'bluesky-social');
+        }
+        echo '</p>';
+
+        // Posts cache status
+        echo '<p><strong>' . __('Posts Feed Cache:', 'bluesky-social') . '</strong> ';
+        if ( $posts_transient !== false ) {
+            $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_posts_transient_key() );
+            echo sprintf(
+                __('Active (expires in %s)', 'bluesky-social'),
+                '<code>' . $this -> format_time_remaining( $time_remaining ) . '</code>'
+            );
+        } else {
+            echo __('Not cached', 'bluesky-social');
+        }
+        echo '</p>';
+
+        echo '</div>';
+    }
+
+    /**
+     * Get transient expiration time in seconds
+     */
+    private function get_transient_expiration_time( $transient_name ) {
+        $timeout_key = '_transient_timeout_' . $transient_name;
+
+        $timeout = get_option( $timeout_key );
+        
+        if ( $timeout ) {
+            return $timeout - time();
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Format time remaining in human-readable format
+     */
+    private function format_time_remaining( $seconds ) {
+        if ( $seconds <= 0 ) {
+            return __('expired', 'bluesky-social');
+        }
+
+        $days = floor( $seconds / 86400 );
+        $hours = floor( ( $seconds % 86400 ) / 3600 );
+        $minutes = floor( ( $seconds % 3600 ) / 60 );
+        $remaining_seconds = $seconds % 60;
+
+        $parts = [];
+        if ($days > 0) {
+            $parts[] = sprintf(_n('%d day', '%d days', $days, 'bluesky-social'), $days);
+        }
+        if ( $hours > 0 ) {
+            $parts[] = sprintf( _n( '%d hour', '%d hours', $hours, 'bluesky-social' ), $hours );
+        }
+        if ( $minutes > 0 ) {
+            $parts[] = sprintf(_n('%d minute', '%d minutes', $minutes, 'bluesky-social'), $minutes);
+        }
+        if ( empty( $parts ) || $remaining_seconds > 0 ) {
+            $parts[] = sprintf( _n( '%d second', '%d seconds', $remaining_seconds, 'bluesky-social' ), $remaining_seconds );
+        }
+
+        return implode(', ', $parts);
     }
 
     /**
@@ -272,11 +429,11 @@ class BlueSky_Plugin_Setup {
      * AJAX handler for fetching BlueSky posts
      */
     public function ajax_fetch_bluesky_posts() {
-        $limit = $this->options['posts_limit'] ?? 10;
-        $posts = $this->api_handler->fetch_bluesky_posts($limit);
+        $limit = $this -> options['posts_limit'] ?? 5;
+        $posts = $this -> api_handler -> fetch_bluesky_posts( $limit );
         
         if ($posts !== false) {
-            wp_send_json_success($posts);
+            wp_send_json_success( $posts );
         } else {
             wp_send_json_error('Could not fetch posts');
         }
@@ -287,12 +444,12 @@ class BlueSky_Plugin_Setup {
      * AJAX handler for fetching BlueSky profile
      */
     public function ajax_get_bluesky_profile() {
-        $profile = $this->api_handler->get_bluesky_profile();
+        $profile = $this -> api_handler -> get_bluesky_profile();
         
         if ($profile) {
-            wp_send_json_success($profile);
+            wp_send_json_success( $profile );
         } else {
-            wp_send_json_error('Could not fetch profile');
+            wp_send_json_error( 'Could not fetch profile' );
         }
         wp_die();
     }
@@ -301,11 +458,19 @@ class BlueSky_Plugin_Setup {
      * Syndicate post to BlueSky
      * @param int $post_id WordPress post ID
      */
-    public function syndicate_post_to_bluesky($post_id) {
-        $post = get_post($post_id);
-        $permalink = get_permalink($post_id);
-        
-        $this->api_handler->syndicate_post_to_bluesky($post->post_title, $permalink);
+    public function syndicate_post_to_bluesky( $post_id ) {
+        $post = get_post( $post_id );
+        $permalink = get_permalink( $post_id );
+
+        // Check if the post is already syndicated
+        // because the action can be triggered multiple times by WordPress
+        $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
+        if ( $is_syndicated ) {
+            return;
+        }
+
+        $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
+        add_post_meta( $post_id, '_bluesky_syndicated', true, true );
     }
 
     /**
@@ -338,7 +503,7 @@ class BlueSky_Plugin_Setup {
                 ],
                 'theme' => [
                     'type' => 'string',
-                    'default' => 'light'
+                    'default' => 'system'
                 ],
                 'numberOfPosts' => [
                     'type' => 'integer',
@@ -375,7 +540,7 @@ class BlueSky_Plugin_Setup {
                 ],
                 'theme' => [
                     'type' => 'string',
-                    'default' => 'light'
+                    'default' => 'system'
                 ],
                 'className' => [
                     'type' => 'string',
@@ -423,7 +588,7 @@ class BlueSky_Plugin_Setup {
      *                         - displayAvatar (bool) Whether to show the profile avatar
      *                         - displayCounters (bool) Whether to show follower/following counts
      *                         - displayBio (bool) Whether to show the profile bio
-     *                         - theme (string) Color theme - 'light' or 'dark'
+     *                         - theme (string) Color theme - 'light', 'dark' or 'system'
      * @return string HTML markup for the profile card
      */
     public function bluesky_profile_block_render( $attributes = [] ) {
@@ -442,7 +607,7 @@ class BlueSky_Plugin_Setup {
      * 
      * @param array $attributes Block attributes including:
      *                         - displayEmbeds (bool) Whether to show embedded media in posts
-     *                         - theme (string) Color theme - 'light' or 'dark'
+     *                         - theme (string) Color theme - 'light', 'dark' or 'system'
      *                         - numberOfPosts (int) Number of posts to display (1-10)
      * @return string HTML markup for the posts feed
      */

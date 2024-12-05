@@ -12,10 +12,17 @@
 
 .bluesky-social-integration-embedded-record,
 .bluesky-social-integration-last-post {
+    background: var(--bluesky-card-bg);
     border: var(--bluesky-card-border);
     padding: 0;
     list-style: none!important;
-    border-radius: 8px;
+    border-radius: var(--bluesky-card-br);
+    color: var(--bluesky-card-txt);
+}
+
+.bluesky-social-integration-embedded-record p,
+.bluesky-social-integration-last-post p {
+    color: var(--bluesky-card-txt);
 }
 
 .bluesky-social-integration-last-post-list,
@@ -59,13 +66,13 @@
     border-radius: 21px;
 }
 
-.bluesky-social-integration-post-account-info-names {
+.bluesky-social-integration-post-account-info-names.bluesky-social-integration-post-account-info-names {
     margin: 0;
     font-size: 15px;
     color: var(--bluesky-card-txt-alt);
 }
 
-.bluesky-social-integration-post-account-info-name {
+.bluesky-social-integration-post-account-info-name.bluesky-social-integration-post-account-info-name {
     color: var(--bluesky-card-txt);
     font-weight: bold;
 }
@@ -94,4 +101,25 @@
     margin-top: 16px;
     text-decoration: none;
     color: inherit;
+}
+
+/**
+ * Styles for the profile card darkmode
+ */
+ @media (prefers-color-scheme: dark) {
+    .bluesky-social-integration-last-post.theme-system {
+        --bluesky-card-bg: #161e27;
+        --bluesky-card-txt: white;
+        --bluesky-card-txt-alt: #aebbc9;
+        --bluesky-card-border: 1px solid #2e4052;
+        --bluesky-primary-color: #208BFE;
+    }
+}
+
+.bluesky-social-integration-last-post.theme-dark {
+    --bluesky-card-bg: #161e27;
+    --bluesky-card-txt: white;
+    --bluesky-card-txt-alt: #aebbc9;
+    --bluesky-card-border: 1px solid #2e4052;
+    --bluesky-primary-color: #208BFE;
 }

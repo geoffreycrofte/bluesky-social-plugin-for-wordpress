@@ -81,20 +81,25 @@ class BlueSky_API_Handler {
      * @return array|false Processed posts or false on failure
      */
     public function fetch_bluesky_posts( $limit = 10 ) {
-        $cache_key = BLUESKY_PLUGIN_TRANSIENT . '-posts-' . $limit; // get the cache key depending on the limit
-        $cached_posts = get_transient( $cache_key );
+        $helpers = new BlueSky_Helpers();
+        $cache_key = $helpers -> get_posts_transient_key( $limit );
+        $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
 
-        if ( $cached_posts !== false ) {
-            return $cached_posts;
+        // Skip cache if duration is 0
+        if ( $cache_duration > 0 ) {
+            $cached_posts = get_transient( $cache_key );
+            if ( $cached_posts !== false ) {
+                return $cached_posts;
+            }
         }
 
         // Ensure authentication
-        if (!$this -> authenticate()) {
+        if ( ! $this -> authenticate() ) {
             return false;
         }
 
         // Sanitize limit
-        $limit = max(1, min(10, intval( $limit ) ) );
+        $limit = max( 1, min( 10, intval( $limit ) ) );
 
         $response = wp_remote_get( $this -> bluesky_api_url . 'app.bsky.feed.getAuthorFeed', [
             'headers' => [
@@ -120,9 +125,10 @@ class BlueSky_API_Handler {
             return strtotime( $b['created_at'] ) - strtotime( $a['created_at'] );
         });
 
-        // Cache the posts for 1 hour
-        // TODO: make it an option?
-        set_transient( $cache_key, $processed_posts, HOUR_IN_SECONDS );
+        // Cache the posts if caching is enabled
+        if ( $cache_duration > 0 ) {
+            set_transient( $cache_key, $processed_posts, $cache_duration );
+        }
 
         return $processed_posts;
     }
@@ -132,11 +138,16 @@ class BlueSky_API_Handler {
      * @return array|false Profile data or false on failure
      */
     public function get_bluesky_profile() {
-        $cache_key = BLUESKY_PLUGIN_TRANSIENT . '-profile';
-        $cached_posts = get_transient( $cache_key );
+        $helpers = new BlueSky_Helpers();
+        $cache_key = $helpers -> get_profile_transient_key();
+        $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
 
-        if ( $cached_posts !== false ) {
-            return $cached_posts;
+        // Skip cache if duration is 0
+        if ( $cache_duration > 0 ) {
+            $cached_profile = get_transient( $cache_key );
+            if ( $cached_profile !== false ) {
+                return $cached_profile;
+            }
         }
 
         if ( ! $this -> authenticate() ) {
@@ -152,15 +163,16 @@ class BlueSky_API_Handler {
             ]
         ]);
 
-        if (is_wp_error( $response ) ) {
+        if ( is_wp_error( $response ) ) {
             return false;
         }
 
-        $decoded = json_decode(wp_remote_retrieve_body( $response ), true);
+        $decoded = json_decode( wp_remote_retrieve_body( $response ), true );
 
-        // Cache the profile for 1 hour
-        // TODO: make it an option?
-        set_transient( $cache_key, $decoded, HOUR_IN_SECONDS );
+        // Cache the profile if caching is enabled
+        if ( $cache_duration > 0 ) {
+            set_transient( $cache_key, $decoded, $cache_duration);
+        }
 
         return $decoded;
     }
@@ -272,10 +284,10 @@ class BlueSky_API_Handler {
             ];
         } 
         // Record (embedded post) embed
-        elseif (isset( $post['post']['embed']['record']) || 
-                (isset( $post['post']['embed']['$type']) && $post['post']['embed']['$type'] === 'app.bsky.embed.record')) {
+        elseif ( isset( $post['post']['embed']['record'] ) || 
+                ( isset( $post['post']['embed']['$type'] ) && $post['post']['embed']['$type'] === 'app.bsky.embed.record') ) {
             $record_embed = $post['post']['embed']['record'];
-            $end0fURI = explode('/', $record_embed['uri']);
+            $end0fURI = explode( '/', $record_embed['uri'] );
             $embedded_media = [
                 'type' => 'record',
                 'author' => [
@@ -291,7 +303,7 @@ class BlueSky_API_Handler {
             ];
 
             // Check if the embedded record has its own media (like a video)
-            if (isset( $record_embed['value']['embed']['video'])) {
+            if ( isset( $record_embed['value']['embed']['video'] ) ) {
                 $embedded_media['embedded_video'] = [
                     'alt' => $record_embed['value']['embed']['alt'] ?? '',
                     'aspect_ratio' => [

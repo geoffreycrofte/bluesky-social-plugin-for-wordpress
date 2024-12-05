@@ -38,6 +38,7 @@
 }
 
 .bluesky-social-integration-profile-card p {
+    color: var(--bluesky-card-txt);
     margin: 0; 
 }
 
@@ -77,8 +78,8 @@
     font-size: 1.2rem;
 }
 
-.bluesky-social-integration-handle {
-    color: var(--bluesky-card-txt);
+.bluesky-social-integration-handle.bluesky-social-integration-handle {
+    color: var(--bluesky-card-txt-alt);
 }
 
 .bluesky-social-integration-description.bluesky-social-integration-description {
@@ -89,7 +90,8 @@
     display: none;
 }
 
-.bluesky-social-integration-followers {
+.bluesky-social-integration-followers.bluesky-social-integration-followers {
+    margin-top: calc(var(--bluesky-card-spacing) / 2);
     color: var(--bluesky-card-txt-alt);    
 }
 
@@ -106,3 +108,25 @@
     content: '• ';
     opacity: 0.4;
 }
+
+/**
+ * Styles for the profile card darkmode
+ */
+@media (prefers-color-scheme: dark) {
+    .bluesky-social-integration-profile-card.theme-system {
+        --bluesky-card-bg: #161e27;
+        --bluesky-card-txt: white;
+        --bluesky-card-txt-alt: #aebbc9;
+        --bluesky-card-border: 1px solid #2e4052;
+        --bluesky-primary-color: #208BFE;
+    }
+}
+
+.bluesky-social-integration-profile-card.theme-dark {
+    --bluesky-card-bg: #161e27;
+    --bluesky-card-txt: white;
+    --bluesky-card-txt-alt: #aebbc9;
+    --bluesky-card-border: 1px solid #2e4052;
+    --bluesky-primary-color: #208BFE;
+}
+

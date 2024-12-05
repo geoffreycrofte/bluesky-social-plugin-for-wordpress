@@ -29,6 +29,7 @@
                         label: __('Theme', 'bluesky-social'),
                         value: attributes.theme,
                         options: [
+                            { label: __('System Preference', 'bluesky-social'), value: 'system' },
                             { label: __('Light', 'bluesky-social'), value: 'light' },
                             { label: __('Dark', 'bluesky-social'), value: 'dark' }
                         ],
@@ -87,7 +88,7 @@
             },
             theme: {
                 type: 'string',
-                default: 'light'
+                default: 'system'
             },
             numberOfPosts: {
                 type: 'integer',
