@@ -3,7 +3,7 @@ Contributors: Geoffrey Crofte
 Donate link: https://paypal.me/crofte
 Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
-Tested up to: 6.4.1
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -44,9 +44,15 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 == Screenshots ==
 
-1. The profile card.
-2. The list of posts.
-3. A post automatically shared after a WordPress publication.
+1. The profile card in light theme.
+2. The list of posts in light theme.
+3. The profile card in dark theme.
+4. The list of posts in dark theme.
+5. The Gutenberg block lists. (the last one isn't ours)
+6. The BlueSky Posts Feed Gutenberg options.
+7. The BlueSky Profile Gutenberg options.
+8. The plugin settings screen.
+9. A post automatically shared after a WordPress publication.
 
 == Changelog ==
 

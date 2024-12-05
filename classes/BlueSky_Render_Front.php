@@ -85,7 +85,7 @@ class BlueSky_Render_Front {
                 <ul class="bluesky-social-integration-last-post-list">
                     <?php foreach ($posts as $post): ?>
                         <li class="bluesky-social-integration-last-post-item">
-                            <a title="<?php _e('Get to this post', 'bluesky-social'); ?>" href="<?php echo esc_url( $post['url'] ); ?>" class="bluesky-social-integration-last-post-link"><span class="screen-reader-text"><?php _e('Get to this post', 'bluesky-social'); ?></span></a>
+                            <a title="<?php esc_attr( __('Get to this post', 'bluesky-social') ); ?>" href="<?php echo esc_url( $post['url'] ); ?>" class="bluesky-social-integration-last-post-link"><span class="screen-reader-text"><?php esc_html( __('Get to this post', 'bluesky-social') ); ?></span></a>
                             <div class="bluesky-social-integration-last-post-header">
                                 <img src="<?php echo esc_url( $post['account']['avatar'] ); ?>" width="42" height="42" alt="" class="avatar post-avatar">
                             </div>
@@ -94,7 +94,7 @@ class BlueSky_Render_Front {
                                     <?php //TODO: should I use aria-hidden on the name and handle to make it lighter for screenreaders? ?>
                                     <span class="bluesky-social-integration-post-account-info-name"><?php echo esc_html($post['account']['display_name']); ?></span>
                                     <span class="bluesky-social-integration-post-account-info-handle"><?php echo esc_html('@' . $post['account']['handle']); ?></span>
-                                    <span class="bluesky-social-integration-post-account-info-date"><?php echo human_time_diff( strtotime( $post['created_at'] ), current_time( 'U' ) ) ; ?></span>
+                                    <span class="bluesky-social-integration-post-account-info-date"><?php echo esc_html( human_time_diff( strtotime( $post['created_at'] ), current_time( 'U' ) ) ); ?></span>
                                 </p>
 
                                 <div class="bluesky-social-integration-post-content-text">
@@ -186,7 +186,7 @@ class BlueSky_Render_Front {
                 $classes[] = 'no-' . strtolower( $element );
             }
         }
-        
+        // translators: %s is the profile display used in an aria-label attribute
         $aria_label = sprintf(__('BlueSky Social Card of %s', 'bluesky-social'), $profile['displayName']);
         
         ob_start();
@@ -199,9 +199,9 @@ class BlueSky_Render_Front {
                 <p class="bluesky-social-integration-name"><?php echo esc_html( $profile['displayName'] ); ?></p>
                 <p class="bluesky-social-integration-handle"><span>@</span><?php echo esc_html( $profile['handle'] ); ?></p>
                 <p class="bluesky-social-integration-followers">
-                    <span class="followers"><span class="nb"><?php echo intval( $profile['followersCount'] ) . '</span>&nbsp;' . __('Followers', 'bluesky-social'); ?></span>
-                    <span class="follows"><span class="nb"><?php echo intval( $profile['followsCount'] ) . '</span>&nbsp;' . __('Following', 'bluesky-social'); ?></span>
-                    <span class="posts"><span class="nb"><?php echo intval( $profile['postsCount'] ) . '</span>&nbsp;' . __('Posts', 'bluesky-social'); ?></span>
+                    <span class="followers"><span class="nb"><?php echo esc_html( intval( $profile['followersCount'] ) ) . '</span>&nbsp;' . esc_html( __('Followers', 'bluesky-social') ); ?></span>
+                    <span class="follows"><span class="nb"><?php echo esc_html( intval( $profile['followsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Following', 'bluesky-social') ); ?></span>
+                    <span class="posts"><span class="nb"><?php echo esc_html( intval( $profile['postsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Posts', 'bluesky-social') ); ?></span>
                 </p>
                 <p class="bluesky-social-integration-description"><?php echo nl2br( esc_html( $profile['description'] ) ); ?></p>
             </div>

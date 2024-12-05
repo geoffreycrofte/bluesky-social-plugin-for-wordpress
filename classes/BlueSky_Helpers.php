@@ -49,13 +49,14 @@ class BlueSky_Helpers {
      * @param string $message The message to display
      * @param string $type The notice type (error, warning, success, info)
      */
-    private function add_admin_notice($message, $type = 'error') {
+    private function add_admin_notice( $message, $type = 'error') {
         add_action('admin_notices', function() use ($message, $type) {
             if (current_user_can('manage_options')) {
                 printf(
                     '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
-                    esc_attr($type),
-                    sprintf(__('BlueSky Error: %s', 'bluesky-social-integration'), esc_html($message))
+                    esc_attr( $type ),
+                    // translators: %s is the error message
+                    sprintf( esc_html( __('BlueSky Error: %s', 'bluesky-social-integration') ), esc_html( $message ) )
                 );
             }
         });
@@ -84,7 +85,6 @@ class BlueSky_Helpers {
     public function bluesky_encrypt($stringToEncrypt) {
         if ( ! $this -> is_encryption_available() ) {
             $this -> add_admin_notice( __('OpenSSL encryption is not available on your server.', 'bluesky-social') );
-            error_log('BlueSky: OpenSSL encryption is not available');
             return false;
         } 
 
@@ -112,9 +112,9 @@ class BlueSky_Helpers {
             return base64_encode($iv . '::' . $encrypted);
         } catch ( Exception $e ) {
             $this -> add_admin_notice(
+                // translators: %s is the error message
                 sprintf( __('Encryption failed: %s', 'bluesky-social'), $e->getMessage() )
             );
-            error_log('BlueSky: Encryption failed - ' . $e->getMessage());
             return false;
         }
     }
@@ -128,7 +128,6 @@ class BlueSky_Helpers {
     public function bluesky_decrypt($stringToDecrypt) {
         if ( ! $this -> is_encryption_available() ) {
             $this -> add_admin_notice( __('OpenSSL encryption is not available on your server.', 'bluesky-social') );
-            error_log('BlueSky: OpenSSL encryption is not available');
             return false;
         }
 
@@ -169,9 +168,9 @@ class BlueSky_Helpers {
             return $decrypted;
         } catch (Exception $e) {
             $this -> add_admin_notice(
+                // translators: %s is the error message
                 sprintf(__('Decryption failed: %s', 'bluesky-social'), $e->getMessage())
             );
-            error_log('BlueSky: Decryption failed - ' . $e->getMessage());
             return false;
         }
     }
