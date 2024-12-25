@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: BlueSky Social Integration
+Plugin Name: Social Integration for BlueSky
 Description: Integrates BlueSky social features into WordPress including: Post New Articles on BlueSky for you, Shortcode for Profile Card, and Widget to display your last posts.
 Version: 1.0.0
 Requires at least: 5.0
@@ -9,7 +9,7 @@ Author: Geoffrey Crofte
 Author URI: https://geoffreycrofte.com
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: bluesky-social
+Text Domain: social-integration-for-bluesky
 Domain Path: /languages
 */
 
@@ -18,11 +18,13 @@ if ( ! defined('ABSPATH') ) {
     exit;
 }
 
-define('BLUESKY_PLUGIN_VERSION', '1.0.0' );
-define('BLUESKY_PLUGIN_FOLDER', plugin_dir_url(__FILE__) );
-define('BLUESKY_PLUGIN_DIRECTORY_NAME', dirname( plugin_basename( __FILE__ ) ) );
-define('BLUESKY_PLUGIN_OPTIONS', 'bluesky_settings' );
-define('BLUESKY_PLUGIN_TRANSIENT', 'bluesky_cache_' . BLUESKY_PLUGIN_VERSION );
+define( 'BLUESKY_PLUGIN_VERSION', '1.0.0' );
+define( 'BLUESKY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'BLUESKY_PLUGIN_FOLDER', plugin_dir_url( __FILE__ ) );
+define( 'BLUESKY_PLUGIN_DIRECTORY_NAME', dirname( plugin_basename( __FILE__ ) ) );
+define( 'BLUESKY_PLUGIN_SETTING_PAGENAME', 'bluesky-social-settings' );
+define( 'BLUESKY_PLUGIN_OPTIONS', 'bluesky_settings' );
+define( 'BLUESKY_PLUGIN_TRANSIENT', 'bluesky_cache_' . BLUESKY_PLUGIN_VERSION );
 
 // Core features (attempt)
 require_once( 'classes/BlueSky_Helpers.php' ); // V.1

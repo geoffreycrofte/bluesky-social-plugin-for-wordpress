@@ -8,8 +8,8 @@ class BlueSky_Posts_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct(
             'bluesky_posts_widget',
-            esc_html( __( 'BlueSky Latest Posts', 'bluesky-social' ) ),
-            ['description' => esc_html( __('Displays latest BlueSky posts', 'bluesky-social') )]
+            esc_html( __( 'BlueSky Latest Posts', 'social-integration-for-bluesky' ) ),
+            ['description' => esc_html( __('Displays latest BlueSky posts', 'social-integration-for-bluesky') )]
         );
     }
 
@@ -18,9 +18,11 @@ class BlueSky_Posts_Widget extends WP_Widget {
         $bluesky = new BlueSky_Render_Front( $api_handler );
         $posts = $bluesky -> render_bluesky_posts_list();
 
-        echo $args['before_widget'];
-        echo $args['before_title'] . esc_html( __( 'BlueSky Latest Posts', 'bluesky-social' ) ) . $args['after_title'];
-        echo $posts;
-        echo $args['after_widget'];
+        $output = $args['before_widget'];
+        $output .= $args['before_title'] . __( 'BlueSky Latest Posts', 'social-integration-for-bluesky' ) . $args['after_title'];
+        $output .= $posts;
+        $output .= $args['after_widget'];
+
+        echo wp_kses( $output, wp_kses_allowed_html('post') );
     }
 }

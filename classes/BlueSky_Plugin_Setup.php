@@ -35,6 +35,7 @@ class BlueSky_Plugin_Setup {
     private function init_hooks() {
         // Internationalization
         add_action('init', [$this, 'load_plugin_textdomain']);
+        add_filter('plugin_action_links_' . BLUESKY_PLUGIN_BASENAME, [$this, 'add_plugin_action_links']);
 
         // Admin menu and settings
         add_action('admin_menu', [$this, 'add_admin_menu']);
@@ -65,7 +66,17 @@ class BlueSky_Plugin_Setup {
      * Load plugin text domain for internationalization
      */
     public function load_plugin_textdomain() {
-        load_plugin_textdomain( 'bluesky-social', false, BLUESKY_PLUGIN_DIRECTORY_NAME . '/languages' );
+        load_plugin_textdomain( 'social-integration-for-bluesky', false, BLUESKY_PLUGIN_DIRECTORY_NAME . '/languages' );
+    }
+
+    /**
+     * Add a link to the setting page
+     */
+    function add_plugin_action_links( array $links ) {
+        $url = get_admin_url() . 'options-general.php?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME;
+        $settings_link = '<a href="' . esc_url( $url ) . '">' . esc_html__('Settings', 'social-integration-for-bluesky') . '</a>';
+        $links[] = $settings_link;
+        return $links;
     }
 
     /**
@@ -73,10 +84,10 @@ class BlueSky_Plugin_Setup {
      */
     public function add_admin_menu() {
         add_options_page(
-            __('BlueSky Social Integration', 'bluesky-social'),
-            __('BlueSky Settings', 'bluesky-social'),
+            esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky'),
+            esc_html__('BlueSky Settings', 'social-integration-for-bluesky'),
             'manage_options',
-            'bluesky-social-settings',
+            BLUESKY_PLUGIN_SETTING_PAGENAME ,
             [$this, 'render_settings_page']
         );
     }
@@ -93,9 +104,9 @@ class BlueSky_Plugin_Setup {
 
         add_settings_section(
             'bluesky_main_settings',
-            __('BlueSky Account Settings', 'bluesky-social'),
+            esc_html__('BlueSky Account Settings', 'social-integration-for-bluesky'),
             [$this, 'settings_section_callback'],
-            'bluesky-social-settings'
+            BLUESKY_PLUGIN_SETTING_PAGENAME 
         );
 
         $this->add_settings_fields();
@@ -149,27 +160,27 @@ class BlueSky_Plugin_Setup {
     private function add_settings_fields() {
         $fields = [
             'bluesky_handle' => [
-                'label' => __('BlueSky Handle', 'bluesky-social'),
+                'label' => __('BlueSky Handle', 'social-integration-for-bluesky'),
                 'callback' => 'render_handle_field'
             ],
             'bluesky_app_password' => [
-                'label' => __('BlueSky Password', 'bluesky-social'),
+                'label' => __('BlueSky Password', 'social-integration-for-bluesky'),
                 'callback' => 'render_password_field'
             ],
             'bluesky_auto_syndicate' => [
-                'label' => __('Auto-Syndicate Posts', 'bluesky-social'),
+                'label' => __('Auto-Syndicate Posts', 'social-integration-for-bluesky'),
                 'callback' => 'render_syndicate_field'
             ],
             'bluesky_theme' => [
-                'label' => __('Theme', 'bluesky-social'),
+                'label' => __('Theme', 'social-integration-for-bluesky'),
                 'callback' => 'render_theme_field'
             ],
             'bluesky_posts_limit' => [
-                'label' => __('Number of Posts to Display', 'bluesky-social'),
+                'label' => __('Number of Posts to Display', 'social-integration-for-bluesky'),
                 'callback' => 'render_posts_limit_field'
             ],
             'bluesky_cache_duration' => [
-                'label' => __('Cache Duration', 'bluesky-social'),
+                'label' => __('Cache Duration', 'social-integration-for-bluesky'),
                 'callback' => 'render_cache_duration_field'
             ]
         ];
@@ -177,9 +188,9 @@ class BlueSky_Plugin_Setup {
         foreach ( $fields as $id => $field ) {
             add_settings_field(
                 $id,
-                '<label for="' . BLUESKY_PLUGIN_OPTIONS . '_' . str_replace('bluesky_', '', $id) . '">' . $field['label'] . '</label>',
-                [$this, $field['callback']],
-                'bluesky-social-settings',
+                '<label for="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_' . str_replace('bluesky_', '', $id) ) . '">' . esc_html( $field['label'] ) . '</label>',
+                [ $this, $field['callback'] ],
+                BLUESKY_PLUGIN_SETTING_PAGENAME ,
                 'bluesky_main_settings'
             );
         }
@@ -189,7 +200,7 @@ class BlueSky_Plugin_Setup {
      * Settings section callback
      */
     public function settings_section_callback() {
-        echo '<p>' . esc_html( __('Enter your BlueSky account details to enable social integration.', 'bluesky-social') ) . '</p>';
+        echo '<p>' . esc_html( __('Enter your BlueSky account details to enable social integration.', 'social-integration-for-bluesky') ) . '</p>';
     }
 
     /**
@@ -197,7 +208,7 @@ class BlueSky_Plugin_Setup {
      */
     public function render_handle_field() {
         $handle = $this -> options['handle'] ?? '';
-        echo "<input type='text' id='" . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_handle' ) . "' name='bluesky_settings[handle]' value='" . esc_attr( $handle ) . "' />";
+        echo '<input type="text" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_handle' ) . '" name="bluesky_settings[handle]" value="' . esc_attr( $handle ) . '" />';
     }
 
     /**
@@ -208,10 +219,12 @@ class BlueSky_Plugin_Setup {
         // Don't show the actual password, just a placeholder if it exists
         $placeholder = ! empty( $password ) ? '••••••••' : '';
         
-        echo "<input type='password' id='" . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_app_password' ) . "' name='bluesky_settings[app_password]' value='' placeholder='" . esc_attr( $placeholder ) . "' />";
+        echo '<input type="password" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_app_password' ) . '" name="bluesky_settings[app_password]" value="" placeholder="' . esc_attr( $placeholder ) . '" />';
         
         if ( ! empty( $password ) ) {
-            echo "<p class='description'>" . esc_html( __('Leave empty to keep the current password.', 'bluesky-social') ) . "</p>";
+            echo '<p class="description">' . esc_html( __('Leave empty to keep the current password.', 'social-integration-for-bluesky') ) . '</p>';
+        } else {
+            echo '<p class="description">' . esc_html( sprintf('Instead of using your password, you can use an %sApp Password%s available on BlueSky. Do not authorize access to direct message, this plugin do not need it.', 'social-integration-for-bluesky'), '<a href="https://bsky.app/settings/app-passwords" target="_blank">', '</a>' ) . '</p>';
         }
     }
 
@@ -227,11 +240,11 @@ class BlueSky_Plugin_Setup {
      * Render theme field
      */
     public function render_theme_field() {
-        $theme = $this->options['theme'] ?? 'light';
+        $theme = $this->options['theme'] ?? 'system';
         echo '<select name="bluesky_settings[theme]" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_theme' ) . '">';
-        echo '<option value="system" ' . selected('system', $theme, false) . '>' . esc_html( __('System Preference', 'bluesky-social') ) . '</option>';
-        echo '<option value="light" ' . selected('light', $theme, false) . '>' . esc_html( __('Light', 'bluesky-social') ) . '</option>';
-        echo '<option value="dark" ' . selected('dark', $theme, false) . '>' . esc_html( __('Dark', 'bluesky-social') ) . '</option>';
+        echo '<option value="system" ' . selected( 'system', $theme, false ) . '>' . esc_html( __('System Preference', 'social-integration-for-bluesky') ) . '</option>';
+        echo '<option value="light" ' . selected( 'light', $theme, false ) . '>' . esc_html( __('Light', 'social-integration-for-bluesky') ) . '</option>';
+        echo '<option value="dark" ' . selected( 'dark', $theme, false ) . '>' . esc_html( __('Dark', 'social-integration-for-bluesky') ) . '</option>';
         echo '</select>';
     }
 
@@ -240,8 +253,8 @@ class BlueSky_Plugin_Setup {
      */
     public function render_posts_limit_field() {
         $limit = $this->options['posts_limit'] ?? 5;
-        echo "<input type='number' min='1' max='10' id='" . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_posts_limit' ) . "' name='bluesky_settings[posts_limit]' value='" . esc_attr( $limit ) . "' />";
-        echo "<p class='description'>" . esc_html( __('Enter the number of posts to display (1-10) - 5 is set by default', 'bluesky-social') ) . "</p>";
+        echo '<input type="number" min="1" max="10" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_posts_limit' ) . '" name="bluesky_settings[posts_limit]" value="' . esc_attr( $limit ) . '" />';
+        echo '<p class="description">' . esc_html( __('Enter the number of posts to display (1-10) - 5 is set by default', 'social-integration-for-bluesky') ) . '</p>';
     }
 
     /**
@@ -262,7 +275,7 @@ class BlueSky_Plugin_Setup {
                         name="bluesky_settings[cache_duration][days]" 
                         value="<?php echo esc_attr( $cache_duration['days'] ); ?>" 
                         style="width: 60px;"> 
-                <?php echo esc_html( __('Days', 'bluesky-social') ); ?>
+                <?php echo esc_html( __('Days', 'social-integration-for-bluesky') ); ?>
             </label>
             <label>
                 <input type="number" 
@@ -270,7 +283,7 @@ class BlueSky_Plugin_Setup {
                         name="bluesky_settings[cache_duration][hours]" 
                         value="<?php echo esc_attr($cache_duration['hours']); ?>" 
                         style="width: 60px;"> 
-                <?php echo esc_html( __('Hours', 'bluesky-social') ); ?>
+                <?php echo esc_html( __('Hours', 'social-integration-for-bluesky') ); ?>
             </label>
             <label>
                 <input type="number" 
@@ -278,11 +291,11 @@ class BlueSky_Plugin_Setup {
                         name="bluesky_settings[cache_duration][minutes]" 
                         value="<?php echo esc_attr( $cache_duration['minutes'] ); ?>" 
                         style="width: 60px;"> 
-                <?php echo esc_html( __('Minutes', 'bluesky-social') ); ?>
+                <?php echo esc_html( __('Minutes', 'social-integration-for-bluesky') ); ?>
             </label>
         </div>
         <p class="description">
-            <?php echo esc_html( __('Set to 0 in all fields to disable caching. Current cache status:', 'bluesky-social') ); ?>
+            <?php echo esc_html( __('Set to 0 in all fields to disable caching. Current cache status:', 'social-integration-for-bluesky') ); ?>
         </p>
         <?php
         $this->display_cache_status();
@@ -297,47 +310,32 @@ class BlueSky_Plugin_Setup {
         $posts_transient = get_transient( $helpers -> get_posts_transient_key() );
 
         echo '<div class="cache-status">';
-        echo '<style>.cache-duration-fields label {
-                    margin-right: 15px;
-                }
-
-                .cache-status {
-                    margin-top: 10px;
-                    padding: 10px;
-                    background: #f8f8f8;
-                    border-left: 4px solid #646970;
-                }
-
-                .cache-status p {
-                    margin: 5px 0;
-                }
-            </style>';
         
         // Profile cache status
-        echo '<p><strong>' . esc_html( __('Profile Card Cache:', 'bluesky-social') ) . '</strong> ';
+        echo '<p><strong>' . esc_html( __('Profile Card Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $profile_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_profile_transient_key() );
             echo sprintf(
                 // translators: %s is the time remaining
-                esc_html( __('Active (expires in %s)', 'bluesky-social') ),
+                esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'bluesky-social') );
+            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
         echo '</p>';
 
         // Posts cache status
-        echo '<p><strong>' . esc_html( __('Posts Feed Cache:', 'bluesky-social') ) . '</strong> ';
+        echo '<p><strong>' . esc_html( __('Posts Feed Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $posts_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_posts_transient_key() );
             echo sprintf(
                 // translators: %s is the time remaining
-                esc_html( __('Active (expires in %s)', 'bluesky-social') ),
+                esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'bluesky-social') );
+            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
         echo '</p>';
 
@@ -364,7 +362,7 @@ class BlueSky_Plugin_Setup {
      */
     private function format_time_remaining( $seconds ) {
         if ( $seconds <= 0 ) {
-            return esc_html( __('expired', 'bluesky-social') );
+            return esc_html( __('expired', 'social-integration-for-bluesky') );
         }
 
         $days = floor( $seconds / 86400 );
@@ -375,19 +373,19 @@ class BlueSky_Plugin_Setup {
         $parts = [];
         if ($days > 0) {
             // translators: %d is the number of days
-            $parts[] = sprintf( esc_html( _n('%d day', '%d days', $days, 'bluesky-social') ), $days );
+            $parts[] = sprintf( esc_html( _n('%d day', '%d days', $days, 'social-integration-for-bluesky') ), $days );
         }
         if ( $hours > 0 ) {
             // translators: %d is the number of hours
-            $parts[] = sprintf( esc_html( _n( '%d hour', '%d hours', $hours, 'bluesky-social' ) ), $hours );
+            $parts[] = sprintf( esc_html( _n( '%d hour', '%d hours', $hours, 'social-integration-for-bluesky' ) ), $hours );
         }
         if ( $minutes > 0 ) {
             // translators: %d is the number of minutes
-            $parts[] = sprintf( esc_html( _n( '%d minute', '%d minutes', $minutes, 'bluesky-social' ) ), $minutes );
+            $parts[] = sprintf( esc_html( _n( '%d minute', '%d minutes', $minutes, 'social-integration-for-bluesky' ) ), $minutes );
         }
         if ( empty( $parts ) || $remaining_seconds > 0 ) {
             // translators: %d is the number of seconds
-            $parts[] = sprintf( esc_html( _n( '%d second', '%d seconds', $remaining_seconds, 'bluesky-social' ) ), $remaining_seconds );
+            $parts[] = sprintf( esc_html( _n( '%d second', '%d seconds', $remaining_seconds, 'social-integration-for-bluesky' ) ), $remaining_seconds );
         }
 
         return implode(', ', $parts);
@@ -399,11 +397,11 @@ class BlueSky_Plugin_Setup {
     public function render_settings_page() {
         ?>
         <div class="wrap bluesky-social-integration-admin">
-            <h1>BlueSky Social Integration</h1>
+            <h1><?php echo esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky' ); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('bluesky_settings_group');
-                do_settings_sections('bluesky-social-settings');
+                do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
                 submit_button();
                 ?>
             </form>
@@ -415,19 +413,19 @@ class BlueSky_Plugin_Setup {
      * Enqueue admin scripts and styles
      */
     public function admin_enqueue_scripts() {
-        wp_enqueue_style('bluesky-social-style', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social.css');
-        wp_enqueue_style('bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css');
-        wp_enqueue_style('bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css');
-        wp_enqueue_script('bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social.js', ['jquery'], '1.0', true);
+        wp_enqueue_style( 'bluesky-social-style', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_script( 'bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social.js', ['jquery'], BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
     }
 
     /**
      * Enqueue frontend scripts and styles
      */
     public function frontend_enqueue_scripts() {
-        if (!is_admin()) {
-            wp_enqueue_style('bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css');
-            wp_enqueue_style('bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css');
+        if ( ! is_admin() ) {
+            wp_enqueue_style( 'bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
+            wp_enqueue_style( 'bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
         }
     }
 
@@ -495,7 +493,12 @@ class BlueSky_Plugin_Setup {
         wp_register_script(
             'bluesky-posts-block',
             BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-posts-feed.js',
-            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render']
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render'],
+            BLUESKY_PLUGIN_VERSION,
+            array(
+                'in_footer' => true,
+                'strategy' => 'defer'
+            )
         );
 
         register_block_type('bluesky-social/posts', [
@@ -522,7 +525,12 @@ class BlueSky_Plugin_Setup {
         wp_register_script(
             'bluesky-profile-block',
             BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-profile-card.js',
-            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render']
+            ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render'],
+            BLUESKY_PLUGIN_VERSION,
+            array(
+                'in_footer' => true,
+                'strategy' => 'defer'
+            )
         );
 
         register_block_type('bluesky-social/profile', [
@@ -560,30 +568,21 @@ class BlueSky_Plugin_Setup {
             'styles' => [
                 [
                     'name' => 'default',
-                    'label' => __('Rounded', 'bluesky-social'),
+                    'label' => __('Rounded', 'social-integration-for-bluesky'),
                     'isDefault' => true
                 ],
                 [
                     'name' => 'outline',
-                    'label' => __('Outline', 'bluesky-social')
+                    'label' => __('Outline', 'social-integration-for-bluesky')
                 ],
                 [
                     'name' => 'squared',
-                    'label' => __('Squared', 'bluesky-social')
+                    'label' => __('Squared', 'social-integration-for-bluesky')
                 ]
             ],
             'editor_script' => 'bluesky-profile-block',
             'render_callback' => [$this, 'bluesky_profile_block_render'],
         ]);
-
-        // Register REST API routes
-        if ( function_exists( 'register_rest_field' ) ) {
-            register_rest_route( 'bluesky-social/v1', '/profile-data', [
-                'methods' => 'GET',
-                'callback' => [ $this, 'get_profile_data' ],
-                'permission_callback' => '__return_true'
-            ]);
-        }
     }
 
     /**
@@ -599,7 +598,7 @@ class BlueSky_Plugin_Setup {
      */
     public function bluesky_profile_block_render( $attributes = [] ) {
         // Get the style class
-        $style_class = !empty($attributes['className']) ? $attributes['className'] : 'is-style-default';
+        $style_class = ! empty( $attributes['className'] ) ? $attributes['className'] : 'is-style-default';
         
         // Add the style class to the attributes for the render function
         $attributes['styleClass'] = $style_class;

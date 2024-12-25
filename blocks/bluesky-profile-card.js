@@ -14,11 +14,11 @@
             el(InspectorControls, { key: 'inspector' },
                 el(PanelBody, { 
                     key: 'formatting-options',
-                    title: __('Profile Display Options', 'bluesky-social')
+                    title: __('Profile Display Options', 'social-integration-for-bluesky')
                 },
                     el(ToggleControl, {
                         key: 'banner-toggle',
-                        label: __('Display Banner', 'bluesky-social'),
+                        label: __('Display Banner', 'social-integration-for-bluesky'),
                         checked: attributes.displayBanner,
                         onChange: function(value) { 
                             setAttributes({ displayBanner: value });
@@ -26,7 +26,7 @@
                     }),
                     el(ToggleControl, {
                         key: 'avatar-toggle',
-                        label: __('Display Avatar', 'bluesky-social'),
+                        label: __('Display Avatar', 'social-integration-for-bluesky'),
                         checked: attributes.displayAvatar,
                         onChange: function(value) {
                             setAttributes({ displayAvatar: value });
@@ -34,7 +34,7 @@
                     }),
                     el(ToggleControl, {
                         key: 'counters-toggle',
-                        label: __('Display Counters', 'bluesky-social'),
+                        label: __('Display Counters', 'social-integration-for-bluesky'),
                         checked: attributes.displayCounters,
                         onChange: function(value) {
                             setAttributes({ displayCounters: value });
@@ -42,7 +42,7 @@
                     }),
                     el(ToggleControl, {
                         key: 'bio-toggle',
-                        label: __('Display Bio', 'bluesky-social'),
+                        label: __('Display Bio', 'social-integration-for-bluesky'),
                         checked: attributes.displayBio,
                         onChange: function(value) {
                             setAttributes({ displayBio: value });
@@ -50,12 +50,12 @@
                     }),
                     el(SelectControl, {
                         key: 'theme-select',
-                        label: __('Theme', 'bluesky-social'),
+                        label: __('Theme', 'social-integration-for-bluesky'),
                         value: attributes.theme,
                         options: [
-                            { label: __('System Preference', 'bluesky-social'), value: 'system' },
-                            { label: __('Light', 'bluesky-social'), value: 'light' },
-                            { label: __('Dark', 'bluesky-social'), value: 'dark' }
+                            { label: __('System Preference', 'social-integration-for-bluesky'), value: 'system' },
+                            { label: __('Light', 'social-integration-for-bluesky'), value: 'light' },
+                            { label: __('Dark', 'social-integration-for-bluesky'), value: 'dark' }
                         ],
                         onChange: function(value) {
                             setAttributes({ theme: value });
@@ -73,13 +73,13 @@
     };
 
     blocks.registerBlockType('bluesky-social/profile', {
-        title: __('BlueSky Profile Card', 'bluesky-social'),
+        title: __('BlueSky Profile Card', 'social-integration-for-bluesky'),
         icon: 'admin-users',
         category: 'widgets',
         keywords: [
-            __( 'social', 'bluesky-social' ),
-            __( 'account', 'bluesky-social' ),
-            __( 'card', 'bluesky-social' )
+            __( 'social', 'social-integration-for-bluesky' ),
+            __( 'account', 'social-integration-for-bluesky' ),
+            __( 'card', 'social-integration-for-bluesky' )
         ],
         styles: [
             // Mark style as default.

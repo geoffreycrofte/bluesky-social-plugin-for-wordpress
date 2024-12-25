@@ -77,16 +77,14 @@ class BlueSky_Render_Front {
             $theme_class = 'theme-' . esc_attr( $theme );
 
             ob_start();
-            /* echo '<pre>';
-            var_dump( $posts );
-            echo '</pre>'; */
             ?>
             <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>">
                 <ul class="bluesky-social-integration-last-post-list">
                     <?php foreach ($posts as $post): ?>
                         <li class="bluesky-social-integration-last-post-item">
-                            <a title="<?php esc_attr( __('Get to this post', 'bluesky-social') ); ?>" href="<?php echo esc_url( $post['url'] ); ?>" class="bluesky-social-integration-last-post-link"><span class="screen-reader-text"><?php esc_html( __('Get to this post', 'bluesky-social') ); ?></span></a>
+                            <a title="<?php echo esc_attr( __('Get to this post', 'social-integration-for-bluesky') ); ?>" href="<?php echo esc_url( $post['url'] ); ?>" class="bluesky-social-integration-last-post-link"><span class="screen-reader-text"><?php esc_html( __('Get to this post', 'social-integration-for-bluesky') ); ?></span></a>
                             <div class="bluesky-social-integration-last-post-header">
+                                <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                                 <img src="<?php echo esc_url( $post['account']['avatar'] ); ?>" width="42" height="42" alt="" class="avatar post-avatar">
                             </div>
                             <div class="bluesky-social-integration-last-post-content">                                
@@ -109,6 +107,7 @@ class BlueSky_Render_Front {
                                 if ( ! empty( $post['embedded_media'] ) && $display_embeds ):
                                         if ( $post['embedded_media']['type'] === 'video' ): ?>
                                     <div class="embedded-video">
+                                        <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                                         <img src="<?php echo esc_url($post['embedded_media']['video_details']['thumbnail_url']); ?>" 
                                             alt="<?php echo esc_attr($post['embedded_media']['alt']); ?>">
                                         <!-- You might want to add a video player or link here -->
@@ -135,7 +134,7 @@ class BlueSky_Render_Front {
             <?php
             return ob_get_clean();
         } else {
-            return '<p class="bluesky-posts-block no-posts">' . __( 'No posts available.', 'bluesky-social' ) . '</p>';
+            return '<p class="bluesky-posts-block no-posts">' . __( 'No posts available.', 'social-integration-for-bluesky' ) . '</p>';
         }
     }
 
@@ -170,7 +169,7 @@ class BlueSky_Render_Front {
         
         // TODO: write a fallback solution using cache
         if ( ! $profile ) {
-            return '<p class="bluesky-social-integration-error">' . __('Unable to fetch BlueSky profile.', 'bluesky-social') . '</p>';
+            return '<p class="bluesky-social-integration-error">' . esc_html__('Unable to fetch BlueSky profile.', 'social-integration-for-bluesky') . '</p>';
         }
 
         $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ];
@@ -187,21 +186,22 @@ class BlueSky_Render_Front {
             }
         }
         // translators: %s is the profile display used in an aria-label attribute
-        $aria_label = sprintf(__('BlueSky Social Card of %s', 'bluesky-social'), $profile['displayName']);
+        $aria_label = sprintf(__('BlueSky Social Card of %s', 'social-integration-for-bluesky'), $profile['displayName']);
         
         ob_start();
         ?>
         <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr($aria_label); ?>">
             <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url('<?php echo esc_url( $profile['banner'] ); ?>')">
+                <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                 <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
             </div>
             <div class="bluesky-social-integration-content">
                 <p class="bluesky-social-integration-name"><?php echo esc_html( $profile['displayName'] ); ?></p>
                 <p class="bluesky-social-integration-handle"><span>@</span><?php echo esc_html( $profile['handle'] ); ?></p>
                 <p class="bluesky-social-integration-followers">
-                    <span class="followers"><span class="nb"><?php echo esc_html( intval( $profile['followersCount'] ) ) . '</span>&nbsp;' . esc_html( __('Followers', 'bluesky-social') ); ?></span>
-                    <span class="follows"><span class="nb"><?php echo esc_html( intval( $profile['followsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Following', 'bluesky-social') ); ?></span>
-                    <span class="posts"><span class="nb"><?php echo esc_html( intval( $profile['postsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Posts', 'bluesky-social') ); ?></span>
+                    <span class="followers"><span class="nb"><?php echo esc_html( intval( $profile['followersCount'] ) ) . '</span>&nbsp;' . esc_html( __('Followers', 'social-integration-for-bluesky') ); ?></span>
+                    <span class="follows"><span class="nb"><?php echo esc_html( intval( $profile['followsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Following', 'social-integration-for-bluesky') ); ?></span>
+                    <span class="posts"><span class="nb"><?php echo esc_html( intval( $profile['postsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Posts', 'social-integration-for-bluesky') ); ?></span>
                 </p>
                 <p class="bluesky-social-integration-description"><?php echo nl2br( esc_html( $profile['description'] ) ); ?></p>
             </div>

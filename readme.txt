@@ -1,5 +1,5 @@
-=== BlueSky Social Integration ===
-Contributors: Geoffrey Crofte
+=== Social Integration for BlueSky ===
+Contributors: CreativeJuiz
 Donate link: https://paypal.me/crofte
 Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
@@ -9,13 +9,18 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+Provides auto syndication (optional), a profile banner, and a last posts Gutenberg blocks for BlueSky Social.
+
 == Description ==
 
-Provides Gutenberg blocks, Shortcode and Widget as well as optional syndication of posts for BlueSky Social.
+This plugin provides your website with Gutenberg blocks including a configurable profile banner (followers, posts and followings counts, banner, avatar, and name) and a list of your latest posts on BlueSky.
+A Shortcodes and Widgets are given as well for older sites.
+
+An option is available for syndication of posts for BlueSky Social.
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/bluesky-social-integration` directory, or install the plugin through the WordPress plugins screen directly.
+1. Install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Use the settings screen in your WordPress admin area to configure the plugin with at least your BlueSky IDs.
 

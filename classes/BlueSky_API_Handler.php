@@ -51,7 +51,7 @@ class BlueSky_API_Handler {
         $password = $helpers -> bluesky_decrypt( $password );
 
         $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.server.createSession', [
-            'body' => json_encode([
+            'body' => wp_json_encode([
                 'identifier' => $this -> options['handle'],
                 'password' => $password
             ]),
@@ -191,7 +191,7 @@ class BlueSky_API_Handler {
         $post_data = [
             '$type' => 'app.bsky.feed.post',
             'text' => wp_trim_words( $title, 50 ) . "\n\nRead more: " . $permalink,
-            'createdAt' => date('c')
+            'createdAt' => gmdate('c')
         ];
 
         $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.repo.createRecord', [
@@ -199,7 +199,7 @@ class BlueSky_API_Handler {
                 'Authorization' => 'Bearer ' . $this -> access_token,
                 'Content-Type' => 'application/json'
             ],
-            'body' => json_encode([
+            'body' => wp_json_encode([
                 'repo' => $this -> did,
                 'collection' => 'app.bsky.feed.post',
                 'record' => $post_data

@@ -40,7 +40,7 @@ class BlueSky_Helpers {
      * @return bool True if encryption is available
      */
     private function is_encryption_available() {
-        return extension_loaded('openssl') && function_exists('openssl_encrypt');
+        return extension_loaded( 'openssl' ) && function_exists( 'openssl_encrypt' );
     }
 
     /**
@@ -56,7 +56,7 @@ class BlueSky_Helpers {
                     '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
                     esc_attr( $type ),
                     // translators: %s is the error message
-                    sprintf( esc_html( __('BlueSky Error: %s', 'bluesky-social-integration') ), esc_html( $message ) )
+                    sprintf( esc_html( __('BlueSky Error: %s', 'social-integration-for-bluesky') ), esc_html( $message ) )
                 );
             }
         });
@@ -68,12 +68,12 @@ class BlueSky_Helpers {
      * @return string The encryption key
      */
     private function get_encryption_key() {
-        $secret_key = get_option(BLUESKY_PLUGIN_OPTIONS . '_secret');
-        if (empty($secret_key) || $secret_key === false) {
-            $secret_key = bin2hex(random_bytes(32));
-            add_option(BLUESKY_PLUGIN_OPTIONS . '_secret', $secret_key);
+        $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
+        if ( empty( $secret_key ) || $secret_key === false ) {
+            $secret_key = bin2hex( random_bytes( 32 ) );
+            add_option( BLUESKY_PLUGIN_OPTIONS . '_secret', $secret_key );
         }
-        return hash('sha256', $secret_key);
+        return hash( 'sha256', $secret_key );
     }
 
     /**
@@ -84,7 +84,7 @@ class BlueSky_Helpers {
      */
     public function bluesky_encrypt($stringToEncrypt) {
         if ( ! $this -> is_encryption_available() ) {
-            $this -> add_admin_notice( __('OpenSSL encryption is not available on your server.', 'bluesky-social') );
+            $this -> add_admin_notice( esc_html__('OpenSSL encryption is not available on your server.', 'social-integration-for-bluesky') );
             return false;
         } 
 
@@ -105,7 +105,7 @@ class BlueSky_Helpers {
             );
 
             if ( $encrypted === false ) {
-                $this -> add_admin_notice( __('Encryption failed. Please check your server configuration.', 'bluesky-social') );
+                $this -> add_admin_notice( esc_html__('Encryption failed. Please check your server configuration.', 'social-integration-for-bluesky') );
                 return false;
             }
 
@@ -113,7 +113,7 @@ class BlueSky_Helpers {
         } catch ( Exception $e ) {
             $this -> add_admin_notice(
                 // translators: %s is the error message
-                sprintf( __('Encryption failed: %s', 'bluesky-social'), $e->getMessage() )
+                sprintf( esc_html__('Encryption failed: %s', 'social-integration-for-bluesky'), $e->getMessage() )
             );
             return false;
         }
@@ -127,7 +127,7 @@ class BlueSky_Helpers {
      */
     public function bluesky_decrypt($stringToDecrypt) {
         if ( ! $this -> is_encryption_available() ) {
-            $this -> add_admin_notice( __('OpenSSL encryption is not available on your server.', 'bluesky-social') );
+            $this -> add_admin_notice( esc_html__('OpenSSL encryption is not available on your server.', 'social-integration-for-bluesky') );
             return false;
         }
 
@@ -140,17 +140,17 @@ class BlueSky_Helpers {
             
             $decoded = base64_decode($stringToDecrypt);
             if ($decoded === false) {
-                $this -> add_admin_notice( __('Invalid encrypted data format.', 'bluesky-social') );
+                $this -> add_admin_notice( esc_html__('Invalid encrypted data format.', 'social-integration-for-bluesky') );
                 return false;
             }
 
             $parts = explode('::', $decoded, 2);
             if (count($parts) !== 2) {
-                $this -> add_admin_notice( __('Corrupted encrypted data.', 'bluesky-social') );
+                $this -> add_admin_notice( esc_html__('Corrupted encrypted data.', 'social-integration-for-bluesky') );
                 return false;
             }
 
-            list($iv, $encrypted) = $parts;
+            list( $iv, $encrypted ) = $parts;
 
             $decrypted = openssl_decrypt(
                 $encrypted,
@@ -161,7 +161,7 @@ class BlueSky_Helpers {
             );
 
             if ( $decrypted === false ) {
-                $this -> add_admin_notice( __('Decryption failed. The data might be corrupted or the encryption key has changed.', 'bluesky-social') );
+                $this -> add_admin_notice(esc_html__('Decryption failed. The data might be corrupted or the encryption key has changed.', 'social-integration-for-bluesky') );
                 return false;
             }
 
@@ -169,7 +169,7 @@ class BlueSky_Helpers {
         } catch (Exception $e) {
             $this -> add_admin_notice(
                 // translators: %s is the error message
-                sprintf(__('Decryption failed: %s', 'bluesky-social'), $e->getMessage())
+                sprintf( esc_html__('Decryption failed: %s', 'social-integration-for-bluesky'), $e->getMessage() )
             );
             return false;
         }

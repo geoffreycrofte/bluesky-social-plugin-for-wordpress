@@ -8,8 +8,8 @@ class BlueSky_Profile_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct(
             'bluesky_profile_widget',
-            esc_html( __( 'BlueSky Profile', 'bluesky-social' ) ),
-            ['description' => esc_html( __('Displays BlueSky profile card', 'bluesky-social') )]
+            esc_html( __( 'BlueSky Profile', 'social-integration-for-bluesky' ) ),
+            ['description' => esc_html( __('Displays BlueSky profile card', 'social-integration-for-bluesky') )]
         );
     }
 
@@ -18,9 +18,11 @@ class BlueSky_Profile_Widget extends WP_Widget {
         $bluesky = new BlueSky_Render_Front( $api_handler );
         $profile_card = $bluesky -> render_bluesky_profile_card();
 
-        echo $args['before_widget'];
-        echo $args['before_title'] . esc_html( __( 'BlueSky Profile', 'bluesky-social' ) ) . $args['after_title'];
-        echo $profile_card;
-        echo $args['after_widget'];
+        $output = $args['before_widget'];
+        $output .= $args['before_title'] . __( 'BlueSky Profile', 'social-integration-for-bluesky' ) . $args['after_title'];
+        $output .= $profile_card;
+        $output .= $args['after_widget'];
+
+        echo wp_kses( $output, wp_kses_allowed_html('post') );
     }
 }

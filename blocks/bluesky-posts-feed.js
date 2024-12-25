@@ -14,11 +14,11 @@
             el(InspectorControls, { key: 'inspector' },
                 el(PanelBody, { 
                     key: 'formatting-options',
-                    title: __('Posts Display Options', 'bluesky-social')
+                    title: __('Posts Display Options', 'social-integration-for-bluesky')
                 },
                     el(ToggleControl, {
                         key: 'embeds-toggle',
-                        label: __('Display Embeds', 'bluesky-social'),
+                        label: __('Display Embeds', 'social-integration-for-bluesky'),
                         checked: attributes.displayEmbeds,
                         onChange: function(value) { 
                             setAttributes({ displayEmbeds: value });
@@ -26,12 +26,12 @@
                     }),
                     el(SelectControl, {
                         key: 'theme-select',
-                        label: __('Theme', 'bluesky-social'),
+                        label: __('Theme', 'social-integration-for-bluesky'),
                         value: attributes.theme,
                         options: [
-                            { label: __('System Preference', 'bluesky-social'), value: 'system' },
-                            { label: __('Light', 'bluesky-social'), value: 'light' },
-                            { label: __('Dark', 'bluesky-social'), value: 'dark' }
+                            { label: __('System Preference', 'social-integration-for-bluesky'), value: 'system' },
+                            { label: __('Light', 'social-integration-for-bluesky'), value: 'light' },
+                            { label: __('Dark', 'social-integration-for-bluesky'), value: 'dark' }
                         ],
                         onChange: function(value) {
                             setAttributes({ theme: value });
@@ -39,7 +39,7 @@
                     }),
                     el(RangeControl, {
                         key: 'posts-number',
-                        label: __('Number of Posts', 'bluesky-social'),
+                        label: __('Number of Posts', 'social-integration-for-bluesky'),
                         value: attributes.numberOfPosts,
                         onChange: function(value) {
                             setAttributes({ numberOfPosts: value });
@@ -58,13 +58,13 @@
     };
 
     blocks.registerBlockType('bluesky-social/posts', {
-        title: __('BlueSky Posts Feed', 'bluesky-social'),
+        title: __('BlueSky Posts Feed', 'social-integration-for-bluesky'),
         icon: 'rss',
         category: 'widgets',
         keywords: [
-            __('social', 'bluesky-social'),
-            __('feed', 'bluesky-social'),
-            __('posts', 'bluesky-social')
+            __('social', 'social-integration-for-bluesky'),
+            __('feed', 'social-integration-for-bluesky'),
+            __('posts', 'social-integration-for-bluesky')
         ],
         styles: [
             {
