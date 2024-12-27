@@ -216,42 +216,58 @@ class BlueSky_API_Handler {
      */
     private function process_posts( $raw_posts ) {
         return array_map(function( $post ) {
+            $post = $post['post'];
+            
             // Extract embedded images
             $images = [];
-            if ( isset( $post['post']['embed']['images'] ) ) {
-                foreach ( $post['post']['embed']['images'] as $image ) {
+            if ( isset( $post['embed']['images'] ) ) {
+                foreach ( $post['embed']['images'] as $image ) {
                     $images[] = $image['fullsize'] ?? $image['thumb'] ?? '';
                 }
             }
 
             // Extract external media
             $external_media = null;
-            if ( isset( $post['post']['embed']['external'] ) ) {
+            if ( isset( $post['embed']['external'] ) ) {
                 $external_media = [
-                    'uri' => $post['post']['embed']['external']['uri'],
-                    'title' => $post['post']['embed']['external']['title'] ?? '',
-                    'alt' => $post['post']['embed']['external']['alt'] ?? '',
-                    'description' => $post['post']['embed']['external']['description'] ?? ''
+                    'uri' => $post['embed']['external']['uri'],
+                    'title' => $post['embed']['external']['title'] ?? '',
+                    'alt' => $post['embed']['external']['alt'] ?? '',
+                    'description' => $post['embed']['external']['description'] ?? ''
+                ];
+            } elseif ( isset( $post['embed']['media'] ) ) {
+                $external_media = [
+                    'uri' => $post['embed']['media']['external']['uri'],
+                    'title' => $post['embed']['media']['external']['title'] ?? '',
+                    'thumb' => $post['embed']['media']['external']['thumb'] ?? '',
+                    'description' => $post['embed']['media']['external']['description'] ?? ''
                 ];
             }
 
             // Check for video embed
             $embedded_media = $this -> extract_embedded_media( $post );
 
-            $end0fPostURI = isset( $post['post']['uri'] ) ? explode( '/', $post['post']['uri'] ) : array();
+            $end0fPostURI = isset( $post['uri'] ) ? explode( '/', $post['uri'] ) : array();
             return [
-                'text' => $post['post']['record']['text'] ?? 'No text',
-                'created_at' => $post['post']['record']['createdAt'] ?? '',
+                'text' => $post['record']['text'] ?? 'No text',
+                'langs' => $post['record']['langs'] ?? array('en'),
+                'url' => 'https://bsky.app/profile/' . ( $post['author']['handle'] ?? '') . '/post/' . (isset( $post['uri']) ? end( $end0fPostURI) : ''),
+                'created_at' => $post['record']['createdAt'] ?? '',
                 'account' => [
-                    'did' => $post['post']['author']['did'] ?? '',
-                    'handle' => $post['post']['author']['handle'] ?? '',
-                    'display_name' => $post['post']['author']['displayName'] ?? '',
-                    'avatar' => $post['post']['author']['avatar'] ?? '',
+                    'did' => $post['author']['did'] ?? '',
+                    'handle' => $post['author']['handle'] ?? '',
+                    'display_name' => $post['author']['displayName'] ?? '',
+                    'avatar' => $post['author']['avatar'] ?? '',
                 ],
                 'images' => $images,
                 'external_media' => $external_media,
                 'embedded_media' => $embedded_media,
-                'url' => 'https://bsky.app/profile/' . ( $post['post']['author']['handle'] ?? '') . '/post/' . (isset( $post['post']['uri']) ? end( $end0fPostURI) : '')
+                'counts' => [
+                    'reply' => $post['replyCount'] ?? '',
+                    'repost' => $post['repostCount'] ?? '',
+                    'like' => $post['likeCount'] ?? '',
+                    'quote' => $post['quoteCount'] ?? ''
+                ]
             ];
         }, $raw_posts);
     }
@@ -265,9 +281,9 @@ class BlueSky_API_Handler {
         $embedded_media = null;
 
         // Video embed
-        if (isset( $post['post']['embed']['video']) || 
-            (isset( $post['post']['embed']['$type']) && $post['post']['embed']['$type'] === 'app.bsky.embed.video')) {
-            $video_embed = $post['post']['embed'];
+        if ( isset( $post['embed']['video'] ) || 
+            ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.video' ) ) ) {
+            $video_embed = $post['embed'];
             $embedded_media = [
                 'type' => 'video',
                 'alt' => $video_embed['alt'] ?? '',
@@ -282,11 +298,15 @@ class BlueSky_API_Handler {
                     'thumbnail_url' => $video_embed['embeds'][0]['thumbnail'] ?? ''
                 ]
             ];
-        } 
+        }
+
         // Record (embedded post) embed
-        elseif ( isset( $post['post']['embed']['record'] ) || 
-                ( isset( $post['post']['embed']['$type'] ) && $post['post']['embed']['$type'] === 'app.bsky.embed.record') ) {
-            $record_embed = $post['post']['embed']['record'];
+        elseif ( isset( $post['embed']['record'] ) || 
+                ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.record') ) ) {
+            
+            // For some reasons, sometimes the API returns record in the record array. (multi embedded items?)
+            $record_embed = isset( $post['embed']['record']['record'] ) ? $post['embed']['record']['record'] : $post['embed']['record'];
+
             $end0fURI = explode( '/', $record_embed['uri'] );
             $embedded_media = [
                 'type' => 'record',

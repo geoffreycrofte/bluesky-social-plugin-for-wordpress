@@ -10,6 +10,11 @@
     --bluesky-card-avatar-size: 90px;
 }
 
+.bluesky-social-integration-last-post img {
+    max-width: 100%;
+    height: auto;
+}
+
 .bluesky-social-integration-embedded-record,
 .bluesky-social-integration-last-post {
     background: var(--bluesky-card-bg);
@@ -38,6 +43,36 @@
     display: flex;
     gap: 8px;
     padding: 16px 8px;
+}
+
+.bluesky-social-integration-embedded-record.has-image {
+    padding: 0;
+    overflow: hidden;
+}
+
+.bluesky-social-integration-embedded-record p:first-child {
+    margin-top: 0;
+}
+
+.bluesky-social-integration-embedded-record p:last-child {
+    margin-bottom: 0;
+}
+
+.bluesky-social-integration-external-content-title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.bluesky-social-integration-external-content-url {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    opacity: 0.7;
+    font-size: .875em;
+}
+
+.bluesky-social-integration-embedded-record.has-image .bluesky-social-integration-external-content {
+    padding: 8px;
 }
 
 .bluesky-social-integration-last-post-item + .bluesky-social-integration-last-post-item {
