@@ -62,7 +62,7 @@ class BlueSky_Render_Front {
         ];
 
         // Merge defaults with provided attributes
-        $attributes = wp_parse_args($attributes, $defaults);
+        $attributes = wp_parse_args( $attributes, $defaults );
 
         // Extract variables
         $display_embeds = $attributes['displayEmbeds'];
@@ -76,6 +76,7 @@ class BlueSky_Render_Front {
             // Apply theme class
             $theme_class = 'theme-' . esc_attr( $theme );
 
+            ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
             ?>
             <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>">

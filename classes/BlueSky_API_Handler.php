@@ -33,7 +33,7 @@ class BlueSky_API_Handler {
      * Constructor
      * @param array $options Plugin settings
      */
-    public function __construct( $options) {
+    public function __construct( $options ) {
         $this -> options = $options;
     }
 
@@ -59,7 +59,7 @@ class BlueSky_API_Handler {
                 'Content-Type' => 'application/json'
             ]
         ]);
-
+        
         if ( is_wp_error( $response ) ) {
             return false;
         }

@@ -208,7 +208,8 @@ class BlueSky_Plugin_Setup {
      */
     public function render_handle_field() {
         $handle = $this -> options['handle'] ?? '';
-        echo '<input type="text" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_handle' ) . '" name="bluesky_settings[handle]" value="' . esc_attr( $handle ) . '" />';
+        echo '<input type="text" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_handle' ) . '" name="bluesky_settings[handle]" value="' . esc_attr( $handle ) . '" aria-describedby="bluesky-handle-description" />';
+        echo '<p class="description" id="bluesky-handle-description">' . esc_html( __('This is your e-mail address used on BlueSky.', 'social-integration-for-bluesky') ) . '</p>';
     }
 
     /**
@@ -220,16 +221,28 @@ class BlueSky_Plugin_Setup {
         // Don't show the actual password, just a placeholder if it exists
         $placeholder = ! empty( $password ) ? '••••••••' : '';
         
-        echo '<input type="password" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_app_password' ) . '" name="bluesky_settings[app_password]" value="" placeholder="' . esc_attr( $placeholder ) . '" />';
+        echo '<input type="password" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_app_password' ) . '" name="bluesky_settings[app_password]" value="" placeholder="' . esc_attr( $placeholder ) . '" aria-describedby="bluesky-password-description" />';
         
         if ( ! empty( $password ) ) {
-            echo '<p class="description">' . esc_html( __('Leave empty to keep the current password.', 'social-integration-for-bluesky') ) . '</p>';
+            echo '<p class="description" id="bluesky-password-description">' . esc_html( __('Leave empty to keep the current password.', 'social-integration-for-bluesky') ) . '</p>';
         } else {
-            echo '<p class="description">' . wp_kses_post(
+            echo '<p class="description" id="bluesky-password-description">' . wp_kses_post(
                 sprintf(
                     // translators: %s are the opening link tag, the closing link tag, and a new line insertion
                     __('Instead of using your password, you can use an %sApp Password%s available on BlueSky.%sNo need to authorize access to your direct messages, this plugin does not need it.', 'social-integration-for-bluesky')
                 , '<a href="https://bsky.app/settings/app-passwords" target="_blank">', '</a>', '<br>' ) ) . '</p>';
+        }
+
+        // Adds a connection check using BlueSky API
+        if ( ! empty( $password ) ) {
+            $api = new BlueSky_API_Handler( $this -> options );
+            $auth = $api -> authenticate();
+
+            if ( $auth ) {
+                echo '<div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-success"><p>' . esc_html__('Connection to BlueSky successful!', 'social-integration-for-bluesky') . '</p></div>';
+            } else {
+                echo '<div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-error"><p>' . esc_html__('Connection to BlueSky failed. Please check your credentials. It can also happend if you reached BlueSky request limit.', 'social-integration-for-bluesky') . '</p></div>';
+            }
         }
     }
 
