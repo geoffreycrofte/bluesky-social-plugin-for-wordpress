@@ -213,6 +213,7 @@ class BlueSky_Plugin_Setup {
 
     /**
      * Render password field
+     * If a password is already set, show a placeholder instead of the actual password
      */
     public function render_password_field() {
         $password = $this -> options['app_password'] ?? '';
@@ -224,7 +225,11 @@ class BlueSky_Plugin_Setup {
         if ( ! empty( $password ) ) {
             echo '<p class="description">' . esc_html( __('Leave empty to keep the current password.', 'social-integration-for-bluesky') ) . '</p>';
         } else {
-            echo '<p class="description">' . esc_html( sprintf('Instead of using your password, you can use an %sApp Password%s available on BlueSky. Do not authorize access to direct message, this plugin do not need it.', 'social-integration-for-bluesky'), '<a href="https://bsky.app/settings/app-passwords" target="_blank">', '</a>' ) . '</p>';
+            echo '<p class="description">' . wp_kses_post(
+                sprintf(
+                    // translators: %s are the opening link tag, the closing link tag, and a new line insertion
+                    __('Instead of using your password, you can use an %sApp Password%s available on BlueSky.%sNo need to authorize access to your direct messages, this plugin does not need it.', 'social-integration-for-bluesky')
+                , '<a href="https://bsky.app/settings/app-passwords" target="_blank">', '</a>', '<br>' ) ) . '</p>';
         }
     }
 

@@ -18,6 +18,20 @@ A Shortcodes and Widgets are given as well for older sites.
 
 An option is available for syndication of posts for BlueSky Social.
 
+Some other included features:
+
+* Embedded posts in the feed
+ * Youtube URL detection
+ * Quote embedded
+ * Link reference (embedded card)
+* App Password for a more secure connection
+* Cache for a more performant display and avoid BlueSky request limitations
+* Dark/Light mode (by default is system/user choice)
+* Lots of options in the display of your profile banner
+
+Not yet supported:
+* Galleries of images
+
 == Installation ==
 
 1. Install the plugin through the WordPress plugins screen directly.
@@ -42,6 +56,11 @@ You have some options available like multiple ways to display your profile card 
 
 The plugin is new.
 Be patient, and report issues via the support forum or the GitHub repository: https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/issues
+
+= How do I ask for a feature support? =
+
+The plugin is new, so feel free to ask for new features or better support at: https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/issues
+The more info you give, the better the support will be. Be patient, I work alone.
 
 = Is this an official BlueSky Plugin =
 
