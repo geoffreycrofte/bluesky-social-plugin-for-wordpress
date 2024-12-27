@@ -124,8 +124,8 @@ class BlueSky_Render_Front {
                                 </div>
 
                                 <?php
-                                // print potential media
-                                if ( ! empty( $post['external_media']  ) ) :
+                                // displays potential media
+                                if ( ! empty( $post['external_media']  )  && $display_embeds ) :
 
                                     if ( isset( $post['external_media']['uri'] ) && ( strpos( $post['external_media']['uri'] , 'youtu' ) ) ) :
                                         $helpers = new BlueSky_Helpers();
@@ -149,20 +149,25 @@ class BlueSky_Render_Front {
                                         <?php echo isset( $post['external_media']['uri'] ) ? '<p class="bluesky-social-integration-external-content-url"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M11.5 3a17 17 0 0 0 0 18"></path><path d="M12.5 3a17 17 0 0 1 0 18"></path></svg>' . esc_html( explode( '/', $post['external_media']['uri'] )[2] ) . '</p>' : ''; ?>
                                     </div>
                                 </div>
-                                <?php echo isset( $post['external_media']['uri'] ) ? '</a>' : ''; ?>
-
                                 <?php
+
+                                    echo isset( $post['external_media']['uri'] ) ? '</a>' : '';
                                 endif;
 
-                                // print potential embeds
+                                // displays potential embeds
                                 if ( ! empty( $post['embedded_media'] ) && $display_embeds ):
-                                        if ( $post['embedded_media']['type'] === 'video' ): ?>
+                                        if ( $post['embedded_media']['type'] === 'video' ):
+
+                                        $video = $post['embedded_media'];
+                                ?>
                                     <div class="embedded-video">
                                         <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
-                                        <img src="<?php echo esc_url($post['embedded_media']['video_details']['thumbnail_url']); ?>" 
-                                            alt="<?php echo esc_attr($post['embedded_media']['alt']); ?>">
-                                        <!-- You might want to add a video player or link here -->
-                                        <p><a href="<?php echo esc_url($post['embedded_media']['video_details']['thumbnail_url']); ?>"><?php echo esc_url($post['embedded_media']['video_details']['thumbnail_url']); ?></a></p>
+                                        
+                                        <video controls playsinline poster="<?php echo esc_url( $video['thumbnail_url'] ); ?>">
+                                            <?php // returns a .m3u8 playlist with at least 2 video quality 480p and 720p  ?>
+                                            <source src="<?php echo esc_url( $video['playlist_url'] ); ?>" type="application/x-mpegURL">
+                                            <img src="<?php echo esc_url( $video['thumbnail_url'] ); ?>"  alt="<?php echo esc_attr( isset( $video['alt'] ) ? $video['alt'] : '' ); ?>">
+                                        </video>
                                     </div>
                                 <?php 
                                         elseif ( $post['embedded_media']['type'] === 'record' ):

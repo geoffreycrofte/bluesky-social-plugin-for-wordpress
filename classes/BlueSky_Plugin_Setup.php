@@ -484,6 +484,8 @@ class BlueSky_Plugin_Setup {
         $post = get_post( $post_id );
         $permalink = get_permalink( $post_id );
 
+        do_action( 'bluesky_before_syndicating_post', $post_id );
+
         // Check if the post is already syndicated
         // because the action can be triggered multiple times by WordPress
         $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
@@ -492,7 +494,9 @@ class BlueSky_Plugin_Setup {
         }
 
         $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
-        add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+        $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+
+        do_action( 'bluesky_after_syndicating_post', $post_id, $post_meta );
     }
 
     /**

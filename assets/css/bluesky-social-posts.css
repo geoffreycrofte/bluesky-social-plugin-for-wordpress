@@ -121,7 +121,15 @@
 }
 
 .bluesky-social-integration-last-post-content {
+    word-wrap: break-word;
+    word-break: break-all;
     font-size: 15px;
+}
+
+.bluesky-social-integration-last-post-content video {
+    max-width: 100%;
+    height: auto;
+    max-height: 420px;
 }
 
 .bluesky-social-integration-last-post-content > :first-child {

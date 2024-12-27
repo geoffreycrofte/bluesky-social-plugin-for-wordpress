@@ -288,20 +288,15 @@ class BlueSky_API_Handler {
         // Video embed
         if ( isset( $post['embed']['video'] ) || 
             ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.video' ) ) ) {
+
             $video_embed = $post['embed'];
             $embedded_media = [
                 'type' => 'video',
                 'alt' => $video_embed['alt'] ?? '',
-                'aspect_ratio' => [
-                    'width' => $video_embed['aspectRatio']['width'] ?? null,
-                    'height' => $video_embed['aspectRatio']['height'] ?? null
-                ],
-                'video_details' => [
-                    'mime_type' => $video_embed['video']['mimeType'] ?? '',
-                    'size' => $video_embed['video']['size'] ?? 0,
-                    'playlist_url' => $video_embed['embeds'][0]['playlist'] ?? '',
-                    'thumbnail_url' => $video_embed['embeds'][0]['thumbnail'] ?? ''
-                ]
+                'width' => $video_embed['aspectRatio']['width'] ?? null,
+                'height' => $video_embed['aspectRatio']['height'] ?? null,
+                'playlist_url' => $video_embed['playlist'] ?? '',
+                'thumbnail_url' => $video_embed['thumbnail'] ?? ''
             ];
         }
 
@@ -329,16 +324,15 @@ class BlueSky_API_Handler {
 
             // Check if the embedded record has its own media (like a video)
             if ( isset( $record_embed['value']['embed']['video'] ) ) {
+
+                $embedvideo = $record_embed['value']['embed'];
                 $embedded_media['embedded_video'] = [
-                    'alt' => $record_embed['value']['embed']['alt'] ?? '',
-                    'aspect_ratio' => [
-                        'width' => $record_embed['value']['embed']['aspectRatio']['width'] ?? null,
-                        'height' => $record_embed['value']['embed']['aspectRatio']['height'] ?? null
-                    ],
-                    'video_details' => [
-                        'mime_type' => $record_embed['value']['embed']['video']['mimeType'] ?? '',
-                        'size' => $record_embed['value']['embed']['video']['size'] ?? 0
-                    ]
+                    'type' => 'video',
+                    'alt' => $embedvideo['alt'] ?? '',
+                    'width' => $embedvideo['aspectRatio']['width'] ?? null,
+                    'height' => $embedvideo['aspectRatio']['height'] ?? null,
+                    'playlist_url' => $embedvideo['playlist'] ?? '',
+                    'thumbnail_url' => $embedvideo['thumbnail'] ?? ''
                 ];
             }
         }
