@@ -106,8 +106,20 @@ class BlueSky_Render_Front {
 
                                 <div class="bluesky-social-integration-post-content-text">
                                 
-                                <?php // print post content 
-                                echo nl2br( esc_html( $post['text'] ) ); ?>
+                                <?php
+                                // print post content 
+                                echo nl2br( esc_html( $post['text'] ) );
+
+                                // print the gallery of images if any
+                                if ( ! empty( $post['images'] ) ) :
+                                ?>
+                                    <div class="bluesky-social-integration-post-gallery" style="--bluesky-gallery-nb: <?php echo esc_attr( count( $post['images'] ) ); ?>">
+                                        <?php foreach ( $post['images'] as $image ) : ?>
+                                        <a href="<?php echo esc_url( $image['url'] ); ?>"><?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?><img src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : ''; ?>" <?php echo ! empty( $image['width'] ) && $image['width'] != '0' ? ' width="' . $image['width'] . '"' : ''; ?> <?php echo ! empty( $image['height'] ) && $image['height'] != '0' ? ' height="' . $image['height'] . '"' : ''; ?>></a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    
+                                <?php endif; ?>
 
                                 </div>
 

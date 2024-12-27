@@ -138,6 +138,19 @@
     color: inherit;
 }
 
+.bluesky-social-integration-post-gallery {
+    display: grid;
+    grid-template-columns: auto;
+    grid-auto-flow: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.bluesky-social-integration-post-gallery img {
+    border-radius: 4px;
+}
+
+
 /**
  * Styles for the profile card darkmode
  */

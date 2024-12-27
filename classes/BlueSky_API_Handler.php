@@ -222,7 +222,12 @@ class BlueSky_API_Handler {
             $images = [];
             if ( isset( $post['embed']['images'] ) ) {
                 foreach ( $post['embed']['images'] as $image ) {
-                    $images[] = $image['fullsize'] ?? $image['thumb'] ?? '';
+                    $images[] = array(
+                        'url' => $image['fullsize'] ?? $image['thumb'] ?? '',
+                        'alt' => $image['alt'] ?? '',
+                        'width' => $image['aspectRatio']['width'] ?? 0,
+                        'height' => $image['aspectRatio']['height'] ?? 0,
+                    );
                 }
             }
 
