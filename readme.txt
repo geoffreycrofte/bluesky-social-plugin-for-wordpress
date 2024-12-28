@@ -22,15 +22,14 @@ Some other included features:
 
 * Embedded posts in the feed
  * Youtube URL detection
+ * Embedded video
  * Quote embedded
  * Link reference (embedded card)
 * App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
 * Dark/Light mode (by default is system/user choice)
 * Lots of options in the display of your profile banner
-
-Not yet supported:
-* Galleries of images
+* Gallery of images
 
 == Installation ==
 
@@ -101,4 +100,4 @@ This plugin is open source and licensed under GPLv2 or later. Contributions are 
 * Add support for the embedded records options in the posts feed.
 * Enhance customization options for profile cards and posts.
 * Add color scheme options for the profile card and posts.
-* Adds an option within the post review to disable the syndication.
+* Adds an option within the post review to disable the syndication, post by post.

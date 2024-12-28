@@ -115,7 +115,7 @@ class BlueSky_Render_Front {
                                 ?>
                                     <div class="bluesky-social-integration-post-gallery" style="--bluesky-gallery-nb: <?php echo esc_attr( count( $post['images'] ) ); ?>">
                                         <?php foreach ( $post['images'] as $image ) : ?>
-                                        <a href="<?php echo esc_url( $image['url'] ); ?>"><?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?><img src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : ''; ?>" <?php echo ! empty( $image['width'] ) && $image['width'] != '0' ? ' width="' . $image['width'] . '"' : ''; ?> <?php echo ! empty( $image['height'] ) && $image['height'] != '0' ? ' height="' . $image['height'] . '"' : ''; ?>></a>
+                                        <a href="<?php echo esc_url( $image['url'] ); ?>"><?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?><img src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : ''; ?>" <?php echo ! empty( $image['width'] ) && $image['width'] != '0' ? ' width="' . esc_attr( $image['width'] ) . '"' : ''; ?> <?php echo ! empty( $image['height'] ) && $image['height'] != '0' ? ' height="' . esc_attr( $image['height'] ) . '"' : ''; ?>></a>
                                         <?php endforeach; ?>
                                     </div>
                                     
@@ -141,6 +141,7 @@ class BlueSky_Render_Front {
                                 <div class="bluesky-social-integration-last-post-content">
                                     
                                     <div class="bluesky-social-integration-external-image">
+                                        <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                                         <?php echo isset( $post['external_media']['thumb'] ) ? '<img src="' . esc_url( $post['external_media']['thumb'] ) . '" loading="lazy" alt="">' : ''; ?>
                                     </div>
                                     <div class="bluesky-social-integration-external-content">
@@ -166,6 +167,7 @@ class BlueSky_Render_Front {
                                         <video controls playsinline poster="<?php echo esc_url( $video['thumbnail_url'] ); ?>">
                                             <?php // returns a .m3u8 playlist with at least 2 video quality 480p and 720p  ?>
                                             <source src="<?php echo esc_url( $video['playlist_url'] ); ?>" type="application/x-mpegURL">
+                                            <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                                             <img src="<?php echo esc_url( $video['thumbnail_url'] ); ?>"  alt="<?php echo esc_attr( isset( $video['alt'] ) ? $video['alt'] : '' ); ?>">
                                         </video>
                                     </div>

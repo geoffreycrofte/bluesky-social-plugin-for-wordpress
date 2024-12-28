@@ -228,8 +228,8 @@ class BlueSky_Plugin_Setup {
         } else {
             echo '<p class="description" id="bluesky-password-description">' . wp_kses_post(
                 sprintf(
-                    // translators: %s are the opening link tag, the closing link tag, and a new line insertion
-                    __('Instead of using your password, you can use an %sApp Password%s available on BlueSky.%sNo need to authorize access to your direct messages, this plugin does not need it.', 'social-integration-for-bluesky')
+                    // translators: %1$s opening link tag, %2$s the closing link tag, %3$s new line insertion
+                    __('Instead of using your password, you can use an %1$sApp Password%2$s available on BlueSky.%3$sNo need to authorize access to your direct messages, this plugin does not need it.', 'social-integration-for-bluesky')
                 , '<a href="https://bsky.app/settings/app-passwords" target="_blank">', '</a>', '<br>' ) ) . '</p>';
         }
 
