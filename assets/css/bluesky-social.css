@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+.bluesky-social-integration-admin {
+    display: flex;
+}
+
 .bluesky-social-integration-admin .cache-duration-fields label {
     margin-right: 15px;
 }
@@ -32,4 +36,17 @@
 
 .bluesky-social-integration-admin .bluesky-connection-check.notice-error {
     border-left-color: darkred;
+}
+
+.bluesky-social-integration-admin p {
+    margin: 1em 0;
+}
+
+.bluesky-social-integration-admin ul {
+    list-style: disc;
+    margin: 1em 0 1em 1em;
+}
+
+.bluesky-social-integration-admin ul ul {
+    list-style: circle;
 }
