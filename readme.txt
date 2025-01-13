@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,13 +102,13 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 == Changelog ==
 
+= 1.0.1 =
+Adds the proper information about the shortcodes in the setting page, the plugin description and the mini-description.
+
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
-
-= 1.0.1 =
-Adds the proper information about the shortcodes in the setting page, the plugin description and the mini-description.
 
 = 1.0.0 =
 Initial release. Please backup your site before installing.

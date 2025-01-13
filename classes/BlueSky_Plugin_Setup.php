@@ -414,46 +414,71 @@ class BlueSky_Plugin_Setup {
      */
     public function render_settings_page() {
         ?>
-        <div class="wrap bluesky-social-integration-admin">
-            <div class="bluesky-social-integration-options postbox ">
-                <h1><?php echo esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky' ); ?></h1>
-                <form method="post" action="options.php">
-                    <?php
-                    settings_fields('bluesky_settings_group');
-                    do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
-                    submit_button();
-                    ?>
-                </form>
-            </div>
+        <div class="wrap bluesky-social-integration-admin">    
+            <h1><?php echo esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky' ); ?></h1>
+            
+            <div class="container">
+                <div class="bluesky-social-integration-options postbox">
+                    <div class="inside">
+                        <div class="main">
+                            <form method="post" action="options.php">
+                                <?php
+                                settings_fields('bluesky_settings_group');
+                                do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
+                                submit_button();
+                                ?>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="bluesky-social-integration-shortcodes postbox">
-                <h2><?php echo esc_html__('About the shortcodes', 'social-integration-for-bluesky'); ?></h2>
-                <?php // translators: %1$s is the the bluesky profile shortcode, %2$s is the bluesky last posts shortcode. ?>
-                <p><?php echo sprintf( esc_html__('You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s.', 'social-integration-for-bluesky'), '<code>[bluesky_profile]</code>', '<code>[bluesky_last_posts]</code>'); ?></p>
-                <ul>
-                    <li>
-                        <?php echo esc_html__('The profile shortcode will display your BlueSky profile card. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
-                        <br>
-                        <ul>
-                            <li><code>displayBanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>displayAvatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>displayCounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>displayBio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the profile. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>className</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
-                        <br>
-                        <ul>
-                            <li><code>number</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                            <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                        </ul>
-                    </li>
-                </ul>
-                <p><?php echo esc_html__('You can also use the Gutenberg blocks to display the profile card and posts feed.', 'social-integration-for-bluesky'); ?></p>
+                <div class="bluesky-social-integration-shortcodes postbox">
+                    <div class="inside">
+                        <div class="main">
+                            <h2><?php echo esc_html__('About the shortcodes', 'social-integration-for-bluesky'); ?></h2>
+                            <?php // translators: %1$s is the the bluesky profile shortcode, %2$s is the bluesky last posts shortcode. ?>
+                            <p><?php echo sprintf( esc_html__('You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s.', 'social-integration-for-bluesky'), '<code>[bluesky_profile]</code>', '<code>[bluesky_last_posts]</code>'); ?></p>
+                            <ul>
+                                <li>
+                                    <?php echo esc_html__('The profile shortcode will display your BlueSky profile card. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
+                                    <br>
+                                    <ul>
+                                        <li><code>displayBanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayAvatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayCounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayBio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the profile. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>className</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
+                                    <br>
+                                    <ul>
+                                        <li><code>number</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <p><?php echo esc_html__('You can also use the Gutenberg blocks to display the profile card and posts feed.', 'social-integration-for-bluesky'); ?></p>
+
+                            <hr>
+
+                            <h2><?php echo esc_html__('About this plugin', 'social-integration-for-bluesky'); ?></h2>
+                            <?php // translators: %s is the name of the developer. ?>
+                            <p><?php echo sprintf( esc_html__( 'This plugin is written by %s.', 'social-integration-for-bluesky'), '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>' ); ?><br><?php echo esc_html__( 'This extension is not an official BlueSky plugin.', 'social-integration-for-bluesky')  ?></p>
+
+                            <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
+                            <p><?php echo sprintf( esc_html__( 'Need help with something? Have a suggestion? %1$sAsk away%2$s.', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">', '</a>' ); ?></p>
+
+                            <?php $title = __('Rate this plugin on WordPress.org', 'social-integration-for-bluesky') ?>
+
+                            <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
+                            <p><?php echo sprintf( esc_html__( 'Want to support the plugin? %1$sGive a review%2$s', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' . esc_attr( $title ) . '">', ' ⭐️⭐️⭐️⭐️⭐️</a>' ); ?></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <?php
