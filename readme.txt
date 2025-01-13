@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Provides auto syndication (optional), a profile banner, and a last posts Gutenbe
 == Description ==
 
 This plugin provides your website with Gutenberg blocks including a configurable profile banner (followers, posts and followings counts, banner, avatar, and name) and a list of your latest posts on BlueSky.
-A Shortcodes and Widgets are given as well for older sites.
+A Shortcodes (`[bluesky_profile]` and `[bluesky_last_posts]`) and Widgets are given as well for older sites.
 
 An option is available for syndication of posts for BlueSky Social.
 
@@ -30,6 +30,29 @@ Some other included features:
 * Dark/Light mode (by default is system/user choice)
 * Lots of options in the display of your profile banner
 * Gallery of images
+
+=== Shortcode usage ===
+
+In the shortcodes below, the complete list of attributes is displayed. You can omit them if you want, as the default values or the global values will be used if you omit them.
+
+==== Display the last posts ====
+
+`[bluesky_profile theme="system" styleClass="" displayBanner="true" displayAvatar="true" displayCounters="true" displayBio="true"]`
+
+- `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
+- `styleClass`: accept any string class-valid to customise the class attribute
+- `displayBanner`: either you want to display your profile banner image or not (values: `true`, `false`)
+- `displayAvatar`: either you want to display your profile avatar or not (values: `true`, `false`)
+- `displayCounters`: either you want to display your followers, following and posts, or not (values: `true`, `false`)
+- `displayBio`: either you want to display your profile description or not (values: `true`, `false`)
+
+==== Display your profile banne ====
+
+`[bluesky_last_posts displayEmbeds="true" theme="system" numberOfPosts="5"]`
+
+- `displaysEmbeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
+- `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
+- `numberOfPosts`: any number of posts to display. (advice, don't set a too high value)
 
 == Installation ==
 
@@ -78,6 +101,9 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 9. A post automatically shared after a WordPress publication.
 
 == Changelog ==
+
+= 1.0.1 =
+Adds the proper information about the shortcodes in the setting page, the plugin description and the mini-description.
 
 = 1.0.0 =
 * Initial release.
