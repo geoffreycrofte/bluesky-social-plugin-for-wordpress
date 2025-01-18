@@ -35,6 +35,30 @@ class BlueSky_Helpers {
     }
 
     /**
+     * Get the access token transient key
+     * @return string
+     */
+    public function get_access_token_transient_key() {
+        return BLUESKY_PLUGIN_TRANSIENT . '-access-token';
+    }
+
+    /**
+     * Get the refresh token transient key
+     * @return string
+     */
+    public function get_refresh_token_transient_key() {
+        return BLUESKY_PLUGIN_TRANSIENT . '-refresh-token';
+    }
+
+    /**
+     * Get the "did" transient key
+     * @return string
+     */
+    public function get_did_transient_key() {
+        return BLUESKY_PLUGIN_TRANSIENT . '-did';
+    }
+
+    /**
      * Check if encryption is available
      * 
      * @return bool True if encryption is available

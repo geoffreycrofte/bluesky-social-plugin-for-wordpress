@@ -41,7 +41,7 @@ class BlueSky_API_Handler {
      * Authenticate with BlueSky API
      * @return bool Whether authentication was successful
      */
-    public function authenticate() {
+    /*public function authenticate() {
         if ( ! isset( $this -> options['handle'] ) || ! isset( $this -> options['app_password'] ) ) {
             return false;
         }
@@ -72,6 +72,102 @@ class BlueSky_API_Handler {
             return true;
         }
 
+        return false;
+    }*/
+
+    public function authenticate( $force = false ) {
+        // Check if credentials are set
+        if ( ! isset( $this->options['handle'] ) || ! isset( $this->options['app_password'] ) ) {
+            return false;
+        }
+
+        $helpers = new BlueSky_Helpers();
+        $access_tkey = $helpers -> get_access_token_transient_key();
+        $refresh_tkey = $helpers -> get_refresh_token_transient_key();
+        $did_tkey = $helpers->get_did_transient_key();
+    
+        // Retrieve saved tokens from transients
+        $access_token = get_transient( $access_tkey );
+        $refresh_token = get_transient( $refresh_tkey );
+        $did = get_transient( $did_tkey );
+    
+        // If an access token exists and hasn't expired, use it
+        if ( $access_token && ! $force ) {
+            $this->access_token = $access_token;
+            $this->did = $did;
+            return true;
+        }
+    
+        // Check if refresh token exists to renew the access token
+        if ( $refresh_token && ! $force ) {
+            $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.server.refreshSession', [
+                'body'    => wp_json_encode([
+                    'refreshJwt' => $refresh_token
+                ]),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $refresh_token,
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+    
+            if ( is_wp_error( $response ) ) {
+                return false;
+            }
+    
+            $body = json_decode( wp_remote_retrieve_body( $response ), true );
+    
+            if ( isset( $body['accessJwt'] ) && isset( $body['refreshJwt'] ) && isset( $body['did'] ) ) {
+                // Save new tokens
+                set_transient( $access_tkey, $body['accessJwt'], HOUR_IN_SECONDS );
+                set_transient( $refresh_tkey, $body['refreshJwt'], WEEK_IN_SECONDS );
+                set_transient( $did_tkey, $body['did'] );
+    
+                $this -> access_token = $body['accessJwt'];
+                $this -> did = $body['did'];
+                return true;
+            }
+            
+            // Force re-authentication if refresh token is invalid
+            delete_transient( $refresh_tkey );
+            delete_transient( $access_tkey );
+            delete_transient( $did_tkey );
+
+            return $this -> authenticate( $force );
+        }
+    
+        // No valid tokens, 
+        // or forced authentication,
+        // then proceed with full authentication
+        $password = $this -> options['app_password'];
+        $password = $helpers -> bluesky_decrypt( $password );
+    
+        $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.server.createSession', [
+            'body'    => wp_json_encode([
+                'identifier' => $this->options['handle'],
+                'password'   => $password
+            ]),
+            'headers' => [
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+    
+        if ( is_wp_error( $response ) ) {
+            return false;
+        }
+    
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+    
+        if ( isset( $body['did'] ) && isset( $body['accessJwt'] ) && isset( $body['refreshJwt'] ) ) {
+            // Save tokens in transients
+            set_transient( $access_tkey, $body['accessJwt'], HOUR_IN_SECONDS );
+            set_transient( $refresh_tkey, $body['refreshJwt'], WEEK_IN_SECONDS );
+            set_transient( $did_tkey, $body['did'] );
+    
+            $this -> did = $body['did'];
+            $this -> access_token = $body['accessJwt'];
+            return true;
+        }
+    
         return false;
     }
 
@@ -187,25 +283,45 @@ class BlueSky_API_Handler {
         if ( ! $this -> authenticate() ) {
             return false;
         }
-
+    
+        // Construct the post text and calculate the link position
+        $text = wp_trim_words( $title, 50 ) . "\n\n" . $permalink;
+        $link_start = strpos( $text, $permalink );
+        $link_end = $link_start + strlen( $permalink );
+    
+        // Post data with facets for link embedding
         $post_data = [
             '$type' => 'app.bsky.feed.post',
-            'text' => wp_trim_words( $title, 50 ) . "\n\nRead more: " . $permalink,
-            'createdAt' => gmdate('c')
+            'text' => $text,
+            'facets' => [
+                [
+                    'index' => [
+                        'byteStart' => $link_start,
+                        'byteEnd' => $link_end
+                    ],
+                    'features' => [
+                        [
+                            '$type' => 'app.bsky.richtext.facet#link',
+                            'uri' => $permalink
+                        ]
+                    ]
+                ]
+            ],
+            'createdAt' => gmdate( 'c' )
         ];
-
-        $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.repo.createRecord', [
+    
+        $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.repo.createRecord', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this -> access_token,
+                'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json'
             ],
             'body' => wp_json_encode([
-                'repo' => $this -> did,
+                'repo' => $this->did,
                 'collection' => 'app.bsky.feed.post',
                 'record' => $post_data
             ])
         ]);
-
+    
         return !is_wp_error( $response );
     }
 

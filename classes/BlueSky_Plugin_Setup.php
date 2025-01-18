@@ -316,7 +316,6 @@ class BlueSky_Plugin_Setup {
             <?php echo esc_html( __('Set to 0 in all fields to disable caching. Current cache status:', 'social-integration-for-bluesky') ); ?>
         </p>
         <?php
-        $this->display_cache_status();
     }
 
     /**
@@ -326,6 +325,8 @@ class BlueSky_Plugin_Setup {
         $helpers = new BlueSky_Helpers();
         $profile_transient = get_transient( $helpers -> get_profile_transient_key() );
         $posts_transient = get_transient( $helpers -> get_posts_transient_key() );
+        $access_token_transient = get_transient( $helpers -> get_access_token_transient_key() );
+        $refresh_token_transient = get_transient( $helpers -> get_refresh_token_transient_key() );
 
         echo '<div class="cache-status">';
         
@@ -347,6 +348,36 @@ class BlueSky_Plugin_Setup {
         echo '<p><strong>' . esc_html( __('Posts Feed Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $posts_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_posts_transient_key() );
+            echo sprintf(
+                // translators: %s is the time remaining
+                esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
+                '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
+            );
+        } else {
+            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+        }
+        echo '</p>';
+
+        echo '<hr>';
+
+        // Access Token cache status
+        echo '<p><strong>' . esc_html( __('Access Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        if ( $access_token_transient !== false ) {
+            $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_access_token_transient_key() );
+            echo sprintf(
+                // translators: %s is the time remaining
+                esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
+                '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
+            );
+        } else {
+            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+        }
+        echo '</p>';
+
+        // Refresh Token cache status
+        echo '<p><strong>' . esc_html( __('Refresh Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        if ( $refresh_token_transient !== false ) {
+            $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_refresh_token_transient_key() );
             echo sprintf(
                 // translators: %s is the time remaining
                 esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
@@ -426,6 +457,8 @@ class BlueSky_Plugin_Setup {
                                 settings_fields('bluesky_settings_group');
                                 do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
                                 submit_button();
+
+                                $this->display_cache_status();
                                 ?>
                             </form>
                         </div>
@@ -455,7 +488,7 @@ class BlueSky_Plugin_Setup {
                                     <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
                                     <br>
                                     <ul>
-                                        <li><code>number</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>numberOfPosts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                     </ul>
@@ -480,6 +513,34 @@ class BlueSky_Plugin_Setup {
                     </div>
                 </div>
             </div>
+
+            <?php
+            // Adds a connection check using BlueSky API
+            $api = new BlueSky_API_Handler( $this -> options );
+            $auth = $api -> authenticate();
+
+            if ( $auth ) {
+            ?>
+            <h2><?php echo esc_html__('Shortcodes Demo', 'social-integration-for-bluesky'); ?></h2>
+            <div class="bluesky-social-demo container">
+                <div class="demo">
+                    <h3><?php echo esc_html__('Profile Card', 'social-integration-for-bluesky'); ?> <code>[bluesky_profile]</code></h3>
+                    <p><?php echo esc_html__('This is how your BlueSky profile card will look like:', 'social-integration-for-bluesky'); ?></p>
+                    <div class="demo-profile">
+                        <?php echo do_shortcode('[bluesky_profile]'); ?>
+                    </div>
+                </div>
+                <div class="demo">
+                    <h3><?php echo esc_html__('Last Posts Feed', 'social-integration-for-bluesky'); ?> <code>[bluesky_last_posts]</code></h3>
+                    <p><?php echo esc_html__('This is how your last posts feed will look like:', 'social-integration-for-bluesky'); ?></p>
+                    <div class="demo-posts">
+                        <?php echo do_shortcode('[bluesky_last_posts]'); ?>
+                    </div>
+                </div>
+            </div>
+            <?php
+            }
+            ?>
         </div>
         <?php
     }

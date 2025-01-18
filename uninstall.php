@@ -13,7 +13,7 @@ $options = wp_load_alloptions();
 // Delete all transients related to the plugin
 // Loop through options to find and delete relevant transients
 foreach ( $options as $option_name => $option_value ) {
-    if ( strpos( $option_name, '_transient_bluesky_' ) === 0 ) {
+    if ( strpos( $option_name, '_transient_bluesky_cache_' ) === 0 ) {
         // Strip '_transient_' to get the actual transient key
         $transient_key = str_replace( '_transient_', '', $option_name );
         delete_transient( $transient_key );

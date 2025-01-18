@@ -30,6 +30,14 @@
     }   
 }
 
+.bluesky-social-demo.container {
+    flex-wrap: nowrap;
+}
+
+.bluesky-social-demo .demo {
+    flex-basis: 100%;
+}
+
 .bluesky-social-integration-admin h1 {
     font-weight: bold;
     margin: 1em 0;
