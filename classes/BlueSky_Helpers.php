@@ -30,8 +30,8 @@ class BlueSky_Helpers {
      * Get the posts transient key
      * @return string
      */
-    public function get_posts_transient_key( $limit = null ) {
-        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . ( $limit ?? $this -> options['posts_limit'] ?? 5 );
+    public function get_posts_transient_key( $limit = null, $no_replies = false ) {
+        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . ( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' );
     }
 
     /**

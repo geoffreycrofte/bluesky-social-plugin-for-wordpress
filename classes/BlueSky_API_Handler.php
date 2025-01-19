@@ -176,9 +176,10 @@ class BlueSky_API_Handler {
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
      */
-    public function fetch_bluesky_posts( $limit = 10 ) {
+    public function fetch_bluesky_posts( $limit = 10, $no_replies = true ) {
         $helpers = new BlueSky_Helpers();
-        $cache_key = $helpers -> get_posts_transient_key( $limit );
+        $no_replies = $this -> options['no_replies'] ?? true;
+        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies );
         $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
 
         // Skip cache if duration is 0
@@ -203,7 +204,7 @@ class BlueSky_API_Handler {
             ],
             'body' => [
                 'actor' => $this -> did,
-                'limit' => $limit
+                'limit' => $no_replies ? 100 : $limit, // Fetch more to account for replies
             ]
         ]);
 
@@ -213,8 +214,18 @@ class BlueSky_API_Handler {
 
         $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true );
 
+        // Filter out replies if necessary
+        $posts = $no_replies ? array_filter( $raw_posts['feed'] ?? [], function( $post ) {
+            return empty( $post['reply'] ); // Exclude posts with a 'reply' key
+        }) : $raw_posts['feed'];
+
+        if ( $no_replies ) {
+            // Limit to the requested number of posts
+            $posts = array_slice( $posts, 0, $limit );
+        }
+
         // Process and normalize posts
-        $processed_posts = $this -> process_posts( $raw_posts['feed'] ?? [] );
+        $processed_posts = $this -> process_posts( $posts ?? [] );
 
         // Sort by most recent first
         usort( $processed_posts, function( $a, $b) {

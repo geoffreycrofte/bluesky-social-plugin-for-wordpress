@@ -57,9 +57,7 @@ class BlueSky_Plugin_Setup {
         add_action('init', [$this, 'register_gutenberg_blocks']);
 
         // Post syndication
-        if ( ! empty( $this -> options['auto_syndicate'] ) ) {
-            add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
-        }
+        add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
     }
 
     /**
@@ -137,6 +135,7 @@ class BlueSky_Plugin_Setup {
         // Sanitize other fields
         $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
         $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
+        $sanitized['no_replies'] = isset( $input['no_replies'] ) ? 1 : 0;
         $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'system';
         $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? min( 10, max( 1, intval( $input['posts_limit'] ) ) ) : 5;
 
@@ -178,6 +177,10 @@ class BlueSky_Plugin_Setup {
             'bluesky_posts_limit' => [
                 'label' => __('Number of Posts to Display', 'social-integration-for-bluesky'),
                 'callback' => 'render_posts_limit_field'
+            ],
+            'bluesky_no_replies' => [
+                'label' => __('Do not display replies', 'social-integration-for-bluesky'),
+                'callback' => 'render_no_replies_field'
             ],
             'bluesky_cache_duration' => [
                 'label' => __('Cache Duration', 'social-integration-for-bluesky'),
@@ -251,7 +254,10 @@ class BlueSky_Plugin_Setup {
      */
     public function render_syndicate_field() {
         $auto_syndicate = $this->options['auto_syndicate'] ?? 0;
-        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate' ) . '" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' />';
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate' ) . '" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' aria-describedby="bluesky-auto-syndicate-desc" />';
+
+        echo '<span class="description bluesky-description" id="bluesky-auto-syndicate-desc">' . esc_html( __('Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -273,6 +279,17 @@ class BlueSky_Plugin_Setup {
         $limit = $this->options['posts_limit'] ?? 5;
         echo '<input type="number" min="1" max="10" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_posts_limit' ) . '" name="bluesky_settings[posts_limit]" value="' . esc_attr( $limit ) . '" />';
         echo '<p class="description">' . esc_html( __('Enter the number of posts to display (1-10) - 5 is set by default', 'social-integration-for-bluesky') ) . '</p>';
+    }
+
+    /**
+     * Render no replies field
+     */
+    public function render_no_replies_field() {
+        $no_replies = $this->options['no_replies'] ?? 1;
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_replies' ) . '" type="checkbox" name="bluesky_settings[no_replies]" value="1" ' . checked(1, $no_replies, false) . ' aria-describedby="bluesky-no_replies-desc" />';
+
+        echo '<span class="description bluesky-description" id="bluesky-no_replies-desc">' . esc_html( __('If checked, your replies will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -488,9 +505,10 @@ class BlueSky_Plugin_Setup {
                                     <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
                                     <br>
                                     <ul>
+                                        <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>noReplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>numberOfPosts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -604,6 +622,13 @@ class BlueSky_Plugin_Setup {
 
         do_action( 'bluesky_before_syndicating_post', $post_id );
 
+        // Check if the post should be syndicated (metabox option)
+        // This metabox is set by the default global setting, or manually by the post editor.
+        $dont_syndicate = get_post_meta( $post_id, '_bluesky_dont_syndicate', true );
+        if ( $dont_syndicate ) {
+            return;
+        }
+
         // Check if the post is already syndicated
         // because the action can be triggered multiple times by WordPress
         $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
@@ -612,7 +637,11 @@ class BlueSky_Plugin_Setup {
         }
 
         $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
-        $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+
+        // if it's supposed to be syndicated, add a meta to the post
+        if ( ! $dont_syndicate ) {
+            $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+        }
 
         do_action( 'bluesky_after_syndicating_post', $post_id, $post_meta );
     }

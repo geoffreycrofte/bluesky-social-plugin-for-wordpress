@@ -162,7 +162,7 @@
 /**
  * Styles for the profile card darkmode
  */
- @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
     .bluesky-social-integration-last-post.theme-system {
         --bluesky-card-bg: #161e27;
         --bluesky-card-txt: white;
@@ -178,4 +178,12 @@
     --bluesky-card-txt-alt: #aebbc9;
     --bluesky-card-border: 1px solid #2e4052;
     --bluesky-primary-color: #208BFE;
+}
+
+.bluesky-social-integration-last-post.theme-light {
+    --bluesky-card-bg: white;
+    --bluesky-card-txt: #0b0f14;
+    --bluesky-card-txt-alt: rgb(66, 87, 108);
+    --bluesky-card-border: 1px solid rgb(212, 219, 226);
+    --bluesky-primary-color: #1083fe;
 }

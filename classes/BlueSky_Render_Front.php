@@ -40,8 +40,9 @@ class BlueSky_Render_Front {
     public function bluesky_last_posts_shortcode($atts = []) {
         // Convert shortcode attributes to array and merge with defaults
         $attributes = shortcode_atts([
+            'theme' => $this -> options['theme'] ?? 'system',
             'displayEmbeds' => true,
-            'theme' => 'system',
+            'noReplies' => $this -> options['no_replies'] ?? true,
             'numberOfPosts' => $this -> options['posts_limit']
         ], $atts);
 
@@ -57,7 +58,8 @@ class BlueSky_Render_Front {
         // Set default attributes
         $defaults = [
             'displayEmbeds' => true,
-            'theme' => 'light',
+            'noReplies' => true,
+            'theme' => 'system',
             'numberOfPosts' => $limit
         ];
 
@@ -66,10 +68,11 @@ class BlueSky_Render_Front {
 
         // Extract variables
         $display_embeds = $attributes['displayEmbeds'];
+        $no_replies = $attributes['noReplies'];
         $theme = $attributes['theme'];
         $number_of_posts = $attributes['numberOfPosts'];
 
-        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ) );
+        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies);
 
         if ( isset ( $posts ) && is_array( $posts ) ) {
 
@@ -207,9 +210,10 @@ class BlueSky_Render_Front {
 
     // Shortcode for BlueSky profile card
     public function bluesky_profile_card_shortcode( $atts = [] ) {
+        
         // Convert shortcode attributes to array and merge with defaults
         $attributes = shortcode_atts([
-            'theme' => 'system',
+            'theme' => $this -> options['theme'] ?? 'system',
             'styleClass' => '',
             'displayBanner' => true,
             'displayAvatar' => true,
