@@ -1,0 +1,44 @@
+name: Publish to WordPress SVN
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the code from the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Filter files based on .distignore or .svnignore
+      - name: Prepare Files for SVN
+        run: |
+          cp .svnignore || true
+          rsync -av --exclude-from=".svnignore" ./ ./wordpress-svn
+
+      # 3. Checkout the SVN Repository
+      - name: Checkout WordPress SVN
+        run: |
+          svn checkout --username "$SVN_USERNAME" --password "$SVN_PASSWORD" https://plugins.svn.wordpress.org/social-integration-for-bluesky
+
+      # 4. Update the trunk and create the tag
+      - name: Update SVN
+        run: |
+          cd wordpress-svn
+          # Copy files to trunk
+          rsync -av --delete ../wordpress-svn/ trunk/
+          
+          # Copy files to the version tag
+          rsync -av --delete ../wordpress-svn/ tags/${{ github.event.release.tag_name }}/
+          
+          # Add changes
+          svn add --force . --auto-props --parents --depth infinity -q
+          svn commit -m "Deploy version ${{ github.event.release.tag_name }}: ${{ github.event.release.name }}" --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
+
+    env:
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
