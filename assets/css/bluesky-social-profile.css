@@ -130,3 +130,11 @@
     --bluesky-primary-color: #208BFE;
 }
 
+.bluesky-social-integration-profile-card.theme-light {
+    --bluesky-card-bg: white;
+    --bluesky-card-txt: #0b0f14;
+    --bluesky-card-txt-alt: rgb(66, 87, 108);
+    --bluesky-card-border: 1px solid rgb(212, 219, 226);
+    --bluesky-primary-color: #1083fe;
+}
+

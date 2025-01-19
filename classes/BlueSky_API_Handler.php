@@ -176,11 +176,11 @@ class BlueSky_API_Handler {
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
      */
-    public function fetch_bluesky_posts( $limit = 10 ) {
+    public function fetch_bluesky_posts( $limit = 10, $no_replies = true ) {
         $helpers = new BlueSky_Helpers();
-        $cache_key = $helpers -> get_posts_transient_key( $limit );
+        $no_replies = $this -> options['no_replies'] ?? true;
+        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies );
         $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
-        $no_replies = $this -> options['no_replies'] ?? false;
 
         // Skip cache if duration is 0
         if ( $cache_duration > 0 ) {

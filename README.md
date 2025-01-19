@@ -53,6 +53,7 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 `[bluesky_last_posts displayEmbeds="true" theme="system" numberOfPosts="5"]`
 
 - `displaysEmbeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
+- `noReplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
 - `numberOfPosts`: any number of posts to display. (advice, don't set a too high value)
 
@@ -107,9 +108,10 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 ### 1.1.0
 - **Bug fix**:
  - Connexion with bluesky should be more consistent now.
+ - Light mode in non-system mode wasn't overriding the system preference.
 - **Features**:
  - Deactivate syndication for a specific post before publishing your post
- - Adds some styling options (font-size and line-height)
+ - Remove the replies from the post feed
  - Display the 2 shortcodes in demo within the admin page
 
 ### 1.0.1
