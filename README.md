@@ -104,6 +104,14 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 ## Changelog
 
+### 1.1.0
+- **Bug fix**:
+ - Connexion with bluesky should be more consistent now.
+- **Features**:
+ - Deactivate syndication for a specific post before publishing your post
+ - Adds some styling options (font-size and line-height)
+ - Display the 2 shortcodes in demo within the admin page
+
 ### 1.0.1
 Adds the proper information about the shortcodes in the setting page, the plugin description and the mini-description.
 
@@ -111,6 +119,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.1.0
+Important bug fix on maintaining the connexion with Bluesky Services
 
 ### 1.0.0
 Initial release. Please backup your site before installing.
