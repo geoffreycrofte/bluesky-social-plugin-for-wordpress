@@ -14,18 +14,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 2. Filter files based on .distignore or .svnignore
+      # 2. Install SVN
+      - name: Install Subversion (SVN)
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      # 3. Filter files based on .distignore or .svnignore
       - name: Prepare Files for SVN
         run: |
           cp .svnignore || true
           rsync -av --exclude-from=".svnignore" ./ ./wordpress-svn
 
-      # 3. Checkout the SVN Repository
+      # 4. Checkout the SVN Repository
       - name: Checkout WordPress SVN
         run: |
           svn checkout --username "$SVN_USERNAME" --password "$SVN_PASSWORD" https://plugins.svn.wordpress.org/social-integration-for-bluesky
 
-      # 4. Update the trunk and create the tag
+      # 5. Update the trunk and create the tag
       - name: Update SVN
         run: |
           cd wordpress-svn
