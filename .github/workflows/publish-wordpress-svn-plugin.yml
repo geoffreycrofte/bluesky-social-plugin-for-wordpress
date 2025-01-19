@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v3
 
       # 2. Install SVN
-      - name: Install Subversion (SVN)
-        run: sudo apt-get update && sudo apt-get install -y subversion
+      - name: Install Subversion
+        run: sudo apt-get install subversion
 
       # 3. Filter files based on .distignore or .svnignore
       - name: Prepare Files for SVN
@@ -26,11 +26,17 @@ jobs:
 
       # 4. Checkout the SVN Repository
       - name: Checkout WordPress SVN
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         run: |
           svn checkout --username "$SVN_USERNAME" --password "$SVN_PASSWORD" https://plugins.svn.wordpress.org/social-integration-for-bluesky
 
       # 5. Update the trunk and create the tag
       - name: Update SVN
+        env:
+            SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+            SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         run: |
           cd wordpress-svn
           # Copy files to trunk
@@ -42,7 +48,3 @@ jobs:
           # Add changes
           svn add --force . --auto-props --parents --depth infinity -q
           svn commit -m "Deploy version ${{ github.event.release.tag_name }}: ${{ github.event.release.name }}" --username "$SVN_USERNAME" --password "$SVN_PASSWORD"
-
-    env:
-      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
