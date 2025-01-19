@@ -95,3 +95,9 @@
     font-size: 14px;
     padding: 4px 16px;
 }
+
+.bluesky-metabox-description.bluesky-metabox-description.bluesky-metabox-description {
+    display: block;
+    margin-top: 0.75em;
+    color: #666;
+}

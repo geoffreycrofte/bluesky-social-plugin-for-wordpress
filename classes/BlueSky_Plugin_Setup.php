@@ -57,9 +57,7 @@ class BlueSky_Plugin_Setup {
         add_action('init', [$this, 'register_gutenberg_blocks']);
 
         // Post syndication
-        if ( ! empty( $this -> options['auto_syndicate'] ) ) {
-            add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
-        }
+        add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
     }
 
     /**
@@ -251,7 +249,10 @@ class BlueSky_Plugin_Setup {
      */
     public function render_syndicate_field() {
         $auto_syndicate = $this->options['auto_syndicate'] ?? 0;
-        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate' ) . '" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' />';
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate' ) . '" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' aria-describedby="bluesky-auto-syndicate-desc" />';
+        
+        echo '<span class="description bluesky-description" id="bluesky-auto-syndicate-desc">' . esc_html( __('Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -604,6 +605,13 @@ class BlueSky_Plugin_Setup {
 
         do_action( 'bluesky_before_syndicating_post', $post_id );
 
+        // Check if the post should be syndicated (metabox option)
+        // This metabox is set by the default global setting, or manually by the post editor.
+        $dont_syndicate = get_post_meta( $post_id, '_bluesky_dont_syndicate', true );
+        if ( $dont_syndicate ) {
+            return;
+        }
+
         // Check if the post is already syndicated
         // because the action can be triggered multiple times by WordPress
         $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
@@ -612,7 +620,11 @@ class BlueSky_Plugin_Setup {
         }
 
         $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
-        $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+
+        // if it's supposed to be syndicated, add a meta to the post
+        if ( ! $dont_syndicate ) {
+            $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+        }
 
         do_action( 'bluesky_after_syndicating_post', $post_id, $post_meta );
     }
