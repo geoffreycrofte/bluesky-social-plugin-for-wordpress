@@ -135,6 +135,7 @@ class BlueSky_Plugin_Setup {
         // Sanitize other fields
         $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
         $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
+        $sanitized['no_replies'] = isset( $input['no_replies'] ) ? 1 : 0;
         $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'system';
         $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? min( 10, max( 1, intval( $input['posts_limit'] ) ) ) : 5;
 
@@ -176,6 +177,10 @@ class BlueSky_Plugin_Setup {
             'bluesky_posts_limit' => [
                 'label' => __('Number of Posts to Display', 'social-integration-for-bluesky'),
                 'callback' => 'render_posts_limit_field'
+            ],
+            'bluesky_no_replies' => [
+                'label' => __('Do not display replies', 'social-integration-for-bluesky'),
+                'callback' => 'render_no_replies_field'
             ],
             'bluesky_cache_duration' => [
                 'label' => __('Cache Duration', 'social-integration-for-bluesky'),
@@ -251,7 +256,7 @@ class BlueSky_Plugin_Setup {
         $auto_syndicate = $this->options['auto_syndicate'] ?? 0;
 
         echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_auto_syndicate' ) . '" type="checkbox" name="bluesky_settings[auto_syndicate]" value="1" ' . checked(1, $auto_syndicate, false) . ' aria-describedby="bluesky-auto-syndicate-desc" />';
-        
+
         echo '<span class="description bluesky-description" id="bluesky-auto-syndicate-desc">' . esc_html( __('Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
@@ -274,6 +279,17 @@ class BlueSky_Plugin_Setup {
         $limit = $this->options['posts_limit'] ?? 5;
         echo '<input type="number" min="1" max="10" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_posts_limit' ) . '" name="bluesky_settings[posts_limit]" value="' . esc_attr( $limit ) . '" />';
         echo '<p class="description">' . esc_html( __('Enter the number of posts to display (1-10) - 5 is set by default', 'social-integration-for-bluesky') ) . '</p>';
+    }
+
+    /**
+     * Render no replies field
+     */
+    public function render_no_replies_field() {
+        $no_replies = $this->options['no_replies'] ?? 1;
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_replies' ) . '" type="checkbox" name="bluesky_settings[no_replies]" value="1" ' . checked(1, $no_replies, false) . ' aria-describedby="bluesky-no_replies-desc" />';
+
+        echo '<span class="description bluesky-description" id="bluesky-no_replies-desc">' . esc_html( __('If checked, your replies will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
