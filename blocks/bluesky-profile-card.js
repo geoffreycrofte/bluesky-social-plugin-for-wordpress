@@ -19,33 +19,33 @@
                     el(ToggleControl, {
                         key: 'banner-toggle',
                         label: __('Display Banner', 'social-integration-for-bluesky'),
-                        checked: attributes.displayBanner,
+                        checked: attributes.displaybanner,
                         onChange: function(value) { 
-                            setAttributes({ displayBanner: value });
+                            setAttributes({ displaybanner: value });
                         }
                     }),
                     el(ToggleControl, {
                         key: 'avatar-toggle',
                         label: __('Display Avatar', 'social-integration-for-bluesky'),
-                        checked: attributes.displayAvatar,
+                        checked: attributes.displayavatar,
                         onChange: function(value) {
-                            setAttributes({ displayAvatar: value });
+                            setAttributes({ displayavatar: value });
                         }
                     }),
                     el(ToggleControl, {
                         key: 'counters-toggle',
                         label: __('Display Counters', 'social-integration-for-bluesky'),
-                        checked: attributes.displayCounters,
+                        checked: attributes.displaycounters,
                         onChange: function(value) {
-                            setAttributes({ displayCounters: value });
+                            setAttributes({ displaycounters: value });
                         }
                     }),
                     el(ToggleControl, {
                         key: 'bio-toggle',
                         label: __('Display Bio', 'social-integration-for-bluesky'),
-                        checked: attributes.displayBio,
+                        checked: attributes.displaybio,
                         onChange: function(value) {
-                            setAttributes({ displayBio: value });
+                            setAttributes({ displaybio: value });
                         }
                     }),
                     el(SelectControl, {
@@ -67,7 +67,7 @@
             el(ServerSideRender, {
                 block: 'bluesky-social/profile',
                 attributes: attributes,
-                className: props.className ?? 'bluesky-posts-block'
+                className: props.classname ?? 'bluesky-posts-block'
             })
         ];
     };
@@ -98,19 +98,19 @@
             },
         ],
         attributes: {
-            displayBanner: {
+            displaybanner: {
                 type: 'boolean',
                 default: true
             },
-            displayAvatar: {
+            displayavatar: {
                 type: 'boolean',
                 default: true
             },
-            displayCounters: {
+            displaycounters: {
                 type: 'boolean',
                 default: true
             },
-            displayBio: {
+            displaybio: {
                 type: 'boolean',
                 default: true
             },

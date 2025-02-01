@@ -136,6 +136,7 @@ class BlueSky_Plugin_Setup {
         $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
         $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
         $sanitized['no_replies'] = isset( $input['no_replies'] ) ? 1 : 0;
+        $sanitized['no_embeds'] = isset( $input['no_embeds'] ) ? 1 : 0;
         $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'system';
         $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? min( 10, max( 1, intval( $input['posts_limit'] ) ) ) : 5;
 
@@ -181,6 +182,10 @@ class BlueSky_Plugin_Setup {
             'bluesky_no_replies' => [
                 'label' => __('Do not display replies', 'social-integration-for-bluesky'),
                 'callback' => 'render_no_replies_field'
+            ],
+            'bluesky_no_embed' => [
+                'label' => __('Do not display embeds', 'social-integration-for-bluesky'),
+                'callback' => 'render_no_embeds_field'
             ],
             'bluesky_cache_duration' => [
                 'label' => __('Cache Duration', 'social-integration-for-bluesky'),
@@ -288,8 +293,17 @@ class BlueSky_Plugin_Setup {
         $no_replies = $this->options['no_replies'] ?? 1;
 
         echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_replies' ) . '" type="checkbox" name="bluesky_settings[no_replies]" value="1" ' . checked(1, $no_replies, false) . ' aria-describedby="bluesky-no_replies-desc" />';
-
         echo '<span class="description bluesky-description" id="bluesky-no_replies-desc">' . esc_html( __('If checked, your replies will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
+    }
+
+    /**
+     * Render no embeds field
+     */
+    public function render_no_embeds_field() {
+        $no_embeds = $this->options['no_embeds'] ?? 0;
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_embeds' ) . '" type="checkbox" name="bluesky_settings[no_embeds]" value="1" ' . checked(1, $no_embeds, false) . ' aria-describedby="bluesky-no_embeds-desc" />';
+        echo '<span class="description bluesky-description" id="bluesky-no_embeds-desc">' . esc_html( __('If checked, video, images, and links will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -493,21 +507,22 @@ class BlueSky_Plugin_Setup {
                                     <?php echo esc_html__('The profile shortcode will display your BlueSky profile card. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
                                     <br>
                                     <ul>
-                                        <li><code>displayBanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayAvatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayCounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayBio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displaybanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayavatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displaycounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displaybio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the profile. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>className</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>classname</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
                                     </ul>
                                 </li>
                                 <li>
                                     <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
                                     <br>
                                     <ul>
-                                        <li><code>displayEmbeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>noReplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>numberOfPosts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayembeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>displayimages</code> - <?php echo esc_html__('Whether to display embedded images in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>noreplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                        <li><code>numberofposts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
                                         <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
                                     </ul>
                                 </li>
@@ -552,7 +567,7 @@ class BlueSky_Plugin_Setup {
                     <h3><?php echo esc_html__('Last Posts Feed', 'social-integration-for-bluesky'); ?> <code>[bluesky_last_posts]</code></h3>
                     <p><?php echo esc_html__('This is how your last posts feed will look like:', 'social-integration-for-bluesky'); ?></p>
                     <div class="demo-posts">
-                        <?php echo do_shortcode('[bluesky_last_posts]'); ?>
+                        <?php echo do_shortcode('[bluesky_last_posts numberofposts="3"]'); ?>
                     </div>
                 </div>
             </div>
@@ -570,7 +585,7 @@ class BlueSky_Plugin_Setup {
         wp_enqueue_style( 'bluesky-social-style', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_style( 'bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_style( 'bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
-        wp_enqueue_script( 'bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social.js', ['jquery'], BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+        wp_enqueue_script( 'bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social-admin.js', ['jquery'], BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
     }
 
     /**
@@ -675,7 +690,11 @@ class BlueSky_Plugin_Setup {
             'editor_script' => 'bluesky-posts-block',
             'render_callback' => [$this, 'bluesky_posts_block_render'],
             'attributes' => [
-                'displayEmbeds' => [
+                'displayembeds' => [
+                    'type' => 'boolean',
+                    'default' => true
+                ],
+                'noreplies' => [
                     'type' => 'boolean',
                     'default' => true
                 ],
@@ -683,7 +702,7 @@ class BlueSky_Plugin_Setup {
                     'type' => 'string',
                     'default' => 'system'
                 ],
-                'numberOfPosts' => [
+                'numberofposts' => [
                     'type' => 'integer',
                     'default' => get_option(BLUESKY_PLUGIN_OPTIONS)['posts_limit'] ?? 5
                 ]
@@ -705,19 +724,19 @@ class BlueSky_Plugin_Setup {
         register_block_type('bluesky-social/profile', [
             'api_version' => 2,
             'attributes' => [
-                'displayBanner' => [
+                'displaybanner' => [
                     'type' => 'boolean',
                     'default' => true,
                 ],
-                'displayAvatar' => [
+                'displayavatar' => [
                     'type' => 'boolean',
                     'default' => true,
                 ],
-                'displayCounters' => [
+                'displaycounters' => [
                     'type' => 'boolean',
                     'default' => true,
                 ],
-                'displayBio' => [
+                'displaybio' => [
                     'type' => 'boolean',
                     'default' => true,
                 ],
@@ -725,7 +744,7 @@ class BlueSky_Plugin_Setup {
                     'type' => 'string',
                     'default' => 'system'
                 ],
-                'className' => [
+                'classname' => [
                     'type' => 'string',
                     'default' => ''
                 ],
@@ -758,16 +777,17 @@ class BlueSky_Plugin_Setup {
      * Renders the BlueSky profile card block
      * 
      * @param array $attributes Block attributes including:
-     *                         - displayBanner (bool) Whether to show the profile banner
-     *                         - displayAvatar (bool) Whether to show the profile avatar
-     *                         - displayCounters (bool) Whether to show follower/following counts
-     *                         - displayBio (bool) Whether to show the profile bio
+     *                         - displaybanner (bool) Whether to show the profile banner
+     *                         - displayavatar (bool) Whether to show the profile avatar
+     *                         - displaycounters (bool) Whether to show follower/following counts
+     *                         - displaybio (bool) Whether to show the profile bio
      *                         - theme (string) Color theme - 'light', 'dark' or 'system'
+     *                         - classname (string) A custom string classname
      * @return string HTML markup for the profile card
      */
     public function bluesky_profile_block_render( $attributes = [] ) {
         // Get the style class
-        $style_class = ! empty( $attributes['className'] ) ? $attributes['className'] : 'is-style-default';
+        $style_class = ! empty( $attributes['classname'] ) ? $attributes['classname'] : 'is-style-default';
         
         // Add the style class to the attributes for the render function
         $attributes['styleClass'] = $style_class;
@@ -780,9 +800,10 @@ class BlueSky_Plugin_Setup {
      * Renders the BlueSky posts feed block
      * 
      * @param array $attributes Block attributes including:
-     *                         - displayEmbeds (bool) Whether to show embedded media in posts
+     *                         - displayembeds (bool) Whether to show embedded media in posts
+     *                         - noreplies (bool) Whether to show replies in posts
      *                         - theme (string) Color theme - 'light', 'dark' or 'system'
-     *                         - numberOfPosts (int) Number of posts to display (1-10)
+     *                         - numberofposts (int) Number of posts to display (1-10)
      * @return string HTML markup for the posts feed
      */
 

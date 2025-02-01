@@ -35,25 +35,25 @@ Some other included features:
 
 In the shortcodes below, the complete list of attributes is displayed. You can omit them if you want, as the default values or the global values will be used if you omit them.
 
+==== Display your profile banner ====
+
+`[bluesky_profile theme="system" styleclass="" displaybanner="true" displayavatar="true" displaycounters="true" displaybio="true"]`
+
+- `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
+- `styleclass`: accept any string class-valid to customise the class attribute
+- `displaybanner`: either you want to display your profile banner image or not (values: `true`, `false`)
+- `displayavatar`: either you want to display your profile avatar or not (values: `true`, `false`)
+- `displaycounters`: either you want to display your followers, following and posts, or not (values: `true`, `false`)
+- `displaybio`: either you want to display your profile description or not (values: `true`, `false`)
+
 ==== Display the last posts ====
 
-`[bluesky_profile theme="system" styleClass="" displayBanner="true" displayAvatar="true" displayCounters="true" displayBio="true"]`
+`[bluesky_last_posts displayembeds="true" displayimages="true" theme="system" noreplies="true" numberofposts="5"]`
 
+- `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
+- `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
-- `styleClass`: accept any string class-valid to customise the class attribute
-- `displayBanner`: either you want to display your profile banner image or not (values: `true`, `false`)
-- `displayAvatar`: either you want to display your profile avatar or not (values: `true`, `false`)
-- `displayCounters`: either you want to display your followers, following and posts, or not (values: `true`, `false`)
-- `displayBio`: either you want to display your profile description or not (values: `true`, `false`)
-
-==== Display your profile banne ====
-
-`[bluesky_last_posts displayEmbeds="true" theme="system" numberOfPosts="5"]`
-
-- `displaysEmbeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
-- `noReplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
-- `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
-- `numberOfPosts`: any number of posts to display. (advice, don't set a too high value)
+- `numberofposts`: any number of posts to display. (advice, don't set a too high value)
 
 == Installation ==
 
@@ -103,7 +103,17 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 == Changelog ==
 
-= 1.1.1
+= 1.2.0 =
+* **Bug fix**
+ * Text wrap renders better now.
+ * numberofposts shortcode attribute works now.
+ * displayembeds shortcode attribute works now.
+* **Features**
+ * Decide if you want to include images, video, links and other embeds, or not, in your feed in the global params
+ * Display an accessible lightbox to display embedded images. (mostly useful for galleries)
+ * Support Starterpack embed in posts
+
+= 1.1.1 =
 WordPress still distributing 1.0.1 instead of 1.1.0. Forcing a version number update.
 
 = 1.1.0 =
@@ -122,6 +132,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Smalm breaking change on the shortcode attributes. Use lower cases on all the name from now on.
 
 = 1.1.0 =
 Important bug fix on maintaining the connexion with Bluesky Services

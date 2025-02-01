@@ -19,9 +19,17 @@
                     el(ToggleControl, {
                         key: 'embeds-toggle',
                         label: __('Display Embeds', 'social-integration-for-bluesky'),
-                        checked: attributes.displayEmbeds,
+                        checked: attributes.displayembeds,
                         onChange: function(value) { 
-                            setAttributes({ displayEmbeds: value });
+                            setAttributes({ displayembeds: value });
+                        }
+                    }),
+                    el(ToggleControl, {
+                        key: 'replied-toggle',
+                        label: __('Hide Replies', 'social-integration-for-bluesky'),
+                        checked: attributes.noreplies,
+                        onChange: function(value) { 
+                            setAttributes({ noreplies: value });
                         }
                     }),
                     el(SelectControl, {
@@ -40,9 +48,9 @@
                     el(RangeControl, {
                         key: 'posts-number',
                         label: __('Number of Posts', 'social-integration-for-bluesky'),
-                        value: attributes.numberOfPosts,
+                        value: attributes.numberofposts,
                         onChange: function(value) {
-                            setAttributes({ numberOfPosts: value });
+                            setAttributes({ numberofposts: value });
                         },
                         min: 1,
                         max: 10
@@ -82,7 +90,11 @@
             }
         ],
         attributes: {
-            displayEmbeds: {
+            displayembeds: {
+                type: 'boolean',
+                default: true
+            },
+            noreplies: {
                 type: 'boolean',
                 default: true
             },
@@ -90,7 +102,7 @@
                 type: 'string',
                 default: 'system'
             },
-            numberOfPosts: {
+            numberofposts: {
                 type: 'integer',
                 default: 5
             }
