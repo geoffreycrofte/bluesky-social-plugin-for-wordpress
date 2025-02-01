@@ -411,7 +411,6 @@ class BlueSky_API_Handler {
      */
     private function extract_embedded_media( $post) {
         $embedded_media = null;
-
         // Video embed
         if ( isset( $post['embed']['video'] ) || 
             ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.video' ) ) ) {
@@ -434,20 +433,39 @@ class BlueSky_API_Handler {
             // For some reasons, sometimes the API returns record in the record array. (multi embedded items?)
             $record_embed = isset( $post['embed']['record']['record'] ) ? $post['embed']['record']['record'] : $post['embed']['record'];
 
-            $end0fURI = explode( '/', $record_embed['uri'] );
-            $embedded_media = [
-                'type' => 'record',
-                'author' => [
-                    'did' => $record_embed['author']['did'] ?? '',
-                    'handle' => $record_embed['author']['handle'] ?? '',
-                    'display_name' => $record_embed['author']['displayName'] ?? ''
-                ],
-                'text' => $record_embed['value']['text'] ?? '',
-                'created_at' => $record_embed['value']['createdAt'] ?? '',
-                'like_count' => $record_embed['likeCount'] ?? 0,
-                'reply_count' => $record_embed['replyCount'] ?? 0,
-                'url' => 'https://bsky.app/profile/' . ( $record_embed['author']['handle'] ?? '') . '/post/' . ( $record_embed['uri'] ? end( $end0fURI) : '')
-            ];
+            if( 'app.bsky.graph.starterpack' == $record_embed['$type'] ) {
+                $end0fURI = explode( '/', $post['embed']['record']['uri'] );
+                $author = $post['embed']['record']['creator'];
+                $embedded_media = [
+                    'type' => 'starterpack',
+                    'author' => [
+                        'did' => $author['did'] ?? '',
+                        'handle' => $author['handle'] ?? '',
+                        'display_name' => $author['displayName'] ?? ''
+                    ],
+                    'title' => $record_embed['name'] ?? '',
+                    'text' => $record_embed['description'] ?? '',
+                    'created_at' => $record_embed['createdAt'] ?? '',
+                    'like_count' => $record_embed['likeCount'] ?? 0,
+                    'reply_count' => $record_embed['replyCount'] ?? 0,
+                    'url' => 'https://bsky.app/starter-pack/' . ( $author['handle'] ?? '') . '/' . end( $end0fURI )
+                ];
+            } else {
+                $end0fURI = explode( '/', $record_embed['uri'] );
+                $embedded_media = [
+                    'type' => 'record',
+                    'author' => [
+                        'did' => $record_embed['author']['did'] ?? '',
+                        'handle' => $record_embed['author']['handle'] ?? '',
+                        'display_name' => $record_embed['author']['displayName'] ?? ''
+                    ],
+                    'text' => $record_embed['value']['text'] ?? '',
+                    'created_at' => $record_embed['value']['createdAt'] ?? '',
+                    'like_count' => $record_embed['likeCount'] ?? 0,
+                    'reply_count' => $record_embed['replyCount'] ?? 0,
+                    'url' => 'https://bsky.app/profile/' . ( $record_embed['author']['handle'] ?? '') . '/post/' . ( $record_embed['uri'] ? end( $end0fURI ) : '')
+                ];
+            }
 
             // Check if the embedded record has its own media (like a video)
             if ( isset( $record_embed['value']['embed']['video'] ) ) {

@@ -38,39 +38,44 @@ class BlueSky_Render_Front {
 
     // Shortcode for BlueSky last posts
     public function bluesky_last_posts_shortcode($atts = []) {
+
+        var_dump( $atts );
+
         // Convert shortcode attributes to array and merge with defaults
-        $attributes = shortcode_atts([
+        $attributes = wp_parse_args($atts, [
             'theme' => $this -> options['theme'] ?? 'system',
-            'displayEmbeds' => true,
-            'noReplies' => $this -> options['no_replies'] ?? true,
-            'numberOfPosts' => $this -> options['posts_limit']
-        ], $atts);
+            'displayembeds' => ! $this -> options['no_embeds'] ?? false,
+            'noreplies' => $this -> options['no_replies'] ?? true,
+            'numberofposts' => $this -> options['posts_limit'] ?? 5
+        ]);
 
         // Convert string boolean values to actual booleans
-        $attributes['displayEmbeds'] = filter_var( $attributes['displayEmbeds'], FILTER_VALIDATE_BOOLEAN);
+        $attributes['displayembeds'] = filter_var( $attributes['displayembeds'], FILTER_VALIDATE_BOOLEAN);
+        $attributes['noreplies'] = filter_var( $attributes['noreplies'], FILTER_VALIDATE_BOOLEAN);
 
-        return $this->render_bluesky_posts_list($attributes);
+        var_dump( $attributes );
+
+        return $this->render_bluesky_posts_list( $attributes );
     }
 
     public function render_bluesky_posts_list( $attributes = [] ) {
 
-        $limit = $this -> options['posts_limit'];
         // Set default attributes
         $defaults = [
-            'displayEmbeds' => true,
-            'noReplies' => true,
-            'theme' => 'system',
-            'numberOfPosts' => $limit
+            'theme' => $this -> options['theme'] ?? 'system',
+            'displayembeds' => ! $this -> options['no_embeds'] ?? false,
+            'noreplies' => $this -> options['no_replies'] ?? true,
+            'numberofposts' => $this -> options['posts_limit'] ?? 5
         ];
 
         // Merge defaults with provided attributes
         $attributes = wp_parse_args( $attributes, $defaults );
 
         // Extract variables
-        $display_embeds = $attributes['displayEmbeds'];
-        $no_replies = $attributes['noReplies'];
+        $display_embeds = $attributes['displayembeds'];
+        $no_replies = $attributes['noreplies'];
         $theme = $attributes['theme'];
-        $number_of_posts = $attributes['numberOfPosts'];
+        $number_of_posts = $attributes['numberofposts'];
 
         $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies);
 
@@ -114,11 +119,13 @@ class BlueSky_Render_Front {
                                 echo nl2br( esc_html( $post['text'] ) );
 
                                 // print the gallery of images if any
-                                if ( ! empty( $post['images'] ) ) :
+                                if ( ! empty( $post['images'] ) && $display_embeds ) :
+                                    wp_enqueue_style( 'bluesky-social-lightbox', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-lightbox.css', array(), BLUESKY_PLUGIN_VERSION );
+                                    wp_enqueue_script( 'bluesky-social-lightbox', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social-lightbox.js', array(), BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
                                 ?>
                                     <div class="bluesky-social-integration-post-gallery" style="--bluesky-gallery-nb: <?php echo esc_attr( count( $post['images'] ) ); ?>">
                                         <?php foreach ( $post['images'] as $image ) : ?>
-                                        <a href="<?php echo esc_url( $image['url'] ); ?>"><?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?><img src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : ''; ?>" <?php echo ! empty( $image['width'] ) && $image['width'] != '0' ? ' width="' . esc_attr( $image['width'] ) . '"' : ''; ?> <?php echo ! empty( $image['height'] ) && $image['height'] != '0' ? ' height="' . esc_attr( $image['height'] ) . '"' : ''; ?>></a>
+                                        <a href="<?php echo esc_url( $image['url'] ); ?>" class="bluesky-gallery-image"><?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?><img src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo isset( $image['alt'] ) ? esc_attr( $image['alt'] ) : ''; ?>" <?php echo ! empty( $image['width'] ) && $image['width'] != '0' ? ' width="' . esc_attr( $image['width'] ) . '"' : ''; ?> <?php echo ! empty( $image['height'] ) && $image['height'] != '0' ? ' height="' . esc_attr( $image['height'] ) . '"' : ''; ?> loading="lazy"></a>
                                         <?php endforeach; ?>
                                     </div>
                                     
@@ -128,7 +135,7 @@ class BlueSky_Render_Front {
 
                                 <?php
                                 // displays potential media
-                                if ( ! empty( $post['external_media']  )  && $display_embeds ) :
+                                if ( ! empty( $post['external_media']  ) && $display_embeds ) :
 
                                     if ( isset( $post['external_media']['uri'] ) && ( strpos( $post['external_media']['uri'] , 'youtu' ) ) ) :
                                         $helpers = new BlueSky_Helpers();
@@ -160,7 +167,7 @@ class BlueSky_Render_Front {
 
                                 // displays potential embeds
                                 if ( ! empty( $post['embedded_media'] ) && $display_embeds ):
-                                        if ( $post['embedded_media']['type'] === 'video' ):
+                                    if ( $post['embedded_media']['type'] === 'video' ):
 
                                         $video = $post['embedded_media'];
                                 ?>
@@ -175,8 +182,8 @@ class BlueSky_Render_Front {
                                         </video>
                                     </div>
                                 <?php 
-                                        elseif ( $post['embedded_media']['type'] === 'record' ):
-                                            $hasURL = isset( $post['embedded_media']['url'] ) && ! empty( $post['embedded_media']['url'] );
+                                    elseif ( $post['embedded_media']['type'] === 'record' ):
+                                        $hasURL = isset( $post['embedded_media']['url'] ) && ! empty( $post['embedded_media']['url'] );
                                 ?>
                                     <<?php echo $hasURL ? 'a href="' . esc_url( $post['embedded_media']['url'] ) . '"' : 'div'; ?> class="bluesky-social-integration-embedded-record">
                                         <div class="bluesky-social-integration-last-post-content">
@@ -185,6 +192,20 @@ class BlueSky_Render_Front {
                                         </div>
                                     </<?php echo $hasURL ? 'a' : 'div'; ?>>
                                 <?php 
+                                    elseif ( $post['embedded_media']['type'] === 'starterpack' ):
+                                    $hasURL = isset( $post['embedded_media']['url'] ) && ! empty( $post['embedded_media']['url'] );
+                            ?>
+                                <<?php echo $hasURL ? 'a href="' . esc_url( $post['embedded_media']['url'] ) . '"' : 'div'; ?> class="bluesky-social-integration-embedded-record">
+                                    <div class="bluesky-social-integration-external-image">
+                                        <svg fill="none" width="58" viewBox="0 0 24 24" height="58"><defs><linearGradient x1="0" y1="0" x2="100%" y2="0" gradientTransform="rotate(45)" id="sky_gkpWQFtGs17eaqFdD5GTv"><stop offset="0" stop-color="#0A7AFF"></stop><stop offset="1" stop-color="#59B9FF"></stop></linearGradient></defs><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M11.26 5.227 5.02 6.899c-.734.197-1.17.95-.973 1.685l1.672 6.24c.197.734.951 1.17 1.685.973l6.24-1.672c.734-.197 1.17-.951.973-1.685L12.945 6.2a1.375 1.375 0 0 0-1.685-.973Zm-6.566.459a2.632 2.632 0 0 0-1.86 3.223l1.672 6.24a2.632 2.632 0 0 0 3.223 1.861l6.24-1.672a2.631 2.631 0 0 0 1.861-3.223l-1.672-6.24a2.632 2.632 0 0 0-3.223-1.861l-6.24 1.672Z"></path><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M15.138 18.411a4.606 4.606 0 1 0 0-9.211 4.606 4.606 0 0 0 0 9.211Zm0 1.257a5.862 5.862 0 1 0 0-11.724 5.862 5.862 0 0 0 0 11.724Z"></path></svg>
+                                    </div>
+                                    <div class="bluesky-social-integration-last-post-content">
+                                        <p>
+                                            <span class="bluesky-social-integration-post-starterpack-name"><?php echo esc_html( $post['embedded_media']['title'] ); ?></span> • <small class="bluesky-social-integration-post-account-info-name"><?php echo esc_html( $post['embedded_media']['author']['display_name'] ); ?></small></p>
+                                        <p><?php echo nl2br( esc_html( $post['embedded_media']['text'] ) ); ?></p>
+                                    </div>
+                                </<?php echo $hasURL ? 'a' : 'div'; ?>>
+                            <?php 
                                     endif;
                                 endif; ?>
                             </div>
@@ -215,14 +236,14 @@ class BlueSky_Render_Front {
         $attributes = shortcode_atts([
             'theme' => $this -> options['theme'] ?? 'system',
             'styleClass' => '',
-            'displayBanner' => true,
-            'displayAvatar' => true,
-            'displayCounters' => true,
-            'displayBio' => true
+            'displaybanner' => true,
+            'displayavatar' => true,
+            'displaycounters' => true,
+            'displaybio' => true
         ], $atts);
 
         // Convert string boolean values to actual booleans
-        $boolean_attrs = ['displayBanner', 'displayAvatar', 'displayCounters', 'displayBio'];
+        $boolean_attrs = ['displaybanner', 'displayavatar', 'displaycounters', 'displaybio'];
         foreach ( $boolean_attrs as $attr ) {
             $attributes[ $attr ] = filter_var( $attributes[ $attr ], FILTER_VALIDATE_BOOLEAN );
         }
@@ -249,7 +270,7 @@ class BlueSky_Render_Front {
             $classes[] = 'theme-' . esc_attr( $attributes['theme'] );
         }
         
-        $display_elements = ['Banner', 'Avatar', 'Counters', 'Bio'];
+        $display_elements = ['banner', 'avatar', 'counters', 'bio'];
         foreach ( $display_elements as $element ) {
             $option_key = 'display' . $element;
             if ( isset( $attributes[ $option_key] ) && $attributes[ $option_key ] === false ) {
