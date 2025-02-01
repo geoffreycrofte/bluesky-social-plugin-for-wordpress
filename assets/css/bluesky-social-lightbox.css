@@ -1,0 +1,74 @@
+#bluesky-lightbox::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+    -webkit-overflow-scrolling: touch;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);   
+}
+
+#bluesky-lightbox {
+    box-sizing: border-box;
+    padding: 32px;
+    background: none;
+    border: 0;
+}
+
+#bluesky-lightbox .bluesky-lightbox-content {
+    position: relative;
+    width: 100%;
+    max-width: 880px;
+    text-align: center;
+}
+
+
+#bluesky-lightbox .bluesky-lightbox-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+#bluesky-lightbox .bluesky-lightbox-image-caption {
+    margin-top: 16px;
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+#bluesky-lightbox button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    width: 26px;
+    height: 26px;
+    color: #fff;
+    font-size: 21px;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#bluesky-lightbox button:hover,
+#bluesky-lightbox button:focus-visible {
+    color: #fff;
+    outline: 2px dotted #fff;
+}
+
+#bluesky-lightbox .bluesky-lightbox-prev {
+    top: 50%;
+    left: -28px;
+}
+
+#bluesky-lightbox .bluesky-lightbox-next {
+    top: 50%;
+    right: -28px;
+}
+
+#bluesky-lightbox .bluesky-lightbox-close {
+    top: -26px;
+    right: -26px;
+}
