@@ -84,6 +84,8 @@
 
 .bluesky-social-integration-description.bluesky-social-integration-description {
     margin-top: calc(var(--bluesky-card-spacing) / 2);
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .no-bio .bluesky-social-integration-description {
