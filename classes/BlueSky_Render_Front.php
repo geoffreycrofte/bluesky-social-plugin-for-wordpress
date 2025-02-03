@@ -38,9 +38,6 @@ class BlueSky_Render_Front {
 
     // Shortcode for BlueSky last posts
     public function bluesky_last_posts_shortcode($atts = []) {
-
-        var_dump( $atts );
-
         // Convert shortcode attributes to array and merge with defaults
         $attributes = wp_parse_args($atts, [
             'theme' => $this -> options['theme'] ?? 'system',
@@ -52,9 +49,6 @@ class BlueSky_Render_Front {
         // Convert string boolean values to actual booleans
         $attributes['displayembeds'] = filter_var( $attributes['displayembeds'], FILTER_VALIDATE_BOOLEAN);
         $attributes['noreplies'] = filter_var( $attributes['noreplies'], FILTER_VALIDATE_BOOLEAN);
-
-        var_dump( $attributes );
-
         return $this->render_bluesky_posts_list( $attributes );
     }
 
