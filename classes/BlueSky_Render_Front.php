@@ -113,7 +113,7 @@ class BlueSky_Render_Front {
                                 <?php //TODO: should I use aria-hidden on the name and handle to make it lighter for screenreaders? ?>
                                 <span class="bluesky-social-integration-post-account-info-name"><?php echo esc_html($post['account']['display_name']); ?></span>
                                 <span class="bluesky-social-integration-post-account-info-handle"><?php echo esc_html('@' . $post['account']['handle']); ?></span>
-                                <span class="bluesky-social-integration-post-account-info-date"><?php echo esc_html( human_time_diff( strtotime( $post['created_at'] ), current_time( 'U' ) ) ); ?></span>
+                                <span class="bluesky-social-integration-post-account-info-date"><?php echo str_replace(' ', ' ', esc_html( human_time_diff( strtotime( $post['created_at'] ), current_time( 'U' ) ) ) ); ?></span>
                             </p>
 
                             <div class="bluesky-social-integration-post-content-text"<?php echo isset( $post['langs'] ) && is_array( $post['langs'] ) ? ' lang="' . $post['langs'][0] . '"' : ''; ?>>

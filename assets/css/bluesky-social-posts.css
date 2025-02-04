@@ -120,8 +120,9 @@
 }
 
 .bluesky-social-integration-post-account-info-names.bluesky-social-integration-post-account-info-names {
-    margin: 0!important;
+    margin: 0 0 6px 0!important;
     font-size: 1em!important;
+    line-height: 1.4!important;
     color: var(--bluesky-card-txt-alt)!important;
 }
 
