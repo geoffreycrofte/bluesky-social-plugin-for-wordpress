@@ -115,6 +115,19 @@
     opacity: 0.4;
 }
 
+
+.bluesky-profile-block {
+    position: relative;
+}
+
+.bluesky-profile-block::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 1;
+}
+
 /**
  * Styles for the profile card darkmode
  */
