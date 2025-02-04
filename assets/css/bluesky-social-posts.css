@@ -10,6 +10,24 @@
     --bluesky-card-avatar-size: 90px;
 }
 
+.bluesky-social-integration-last-post.has-no-posts {
+    padding: 24px;
+    text-align: center;
+}
+
+.bluesky-social-integration-last-post.has-no-posts svg {
+    padding: 16px;
+    color: color-mix(in srgb, var(--bluesky-card-txt) 20%, var(--bluesky-card-txt) 20%);
+    background: color-mix(in srgb, var(--bluesky-card-txt) 5%, var(--bluesky-card-txt) 5%);
+    border-radius: 50%;
+}
+
+.bluesky-social-integration-last-post.has-no-posts p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--bluesky-card-txt) 30%, var(--bluesky-card-txt) 30%);
+}
+
 .bluesky-social-integration-last-post img {
     max-width: 100%;
     height: auto;
@@ -102,18 +120,15 @@
 }
 
 .bluesky-social-integration-post-account-info-names.bluesky-social-integration-post-account-info-names {
-    margin: 0!important;
+    margin: 0 0 6px 0!important;
     font-size: 1em!important;
+    line-height: 1.4!important;
     color: var(--bluesky-card-txt-alt)!important;
 }
 
 .bluesky-social-integration-post-account-info-name.bluesky-social-integration-post-account-info-name {
     color: var(--bluesky-card-txt-alt)!important;
     font-weight: bold!important;
-}
-
-.bluesky-social-integration-post-account-info-handle {
-    /* Maybe some day */
 }
 
 .bluesky-social-integration-post-starterpack-name {

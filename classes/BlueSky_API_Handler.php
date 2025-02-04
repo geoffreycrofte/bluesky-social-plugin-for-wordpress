@@ -342,6 +342,7 @@ class BlueSky_API_Handler {
      * @return array Processed posts
      */
     private function process_posts( $raw_posts ) {
+        
         return array_map(function( $post ) {
             $post = $post['post'];
             
@@ -365,12 +366,14 @@ class BlueSky_API_Handler {
                     'uri' => $post['embed']['external']['uri'],
                     'title' => $post['embed']['external']['title'] ?? '',
                     'alt' => $post['embed']['external']['alt'] ?? '',
+                    'thumb' => $post['embed']['external']['thumb'] ?? '',
                     'description' => $post['embed']['external']['description'] ?? ''
                 ];
             } elseif ( isset( $post['embed']['media'] ) ) {
                 $external_media = [
                     'uri' => $post['embed']['media']['external']['uri'],
                     'title' => $post['embed']['media']['external']['title'] ?? '',
+                    'alt' => $post['embed']['media']['external']['alt'] ?? '',
                     'thumb' => $post['embed']['media']['external']['thumb'] ?? '',
                     'description' => $post['embed']['media']['external']['description'] ?? ''
                 ];
@@ -399,7 +402,8 @@ class BlueSky_API_Handler {
                     'repost' => $post['repostCount'] ?? '',
                     'like' => $post['likeCount'] ?? '',
                     'quote' => $post['quoteCount'] ?? ''
-                ]
+                ],
+                'facets' => $post['record']['facets'] ?? [],
             ];
         }, $raw_posts);
     }

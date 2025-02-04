@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.7
 - Requires PHP: 7.4
-- Stable tag: 1.2.0
+- Stable tag: 1.3.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -26,12 +26,13 @@ Some other included features:
  * Youtube URL detection
  * Embedded video
  * Quote embedded
- * Link reference (embedded card)
+ * Link reference (embedded card with image)
+ * Starterpack display
+ * Gallery of images (displaying an accessible lightbox)
 * App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
 * Dark/Light mode (by default is system/user choice)
 * Lots of options in the display of your profile banner
-* Gallery of images
 
 ## Shortcode usage
 
@@ -105,6 +106,15 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 ## Changelog
 
+### 1.3.0
+* **Features**
+ * Displays links for URL and hashtags.
+ * Displays Open Graph Image for embedded link cards.
+ * Better empty states for new accounts.
+ * Default avatar and banner for empty accounts.
+* **Improvements**
+ * Auto-syndication only auto-post posts created after plugin activation (🚨 existing users: you need to save your settings again)
+
 ### 1.2.0
 * **Bug fix**
  * Text wrap renders better now.
@@ -135,6 +145,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 
 ## Upgrade Notice
 
+### 1.3.0
+Existing users: you need to save your settings again to ensure proper auto-syndication function.
+
 ### 1.2.0
 Smalm breaking change on the shortcode attributes. Use lower cases on all the name from now on.
 
@@ -155,9 +168,11 @@ This plugin is open source and licensed under GPLv2 or later. Contributions are 
 
 ### Planned Improvements
 
-* Add support for the embedded records options in the posts feed.
+Follow the roadmap on [Github Project](https://github.com/users/geoffreycrofte/projects/1/views/2).
+
 * Enhance customization options for profile cards and posts.
 * Add color scheme options for the profile card and posts.
-* Adds an option within the post review to disable the syndication, post by post.
-
-Other feature requests and bugs fixing at: https://github.com/users/geoffreycrofte/projects/1/views/1?layout=table
+* ~~Add support for Open Graph Image on Post Cards~~
+* ~~Add support links and hashtag being real links~~
+* ~~Add support for the embedded records options in the posts feed.~~
+* ~~Adds an option within the post review to disable the syndication, post by post.~~
