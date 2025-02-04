@@ -36,7 +36,11 @@ class BlueSky_Plugin_Setup {
      * Plugin activation hook
      */
     public function on_plugin_activation() {
-        add_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date', time() );
+        // Adds activation date if it doesn't exist.
+        // Used later to block syndication for older posts.
+        if ( ! get_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date' ) ) {
+            add_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date', time() );
+        }
     }
 
     /**
@@ -67,7 +71,7 @@ class BlueSky_Plugin_Setup {
         add_action('init', [$this, 'register_gutenberg_blocks']);
 
         // Post syndication
-        add_action( 'publish_post', [$this, 'syndicate_post_to_bluesky'], 10, 1 );
+        add_action( 'transition_post_status', [$this, 'syndicate_post_to_bluesky'], 10, 3 );
     }
 
     /**
@@ -646,34 +650,36 @@ class BlueSky_Plugin_Setup {
      * Syndicate post to BlueSky
      * @param int $post_id WordPress post ID
      */
-    public function syndicate_post_to_bluesky( $post_id ) {
-        $post = get_post( $post_id );
-        $permalink = get_permalink( $post_id );
+    public function syndicate_post_to_bluesky( $new_status, $old_status, $post ) {
+        if ( ( 'publish' === $new_status && 'publish' !== $old_status ) && 'post' === $post->post_type ) {
+            $post_id = $post -> ID;
+            $permalink = get_permalink( $post_id );
 
-        do_action( 'bluesky_before_syndicating_post', $post_id );
+            do_action( 'bluesky_before_syndicating_post', $post_id );
 
-        // Check if the post should be syndicated (metabox option)
-        // This metabox is set by the default global setting, or manually by the post editor.
-        $dont_syndicate = get_post_meta( $post_id, '_bluesky_dont_syndicate', true );
-        if ( $dont_syndicate ) {
-            return;
+            // Check if the post should be syndicated (metabox option)
+            // This metabox is set by the default global setting, or manually by the post editor.
+            $dont_syndicate = get_post_meta( $post_id, '_bluesky_dont_syndicate', true );
+            if ( $dont_syndicate || ( isset( $_POST['bluesky_dont_syndicate'] ) && $_POST['bluesky_dont_syndicate'] === '1' ) ) {
+                return;
+            }
+
+            // Check if the post is already syndicated
+            // because the action can be triggered multiple times by WordPress
+            $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
+            if ( $is_syndicated ) {
+                return;
+            }
+
+            $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
+
+            // if it's supposed to be syndicated, add a meta to the post
+            if ( ! $dont_syndicate ) {
+                $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
+            }
+
+            do_action( 'bluesky_after_syndicating_post', $post_id, $post_meta );
         }
-
-        // Check if the post is already syndicated
-        // because the action can be triggered multiple times by WordPress
-        $is_syndicated = get_post_meta( $post_id, '_bluesky_syndicated', true );
-        if ( $is_syndicated ) {
-            return;
-        }
-
-        $this -> api_handler -> syndicate_post_to_bluesky( $post -> post_title, $permalink );
-
-        // if it's supposed to be syndicated, add a meta to the post
-        if ( ! $dont_syndicate ) {
-            $post_meta = add_post_meta( $post_id, '_bluesky_syndicated', true, true );
-        }
-
-        do_action( 'bluesky_after_syndicating_post', $post_id, $post_meta );
     }
 
     /**

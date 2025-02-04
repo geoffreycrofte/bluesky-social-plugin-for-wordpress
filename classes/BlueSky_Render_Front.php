@@ -222,6 +222,7 @@ class BlueSky_Render_Front {
             ob_start();
             do_action('bluesky_before_post_list_empty_markup', $posts );
         ?>
+            
             <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?> has-no-posts">
                 <svg fill="none" width="64" viewBox="0 0 24 24" height="64">
                     <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 4a1 1 0 0 1 1-1h1a8.003 8.003 0 0 1 7.75 6.006A7.985 7.985 0 0 1 19 6h1a1 1 0 0 1 1 1v1a8 8 0 0 1-8 8v4a1 1 0 1 1-2 0v-7a8 8 0 0 1-8-8V4Zm2 1a6 6 0 0 1 6 6 6 6 0 0 1-6-6Zm8 9a6 6 0 0 1 6-6 6 6 0 0 1-6 6Z"></path>
