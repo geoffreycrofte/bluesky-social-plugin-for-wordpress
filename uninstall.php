@@ -7,6 +7,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // Delete plugin options
 delete_option( 'bluesky_settings' ); // Main plugin options
 delete_option( 'bluesky_settings_secret' ); // API secret or key, if applicable
+delete_option( 'bluesky_settings__activation_date' ); // The activation date of the plugin (from v1.3.0)
 
 // Fetch all options
 $options = wp_load_alloptions();

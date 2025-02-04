@@ -72,12 +72,11 @@ class BlueSky_Render_Front {
         $number_of_posts = $attributes['numberofposts'];
 
         $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies);
+        
+        // Apply theme class
+        $theme_class = 'theme-' . esc_attr( $theme );
 
-        if ( isset ( $posts ) && is_array( $posts ) ) {
-
-            // Apply theme class
-            $theme_class = 'theme-' . esc_attr( $theme );
-
+        if ( isset ( $posts ) && is_array( $posts ) && count( $posts ) > 0 ) {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
             ?>
@@ -218,8 +217,20 @@ class BlueSky_Render_Front {
             <?php
             do_action('bluesky_after_post_list_markup', $posts );
             return ob_get_clean();
+
         } else {
-            return '<p class="bluesky-posts-block no-posts">' . __( 'No posts available.', 'social-integration-for-bluesky' ) . '</p>';
+            ob_start();
+            do_action('bluesky_before_post_list_empty_markup', $posts );
+        ?>
+            <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?> has-no-posts">
+                <svg fill="none" width="64" viewBox="0 0 24 24" height="64">
+                    <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 4a1 1 0 0 1 1-1h1a8.003 8.003 0 0 1 7.75 6.006A7.985 7.985 0 0 1 19 6h1a1 1 0 0 1 1 1v1a8 8 0 0 1-8 8v4a1 1 0 1 1-2 0v-7a8 8 0 0 1-8-8V4Zm2 1a6 6 0 0 1 6 6 6 6 0 0 1-6-6Zm8 9a6 6 0 0 1 6-6 6 6 0 0 1-6 6Z"></path>
+                </svg>
+                <p class="bluesky-posts-block no-posts"><?php esc_html_e( 'No posts available.', 'social-integration-for-bluesky' ); ?></p>
+            </div>
+        <?php
+            do_action('bluesky_after_post_list_empty_markup', $posts );
+            return ob_get_clean();
         }
     }
 
@@ -283,7 +294,7 @@ class BlueSky_Render_Front {
         ?>
         <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>">
             <?php do_action('bluesky_before_profile_card_content', $profile ); ?>
-            <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url('<?php echo esc_url( $profile['banner'] ); ?>')">
+            <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
                 <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                 <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
             </div>
@@ -295,7 +306,9 @@ class BlueSky_Render_Front {
                     <span class="follows"><span class="nb"><?php echo esc_html( intval( $profile['followsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Following', 'social-integration-for-bluesky') ); ?></span>
                     <span class="posts"><span class="nb"><?php echo esc_html( intval( $profile['postsCount'] ) ) . '</span>&nbsp;' . esc_html( __('Posts', 'social-integration-for-bluesky') ); ?></span>
                 </p>
-                <p class="bluesky-social-integration-description"><?php echo nl2br( esc_html( $profile['description'] ) ); ?></p>
+                <?php if ( isset( $profile['description'] ) ) { ?>
+                    <p class="bluesky-social-integration-description"><?php echo nl2br( esc_html( $profile['description'] ) ); ?></p>
+                <?php } ?>
             </div>
             <?php do_action('bluesky_after_profile_card_content', $profile ); ?>
         </aside>

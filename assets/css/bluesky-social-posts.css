@@ -10,6 +10,24 @@
     --bluesky-card-avatar-size: 90px;
 }
 
+.bluesky-social-integration-last-post.has-no-posts {
+    padding: 24px;
+    text-align: center;
+}
+
+.bluesky-social-integration-last-post.has-no-posts svg {
+    padding: 16px;
+    color: color-mix(in srgb, var(--bluesky-card-txt) 20%, var(--bluesky-card-txt) 20%);
+    background: color-mix(in srgb, var(--bluesky-card-txt) 5%, var(--bluesky-card-txt) 5%);
+    border-radius: 50%;
+}
+
+.bluesky-social-integration-last-post.has-no-posts p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--bluesky-card-txt) 30%, var(--bluesky-card-txt) 30%);
+}
+
 .bluesky-social-integration-last-post img {
     max-width: 100%;
     height: auto;

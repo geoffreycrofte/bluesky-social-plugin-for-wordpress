@@ -25,8 +25,18 @@ class BlueSky_Plugin_Setup {
         $this->api_handler = $api_handler;
         $this->options = get_option( BLUESKY_PLUGIN_OPTIONS );
 
+        // On activation
+        register_activation_hook(BLUESKY_PLUGIN_FILE, [$this, 'on_plugin_activation']);
+
         // Initialize hooks
         $this->init_hooks();
+    }
+
+    /**
+     * Plugin activation hook
+     */
+    public function on_plugin_activation() {
+        add_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date', time() );
     }
 
     /**
@@ -150,6 +160,11 @@ class BlueSky_Plugin_Setup {
             'days' => $days,
             'total_seconds' => ( $minutes * 60 ) + ( $hours * 3600 ) + ( $days * 86400 )
         ];
+
+        // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)
+        if ( ! get_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date' ) ) {
+            add_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date', time() );
+        }
         
         return $sanitized;
     }

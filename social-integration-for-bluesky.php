@@ -19,6 +19,7 @@ if ( ! defined('ABSPATH') ) {
 }
 
 define( 'BLUESKY_PLUGIN_VERSION', '1.2.1' );
+define( 'BLUESKY_PLUGIN_FILE',  __FILE__ );
 define( 'BLUESKY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'BLUESKY_PLUGIN_FOLDER', plugin_dir_url( __FILE__ ) );
 define( 'BLUESKY_PLUGIN_DIRECTORY_NAME', dirname( plugin_basename( __FILE__ ) ) );
