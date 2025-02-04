@@ -104,6 +104,11 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 == Changelog ==
 
+= 1.3.1 =
+* **Improvements**
+ * Improve feed block accessibility
+ * Improve feed block link color on Gutenberg editor
+
 = 1.3.0 =
 * **Features**
  * Displays links for URL and hashtags.

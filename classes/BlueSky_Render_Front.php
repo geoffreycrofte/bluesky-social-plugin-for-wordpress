@@ -89,7 +89,7 @@ class BlueSky_Render_Front {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
             ?>
-            <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>">
+            <aside class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
                 <ul class="bluesky-social-integration-last-post-list">
 
                     <?php
@@ -223,8 +223,9 @@ class BlueSky_Render_Front {
                     
                     do_action('bluesky_after_post_list_content', $posts );
                     ?>
+
                 </ul>
-            </div>
+            </aside>
             <?php
             do_action('bluesky_after_post_list_markup', $posts );
             return ob_get_clean();
@@ -348,12 +349,16 @@ class BlueSky_Render_Front {
         ob_start();
         do_action('bluesky_before_profile_card_markup', $profile );
         ?>
+
         <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>">
+
             <?php do_action('bluesky_before_profile_card_content', $profile ); ?>
+
             <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
                 <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                 <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
             </div>
+
             <div class="bluesky-social-integration-content">
                 <p class="bluesky-social-integration-name"><?php echo esc_html( $profile['displayName'] ); ?></p>
                 <p class="bluesky-social-integration-handle"><a href="https://bsky.app/profile/<?php echo esc_attr( $profile['handle'] ); ?>"><span>@</span><?php echo esc_html( $profile['handle'] ); ?></a></p>
@@ -366,8 +371,11 @@ class BlueSky_Render_Front {
                     <p class="bluesky-social-integration-description"><?php echo nl2br( esc_html( $profile['description'] ) ); ?></p>
                 <?php } ?>
             </div>
+
             <?php do_action('bluesky_after_profile_card_content', $profile ); ?>
+
         </aside>
+
         <?php
         do_action('bluesky_after_profile_card_markup', $profile );
         return ob_get_clean();
