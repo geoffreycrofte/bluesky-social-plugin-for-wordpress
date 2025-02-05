@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,11 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 9. A post automatically shared after a WordPress publication.
 
 == Changelog ==
+
+= 1.3.1 =
+* **Improvements**
+ * Improve feed block accessibility
+ * Improve feed block link color on Gutenberg editor
 
 = 1.3.0 =
 * **Features**

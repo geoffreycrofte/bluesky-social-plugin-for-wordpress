@@ -555,7 +555,10 @@ class BlueSky_Plugin_Setup {
                             <p><?php echo sprintf( esc_html__( 'This plugin is written by %s.', 'social-integration-for-bluesky'), '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>' ); ?><br><?php echo esc_html__( 'This extension is not an official BlueSky plugin.', 'social-integration-for-bluesky')  ?></p>
 
                             <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
-                            <p><?php echo sprintf( esc_html__( 'Need help with something? Have a suggestion? %1$sAsk away%2$s.', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">', '</a>' ); ?></p>
+                            <p>
+                                <?php echo sprintf( esc_html__( 'Need help with something? Have a suggestion? %1$sAsk away%2$s.', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">', '</a>' ); ?><br>
+                                <?php echo sprintf( esc_html__( 'You want to contribute to this project? %1$sHere is the Github Repository%2$s.', 'social-integration-for-bluesky'), '<a href="https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress" target="_blank">', '</a>' ); ?>
+                            </p>
 
                             <?php $title = __('Rate this plugin on WordPress.org', 'social-integration-for-bluesky') ?>
 

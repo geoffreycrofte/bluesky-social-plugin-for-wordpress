@@ -109,6 +109,10 @@
     z-index: 1;
 }
 
+.bluesky-social-integration-post-content-text a {
+    color: var(--bluesky-primary-color);
+}
+
 .bluesky-social-integration-last-post-header {
     flex-shrink: 0;
 }
@@ -182,6 +186,18 @@
     display: inline-flex;
 }
 
+.bluesky-posts-block {
+    position: relative;
+}
+
+.bluesky-posts-block::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 1;
+}
+
 
 /**
  * Styles for the profile card darkmode
@@ -192,7 +208,7 @@
         --bluesky-card-txt: white;
         --bluesky-card-txt-alt: #aebbc9;
         --bluesky-card-border: 1px solid #2e4052;
-        --bluesky-primary-color: #208BFE;
+        --bluesky-primary-color: #3491f4;
     }
 }
 
@@ -201,7 +217,7 @@
     --bluesky-card-txt: white;
     --bluesky-card-txt-alt: #aebbc9;
     --bluesky-card-border: 1px solid #2e4052;
-    --bluesky-primary-color: #208BFE;
+    --bluesky-primary-color: #3491f4;
 }
 
 .bluesky-social-integration-last-post.theme-light {

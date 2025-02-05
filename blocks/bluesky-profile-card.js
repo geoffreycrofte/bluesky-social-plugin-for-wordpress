@@ -67,7 +67,7 @@
             el(ServerSideRender, {
                 block: 'bluesky-social/profile',
                 attributes: attributes,
-                className: props.classname ?? 'bluesky-posts-block'
+                className: props.classname ?? 'bluesky-profile-block'
             })
         ];
     };
