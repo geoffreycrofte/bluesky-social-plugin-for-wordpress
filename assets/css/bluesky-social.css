@@ -27,8 +27,20 @@
     width: 100%;
 }
 
+.bluesky-social-integration-admin .privacy-settings-header {
+    margin-bottom: 0;
+}
+
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    display: flex;
+    justify-content: safe center;
+    overflow: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper a {
@@ -52,13 +64,18 @@
 }
 
 .bluesky-social-integration-admin-content.bluesky-social-integration-admin-content > * {
+    box-sizing: border-box;
     width: 100%;
     max-width: 680px;
     margin-inline: auto;
 }
 
-.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content > ul {
-    padding-left: 3em;
+.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content ul {
+    padding-left: 1.5em;
+}
+
+.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content .bluesky-social-integration-last-post-list {
+    padding-left: 0;
 }
 
 .bluesky-social-demo .demo {
@@ -83,19 +100,34 @@
     font-size: 1.8em;
 }
 
+.bluesky-social-integration-admin h2:first-child {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.bluesky-social-integration-admin-content * + h2 {
+    margin-top: 2em;
+}
+
 .bluesky-social-integration-admin .cache-duration-fields label {
     margin-right: 15px;
 }
 
-.bluesky-social-integration-admin .cache-status {
+.bluesky-social-integration-admin .bluesky-cache-status {
     margin-top: 10px;
-    padding: 10px;
+    padding: 10px 16px;
     background: #f8f8f8;
     border-left: 4px solid #646970;
+    border-radius: 8px;
 }
 
-.bluesky-social-integration-admin .cache-status p {
-    margin: 5px 0;
+.bluesky-social-integration-admin .bluesky-cache-status h3 {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.bluesky-social-integration-admin .bluesky-cache-status p {
+    margin: 10px 0;
 }
 
 .bluesky-social-integration-admin .bluesky-connection-check {
@@ -162,4 +194,25 @@
 
 .bluesky-social-integration-shortcode-demo {
     padding: 32px;
+}
+
+/* Interactive Editor */
+.bluesky-social-integration-admin-content .bluesky-social-integration-large-content {
+    max-width: 1200px;
+}
+
+.bluesky-social-integration-interactive {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.bluesky-social-integration-interactive .form-table {
+    margin-top: 0;
+}
+
+input.bluesky-custom-unit {
+    width: 4em;
+    padding-right: 0;
 }

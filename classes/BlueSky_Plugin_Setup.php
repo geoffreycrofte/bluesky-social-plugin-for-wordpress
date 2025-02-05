@@ -136,7 +136,7 @@ class BlueSky_Plugin_Setup {
             BLUESKY_PLUGIN_SETTING_PAGENAME,
             array(
                 'before_section' => '<div id="customization" aria-hidden="false" class="bluesky-social-integration-admin-content">',
-                'after_section'  => $submit_button . "\n\n" . $this->display_cache_status() . "\n\n" . '</div>',
+                'after_section'  => $submit_button . "\n\n" . '</div>',
                 'section_class'  => 'bluesky-customization-settings',
             )
         );
@@ -357,7 +357,7 @@ class BlueSky_Plugin_Setup {
         $no_embeds = $this->options['no_embeds'] ?? 0;
 
         echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_embeds' ) . '" type="checkbox" name="bluesky_settings[no_embeds]" value="1" ' . checked(1, $no_embeds, false) . ' aria-describedby="bluesky-no_embeds-desc" />';
-        echo '<span class="description bluesky-description" id="bluesky-no_embeds-desc">' . esc_html( __('If checked, video, images, and links will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
+        echo '<span class="description bluesky-description" id="bluesky-no_embeds-desc">' . esc_html( __('If checked, videos, images, and link cards won’t be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -398,7 +398,7 @@ class BlueSky_Plugin_Setup {
             </label>
         </div>
         <p class="description">
-            <?php echo esc_html( __('Set to 0 in all fields to disable caching. Current cache status:', 'social-integration-for-bluesky') ); ?>
+            <?php echo esc_html( __('Set to 0 in all fields to disable the cache.', 'social-integration-for-bluesky') ); ?>
         </p>
         <?php
     }
@@ -413,7 +413,9 @@ class BlueSky_Plugin_Setup {
         $access_token_transient = get_transient( $helpers -> get_access_token_transient_key() );
         $refresh_token_transient = get_transient( $helpers -> get_refresh_token_transient_key() );
 
-        $output = '<div class="cache-status">';
+        $output = '<aside class="bluesky-cache-status">';
+
+        $output .= '<h3 class="bluesky-cache-title">' . esc_html__( 'Current cache status:', 'social-integration-for-bluesky') . '</h3>';
         
         // Profile cache status
         $output .= '<p><strong>' . esc_html( __('Profile Card Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
@@ -472,7 +474,7 @@ class BlueSky_Plugin_Setup {
             $output .= esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
         $output .= '</p>';
-        $output .= '</div>';
+        $output .= '</aside>';
 
         return $output;
     }
@@ -556,6 +558,12 @@ class BlueSky_Plugin_Setup {
                         <?php esc_html_e('Customization', 'social-integration-for-bluesky'); ?>
                     </a>
                     <?php } ?>
+
+                    <?php if ( $auth ) { ?>
+                    <a href="#styles" aria-controls="styles" class="privacy-settings-tab">
+                        <?php esc_html_e('Styles', 'social-integration-for-bluesky'); ?>
+                    </a>
+                    <?php } ?>
                     
                     <?php if ( $auth ) { ?>
                     <a href="#shortcodes" aria-controls="shortcodes" class="privacy-settings-tab">
@@ -577,10 +585,44 @@ class BlueSky_Plugin_Setup {
                         do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
                     ?>
 
+                    <div id="styles" aria-hidden="false" class="bluesky-social-integration-admin-content">
+                        <h2><?php echo esc_html__('Styles', 'social-integration-for-bluesky'); ?></h2>
+
+                        <p><?php echo esc_html__('Decide how you want your Bluesky blocks to look like!', 'social-integration-for-bluesky'); ?></p>
+
+                        <div class="bluesky-social-integration-large-content">
+                            <div class="bluesky-social-integration-interactive">
+                                <div class="bluesky-social-integration-interactive-visual">
+                                    <?php echo do_shortcode('[bluesky_profile]'); ?>
+                                </div>
+                                <div class="bluesky-social-integration-interactive-editor">
+                                    <table class="form-table" role="presentation">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">
+                                                    <label for="bluesky_custom_profile_name">Name/Pseudo</label>
+                                                </th>
+                                                <td>
+                                                    <span class="bluesky-input-widget">
+                                                        <input type="number" id="bluesky_custom_profile_name" name="bluesky_settings[customisation][profile][name][fs]" value="" placeholder="20" data-var="--bluesky-profile-custom-name-fs" aria-labelledby="bluesky_custom_profile_name bluesky_custom_profile_name_unit" class="bluesky-custom-unit" min="10">
+                                                        <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_profile_name_unit">px</abbr>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div id="shortcodes" aria-hidden="false" class="bluesky-social-integration-admin-content">
                         <h2><?php echo esc_html__('About the shortcodes', 'social-integration-for-bluesky'); ?></h2>
                         <?php // translators: %1$s is the the bluesky profile shortcode, %2$s is the bluesky last posts shortcode. ?>
                         <p><?php echo sprintf( esc_html__('You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s.', 'social-integration-for-bluesky'), '<code>[bluesky_profile]</code>', '<code>[bluesky_last_posts]</code>'); ?></p>
+
+                        <p><?php echo esc_html__('By default, the shortcodes use the global settings, but you can decide to override them thanks to the attributes described on this page.', 'social-integration-for-bluesky'); ?></p>
 
                         <p><?php echo esc_html__('You can also use the Gutenberg blocks to display the profile card and posts feed.', 'social-integration-for-bluesky'); ?></p>
 
@@ -649,6 +691,9 @@ class BlueSky_Plugin_Setup {
 
                         <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
                         <p><?php echo sprintf( esc_html__( 'Want to support the plugin? %1$sGive a review%2$s', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' . esc_attr( $title ) . '">', ' ⭐️⭐️⭐️⭐️⭐️</a>' ); ?></p>
+
+                        <h2><?php echo esc_html__('Some Plugin Engine Info', 'social-integration-for-bluesky'); ?></h2>
+                        <?php echo $this -> display_cache_status(); ?>
                     </div>
 
                 </form>

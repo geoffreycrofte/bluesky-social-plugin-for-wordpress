@@ -1,5 +1,9 @@
 (function($){
     if ( document.querySelector('.bluesky-social-integration-admin') ) {
+
+        /**
+         * Navigation menu
+         */
         const navItems = document.querySelectorAll('#bluesky-main-nav-tabs a');
         const tabContents = document.querySelectorAll('.bluesky-social-integration-admin-content');
         const hideTabs = function(){
@@ -12,6 +16,7 @@
                 item.setAttribute('aria-current', 'false');
             });
         };
+
         const showCurrent = function(currentNavItem){
             currentNavItem.classList.add('active');
             currentNavItem.setAttribute('aria-current', 'true');
@@ -37,5 +42,29 @@
         } else {
             navItems[0].click();
         }
+
+        /**
+         * Customisation Editor
+         */
+        const units = document.querySelectorAll('.bluesky-custom-unit');
+        const styles = document.querySelector('.bluesky-social-integration-interactive-editor');
+
+        units.forEach(unit => {
+            unit.addEventListener('change', e => {
+                let styleID = 'bluesky' + e.target.dataset.var;
+
+                if ( ! document.getElementById( styleID ) ) {
+                    let style = document.createElement('style');
+                    style.id = styleID;
+                    styles.prepend( style );
+                }
+
+                document.getElementById( styleID ).innerHTML = '.bluesky-social-integration-profile-card{' + e.target.dataset.var + ': ' + e.target.value + 'px}';
+
+                if ( e.target.value < 10 || typeof 'e.target.value' === 'null' ) {
+                    document.getElementById( styleID ).remove();
+                }
+            });
+        });
     }
 })(jQuery);

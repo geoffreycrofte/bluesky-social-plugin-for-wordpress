@@ -13,7 +13,8 @@
     border: var(--bluesky-card-border);
     background: var(--bluesky-card-bg);
     border-radius: var(--bluesky-card-br);
-    font-size: 1rem!important;
+    font-size: var(--bluesky-profile-custom-global-fs, 16px)!important;
+    line-height: var(--bluesky-profile-custom-global-lh, 1.5)!important;
 }
 
 .no-banner.bluesky-social-integration-profile-card {
@@ -79,17 +80,19 @@
 .bluesky-social-integration-name {
     color: var(--bluesky-primary-color)!important;
     font-weight: bold!important;
-    font-size: 1.2rem!important;
+    font-size: var(--bluesky-profile-custom-name-fs, 20px)!important;
 }
 
 .bluesky-social-integration-handle.bluesky-social-integration-handle {
     color: var(--bluesky-card-txt-alt)!important;
+    font-size: var(--bluesky-profile-custom-handle-fs, 14px)!important;
 }
 
 .bluesky-social-integration-description.bluesky-social-integration-description {
     margin-top: calc(var(--bluesky-card-spacing) / 2);
     word-wrap: break-word;
     word-break: break-word;
+    font-size: var(--bluesky-profile-custom-description-fs, 16px)!important;
 }
 
 .no-bio .bluesky-social-integration-description {
@@ -97,8 +100,9 @@
 }
 
 .bluesky-social-integration-followers.bluesky-social-integration-followers {
-    margin-top: calc(var(--bluesky-card-spacing) / 2)!important;
-    color: var(--bluesky-card-txt-alt)!important;    
+    margin-block: calc(var(--bluesky-card-spacing) / 2)!important;
+    color: var(--bluesky-card-txt-alt)!important;
+    font-size: var(--bluesky-profile-custom-followers-fs, 16px)!important;
 }
 
 .no-counters .bluesky-social-integration-followers {
