@@ -108,6 +108,8 @@ class BlueSky_Plugin_Setup {
      * Register plugin settings
      */
     public function register_settings() {
+        $submit_button = '<p class="submit"><button type="submit" class="button button-large button-primary">' . __( 'Save Changes' ) . '</button></p>';
+
         register_setting( 
             'bluesky_settings_group', 
             BLUESKY_PLUGIN_OPTIONS,
@@ -118,7 +120,25 @@ class BlueSky_Plugin_Setup {
             'bluesky_main_settings',
             esc_html__('BlueSky Account Settings', 'social-integration-for-bluesky'),
             [$this, 'settings_section_callback'],
-            BLUESKY_PLUGIN_SETTING_PAGENAME 
+            BLUESKY_PLUGIN_SETTING_PAGENAME,
+            array(
+                'before_section' => '<div id="account" aria-hidden="false" class="bluesky-social-integration-admin-content">',
+                //I tried get_submit_button() but it couldn't work for some reasons.
+                'after_section'  => $submit_button . "\n\n" . '</div>',
+                'section_class'  => 'bluesky-main-settings',
+            ) 
+        );
+
+        add_settings_section(
+            'bluesky_customization_settings',
+            esc_html__('BlueSky Customization Settings', 'social-integration-for-bluesky'),
+            [$this, 'customization_section_callback'],
+            BLUESKY_PLUGIN_SETTING_PAGENAME,
+            array(
+                'before_section' => '<div id="customization" aria-hidden="false" class="bluesky-social-integration-admin-content">',
+                'after_section'  => $submit_button . "\n\n" . $this->display_cache_status() . "\n\n" . '</div>',
+                'section_class'  => 'bluesky-customization-settings',
+            )
         );
 
         $this->add_settings_fields();
@@ -180,35 +200,43 @@ class BlueSky_Plugin_Setup {
         $fields = [
             'bluesky_handle' => [
                 'label' => __('BlueSky Handle', 'social-integration-for-bluesky'),
-                'callback' => 'render_handle_field'
+                'callback' => 'render_handle_field',
+                'section' => 'bluesky_main_settings'
             ],
             'bluesky_app_password' => [
                 'label' => __('BlueSky Password', 'social-integration-for-bluesky'),
-                'callback' => 'render_password_field'
+                'callback' => 'render_password_field',
+                'section' => 'bluesky_main_settings'
             ],
             'bluesky_auto_syndicate' => [
                 'label' => __('Auto-Syndicate Posts', 'social-integration-for-bluesky'),
-                'callback' => 'render_syndicate_field'
+                'callback' => 'render_syndicate_field',
+                'section' => 'bluesky_customization_settings'
             ],
             'bluesky_theme' => [
                 'label' => __('Theme', 'social-integration-for-bluesky'),
-                'callback' => 'render_theme_field'
+                'callback' => 'render_theme_field',
+                'section' => 'bluesky_customization_settings'
             ],
             'bluesky_posts_limit' => [
                 'label' => __('Number of Posts to Display', 'social-integration-for-bluesky'),
-                'callback' => 'render_posts_limit_field'
+                'callback' => 'render_posts_limit_field',
+                'section' => 'bluesky_customization_settings'
             ],
             'bluesky_no_replies' => [
                 'label' => __('Do not display replies', 'social-integration-for-bluesky'),
-                'callback' => 'render_no_replies_field'
+                'callback' => 'render_no_replies_field',
+                'section' => 'bluesky_customization_settings'
             ],
-            'bluesky_no_embed' => [
+            'bluesky_no_embeds' => [
                 'label' => __('Do not display embeds', 'social-integration-for-bluesky'),
-                'callback' => 'render_no_embeds_field'
+                'callback' => 'render_no_embeds_field',
+                'section' => 'bluesky_customization_settings'
             ],
             'bluesky_cache_duration' => [
                 'label' => __('Cache Duration', 'social-integration-for-bluesky'),
-                'callback' => 'render_cache_duration_field'
+                'callback' => 'render_cache_duration_field',
+                'section' => 'bluesky_customization_settings'
             ]
         ];
 
@@ -218,7 +246,7 @@ class BlueSky_Plugin_Setup {
                 '<label for="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_' . str_replace('bluesky_', '', $id) ) . '">' . esc_html( $field['label'] ) . '</label>',
                 [ $this, $field['callback'] ],
                 BLUESKY_PLUGIN_SETTING_PAGENAME ,
-                'bluesky_main_settings'
+                $field['section']
             );
         }
     }
@@ -228,6 +256,13 @@ class BlueSky_Plugin_Setup {
      */
     public function settings_section_callback() {
         echo '<p>' . esc_html( __('Enter your BlueSky account details to enable social integration.', 'social-integration-for-bluesky') ) . '</p>';
+    }
+
+    /**
+     * Customization section callback
+     */
+    public function customization_section_callback() {
+        echo '<p>' . esc_html( __('Start customizing how your feed and profile card are displayed.', 'social-integration-for-bluesky') ) . '</p>';
     }
 
     /**
@@ -378,67 +413,68 @@ class BlueSky_Plugin_Setup {
         $access_token_transient = get_transient( $helpers -> get_access_token_transient_key() );
         $refresh_token_transient = get_transient( $helpers -> get_refresh_token_transient_key() );
 
-        echo '<div class="cache-status">';
+        $output = '<div class="cache-status">';
         
         // Profile cache status
-        echo '<p><strong>' . esc_html( __('Profile Card Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        $output .= '<p><strong>' . esc_html( __('Profile Card Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $profile_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_profile_transient_key() );
-            echo sprintf(
+            $output .= sprintf(
                 // translators: %s is the time remaining
                 esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+            $output .=  esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
-        echo '</p>';
+        $output .= '</p>';
 
         // Posts cache status
-        echo '<p><strong>' . esc_html( __('Posts Feed Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        $output .=  '<p><strong>' . esc_html( __('Posts Feed Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $posts_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_posts_transient_key() );
-            echo sprintf(
+            $output .= sprintf(
                 // translators: %s is the time remaining
                 esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+            $output .= esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
-        echo '</p>';
+        $output .= '</p>';
 
-        echo '<hr>';
+        $output .= '<hr>';
 
         // Access Token cache status
-        echo '<p><strong>' . esc_html( __('Access Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        $output .= '<p><strong>' . esc_html( __('Access Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $access_token_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_access_token_transient_key() );
-            echo sprintf(
+            $output .= sprintf(
                 // translators: %s is the time remaining
                 esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+            $output .= esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
-        echo '</p>';
+        $output .= '</p>';
 
         // Refresh Token cache status
-        echo '<p><strong>' . esc_html( __('Refresh Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
+        $output .= '<p><strong>' . esc_html( __('Refresh Token Cache:', 'social-integration-for-bluesky') ) . '</strong> ';
         if ( $refresh_token_transient !== false ) {
             $time_remaining = $this -> get_transient_expiration_time( $helpers -> get_refresh_token_transient_key() );
-            echo sprintf(
+            $output .= sprintf(
                 // translators: %s is the time remaining
                 esc_html( __('Active (expires in %s)', 'social-integration-for-bluesky') ),
                 '<code>' . esc_html( $this -> format_time_remaining( $time_remaining ) ) . '</code>'
             );
         } else {
-            echo esc_html( __('Not cached', 'social-integration-for-bluesky') );
+            $output .= esc_html( __('Not cached', 'social-integration-for-bluesky') );
         }
-        echo '</p>';
+        $output .= '</p>';
+        $output .= '</div>';
 
-        echo '</div>';
+        return $output;
     }
 
     /**
@@ -494,109 +530,130 @@ class BlueSky_Plugin_Setup {
      * Render settings page
      */
     public function render_settings_page() {
+        // Adds a connection check using BlueSky API
+        $api = new BlueSky_API_Handler( $this -> options );
+        $auth = $api -> authenticate();
+
         ?>
-        <div class="wrap bluesky-social-integration-admin">    
-            <h1><?php echo esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky' ); ?></h1>
-            
-            <div class="container">
-                <div class="bluesky-social-integration-options postbox">
-                    <div class="inside">
-                        <div class="main">
-                            <form method="post" action="options.php">
-                                <?php
-                                settings_fields('bluesky_settings_group');
-                                do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
-                                submit_button();
-
-                                $this->display_cache_status();
-                                ?>
-                            </form>
-                        </div>
-                    </div>
+        <main class="bluesky-social-integration-admin">
+            <header role="banner" class="privacy-settings-header">
+                <div class="privacy-settings-title-section">
+                    <h1>
+                        <svg width="64" height="56" viewBox="0 0 166 146" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M36.454 10.4613C55.2945 24.5899 75.5597 53.2368 83 68.6104C90.4409 53.238 110.705 24.5896 129.546 10.4613C143.14 0.26672 165.167 -7.6213 165.167 17.4788C165.167 22.4916 162.289 59.5892 160.602 65.6118C154.736 86.5507 133.361 91.8913 114.348 88.6589C147.583 94.3091 156.037 113.025 137.779 131.74C103.101 167.284 87.9374 122.822 84.05 111.429C83.3377 109.34 83.0044 108.363 82.9995 109.194C82.9946 108.363 82.6613 109.34 81.949 111.429C78.0634 122.822 62.8997 167.286 28.2205 131.74C9.96137 113.025 18.4158 94.308 51.6513 88.6589C32.6374 91.8913 11.2622 86.5507 5.39715 65.6118C3.70956 59.5886 0.832367 22.4911 0.832367 17.4788C0.832367 -7.6213 22.8593 0.26672 36.453 10.4613H36.454Z" fill="#1185FE"/>
+                        </svg>
+                        <?php echo esc_html__('Social Integration for BlueSky', 'social-integration-for-bluesky' ); ?>
+                    </h1>
                 </div>
 
-                <div class="bluesky-social-integration-shortcodes postbox">
-                    <div class="inside">
-                        <div class="main">
-                            <h2><?php echo esc_html__('About the shortcodes', 'social-integration-for-bluesky'); ?></h2>
-                            <?php // translators: %1$s is the the bluesky profile shortcode, %2$s is the bluesky last posts shortcode. ?>
-                            <p><?php echo sprintf( esc_html__('You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s.', 'social-integration-for-bluesky'), '<code>[bluesky_profile]</code>', '<code>[bluesky_last_posts]</code>'); ?></p>
+                <nav id="bluesky-main-nav-tabs" role="navigation" class="privacy-settings-tabs-wrapper" aria-label="<?php esc_attr_e( 'Bluesky Settings Menu', 'social-integration-for-bluesky'); ?>">
+                    <a href="#account" aria-controls="account" class="privacy-settings-tab active" aria-current="true">
+                        <?php esc_html_e('Account Settings', 'social-integration-for-bluesky'); ?>
+                    </a>
+
+                    <?php if ( $auth ) { ?>
+                    <a href="#customization" aria-controls="customization" class="privacy-settings-tab">
+                        <?php esc_html_e('Customization', 'social-integration-for-bluesky'); ?>
+                    </a>
+                    <?php } ?>
+                    
+                    <?php if ( $auth ) { ?>
+                    <a href="#shortcodes" aria-controls="shortcodes" class="privacy-settings-tab">
+                        <?php echo esc_html__('The shortcodes', 'social-integration-for-bluesky'); ?>
+                    </a>
+                    <?php } ?>
+
+                    <a href="#about" aria-controls="about" class="privacy-settings-tab">
+                        <?php echo esc_html__('About', 'social-integration-for-bluesky'); ?>
+                    </a>
+                </nav>
+            </header>
+
+            <div class="bluesky-social-integration-options">
+                <form method="post" action="options.php">
+                    
+                    <?php
+                        settings_fields('bluesky_settings_group');
+                        do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
+                    ?>
+
+                    <div id="shortcodes" aria-hidden="false" class="bluesky-social-integration-admin-content">
+                        <h2><?php echo esc_html__('About the shortcodes', 'social-integration-for-bluesky'); ?></h2>
+                        <?php // translators: %1$s is the the bluesky profile shortcode, %2$s is the bluesky last posts shortcode. ?>
+                        <p><?php echo sprintf( esc_html__('You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s.', 'social-integration-for-bluesky'), '<code>[bluesky_profile]</code>', '<code>[bluesky_last_posts]</code>'); ?></p>
+
+                        <p><?php echo esc_html__('You can also use the Gutenberg blocks to display the profile card and posts feed.', 'social-integration-for-bluesky'); ?></p>
+
+                        <?php if ( $auth ) { ?>
+                        
+                        <h2><?php echo esc_html__('Shortcodes Demo', 'social-integration-for-bluesky'); ?></h2>
+
+                        <div class="bluesky-social-demo container">
+                            <h3><?php echo esc_html__('Profile Card', 'social-integration-for-bluesky'); ?> <code>[bluesky_profile]</code></h3>
+                            <p><?php echo esc_html__('The profile shortcode will display your BlueSky profile card. It uses the following attributes:', 'social-integration-for-bluesky'); ?></p>
                             <ul>
-                                <li>
-                                    <?php echo esc_html__('The profile shortcode will display your BlueSky profile card. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
-                                    <br>
-                                    <ul>
-                                        <li><code>displaybanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayavatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displaycounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displaybio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the profile. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>classname</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?>
-                                    <br>
-                                    <ul>
-                                        <li><code>displayembeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>displayimages</code> - <?php echo esc_html__('Whether to display embedded images in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>noreplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>numberofposts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
-                                        <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
-                                    </ul>
-                                </li>
+                                <li><code>displaybanner</code> - <?php echo esc_html__('Whether to display the profile banner. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>displayavatar</code> - <?php echo esc_html__('Whether to display the profile avatar. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>displaycounters</code> - <?php echo esc_html__('Whether to display follower/following counts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>displaybio</code> - <?php echo esc_html__('Whether to display the profile bio. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the profile. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>classname</code> - <?php echo esc_html__('Additional CSS class to apply to the profile card.', 'social-integration-for-bluesky'); ?></li>
                             </ul>
-                            <p><?php echo esc_html__('You can also use the Gutenberg blocks to display the profile card and posts feed.', 'social-integration-for-bluesky'); ?></p>
 
-                            <hr>
-
-                            <h2><?php echo esc_html__('About this plugin', 'social-integration-for-bluesky'); ?></h2>
-                            <?php // translators: %s is the name of the developer. ?>
-                            <p><?php echo sprintf( esc_html__( 'This plugin is written by %s.', 'social-integration-for-bluesky'), '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>' ); ?><br><?php echo esc_html__( 'This extension is not an official BlueSky plugin.', 'social-integration-for-bluesky')  ?></p>
-
-                            <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
-                            <p>
-                                <?php echo sprintf( esc_html__( 'Need help with something? Have a suggestion? %1$sAsk away%2$s.', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">', '</a>' ); ?><br>
-                                <?php echo sprintf( esc_html__( 'You want to contribute to this project? %1$sHere is the Github Repository%2$s.', 'social-integration-for-bluesky'), '<a href="https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress" target="_blank">', '</a>' ); ?>
-                            </p>
-
-                            <?php $title = __('Rate this plugin on WordPress.org', 'social-integration-for-bluesky') ?>
-
-                            <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
-                            <p><?php echo sprintf( esc_html__( 'Want to support the plugin? %1$sGive a review%2$s', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' . esc_attr( $title ) . '">', ' ⭐️⭐️⭐️⭐️⭐️</a>' ); ?></p>
+                            <p><?php echo esc_html__('This is how your BlueSky profile card will look like:', 'social-integration-for-bluesky'); ?></p>
+                            
+                            <div class="demo">
+                                <div class="demo-profile">
+                                    <?php echo do_shortcode('[bluesky_profile]'); ?>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <?php
-            // Adds a connection check using BlueSky API
-            $api = new BlueSky_API_Handler( $this -> options );
-            $auth = $api -> authenticate();
+                        <div class="bluesky-social-demo container">
+                            <h3><?php echo esc_html__('Last Posts Feed', 'social-integration-for-bluesky'); ?> <code>[bluesky_last_posts]</code></h3>
 
-            if ( $auth ) {
-            ?>
-            <h2><?php echo esc_html__('Shortcodes Demo', 'social-integration-for-bluesky'); ?></h2>
-            <div class="bluesky-social-demo container">
-                <div class="demo">
-                    <h3><?php echo esc_html__('Profile Card', 'social-integration-for-bluesky'); ?> <code>[bluesky_profile]</code></h3>
-                    <p><?php echo esc_html__('This is how your BlueSky profile card will look like:', 'social-integration-for-bluesky'); ?></p>
-                    <div class="demo-profile">
-                        <?php echo do_shortcode('[bluesky_profile]'); ?>
+                            <p><?php echo esc_html__('The last posts shortcode will display your last posts feed. It uses the following attributes:', 'social-integration-for-bluesky'); ?></p>
+                            <ul>
+                                <li><code>displayembeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>displayimages</code> - <?php echo esc_html__('Whether to display embedded images in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>noreplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>numberofposts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
+                            </ul>
+
+                            <p><?php echo esc_html__('This is how your last posts feed will look like:', 'social-integration-for-bluesky'); ?></p>
+
+                            <div class="demo">
+                                <div class="demo-posts">
+                                    <?php echo do_shortcode('[bluesky_last_posts numberofposts="3"]'); ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                        }
+                        ?>
                     </div>
-                </div>
-                <div class="demo">
-                    <h3><?php echo esc_html__('Last Posts Feed', 'social-integration-for-bluesky'); ?> <code>[bluesky_last_posts]</code></h3>
-                    <p><?php echo esc_html__('This is how your last posts feed will look like:', 'social-integration-for-bluesky'); ?></p>
-                    <div class="demo-posts">
-                        <?php echo do_shortcode('[bluesky_last_posts numberofposts="3"]'); ?>
+                    
+                    <div id="about" aria-hidden="false" class="bluesky-social-integration-admin-content">
+                        <h2><?php echo esc_html__('About this plugin', 'social-integration-for-bluesky'); ?></h2>
+                        <?php // translators: %s is the name of the developer. ?>
+                        <p><?php echo sprintf( esc_html__( 'This plugin is written by %s.', 'social-integration-for-bluesky'), '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>' ); ?><br><?php echo esc_html__( 'This extension is not an official BlueSky plugin.', 'social-integration-for-bluesky')  ?></p>
+
+                        <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
+                        <p>
+                            <?php echo sprintf( esc_html__( 'Need help with something? Have a suggestion? %1$sAsk away%2$s.', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">', '</a>' ); ?><br>
+                            <?php echo sprintf( esc_html__( 'You want to contribute to this project? %1$sHere is the Github Repository%2$s.', 'social-integration-for-bluesky'), '<a href="https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress" target="_blank">', '</a>' ); ?>
+                        </p>
+
+                        <?php $title = __('Rate this plugin on WordPress.org', 'social-integration-for-bluesky') ?>
+
+                        <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
+                        <p><?php echo sprintf( esc_html__( 'Want to support the plugin? %1$sGive a review%2$s', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' . esc_attr( $title ) . '">', ' ⭐️⭐️⭐️⭐️⭐️</a>' ); ?></p>
                     </div>
-                </div>
+
+                </form>
             </div>
-            <?php
-            }
-            ?>
-        </div>
+        </main>
         <?php
     }
 

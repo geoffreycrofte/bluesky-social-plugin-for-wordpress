@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.7
 - Requires PHP: 7.4
-- Stable tag: 1.3.1
+- Stable tag: 1.4.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -29,6 +29,7 @@ Some other included features:
  * Link reference (embedded card with image)
  * Starterpack display
  * Gallery of images (displaying an accessible lightbox)
+ * Multiple available layouts
 * App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
 * Dark/Light mode (by default is system/user choice)
@@ -105,6 +106,14 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 9. A post automatically shared after a WordPress publication.
 
 ## Changelog
+
+### 1.4.0
+* **Features** 
+ * Pick among different feed layouts.
+ * Customize font-size and line-height.
+ * Generate a working shortcode from the shortcode generator.
+* **Improvements**
+ * Better admin plugin user interface.
 
 ### 1.3.0
 * **Features**
