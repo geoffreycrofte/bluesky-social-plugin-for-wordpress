@@ -80,7 +80,7 @@
 
 .bluesky-social-integration-external-content-title {
     font-weight: bold!important;
-    font-size: var(--bluesky-posts-custom-external-content-title-fs, 1.1em)!important;
+    font-size: var(--bluesky-posts-custom-external-content-title-fs, 18px)!important;
 }
 
 .bluesky-social-integration-external-content-description {
@@ -131,7 +131,7 @@
 
 .bluesky-social-integration-post-account-info-names.bluesky-social-integration-post-account-info-names {
     margin: 0 0 6px 0!important;
-    font-size: var(--bluesky-posts-custom-account-info-names-fs, 1em)!important;
+    font-size: var(--bluesky-posts-custom-account-info-names-fs, 16px)!important;
     line-height: var(--bluesky-posts-custom-account-info-names-lh, 1.4)!important;
     color: var(--bluesky-card-txt-alt)!important;
 }
@@ -143,7 +143,7 @@
 
 .bluesky-social-integration-post-starterpack-name {
     font-weight: bold!important;
-    font-size: var(--bluesky-posts-custom-starterpack-name-fs, 1.2em)!important;
+    font-size: var(--bluesky-posts-custom-starterpack-name-fs, 20px)!important;
 }
 
 .bluesky-social-integration-post-account-info-date::before {

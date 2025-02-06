@@ -37,44 +37,6 @@ class BlueSky_API_Handler {
         $this -> options = $options;
     }
 
-    /**
-     * Authenticate with BlueSky API
-     * @return bool Whether authentication was successful
-     */
-    /*public function authenticate() {
-        if ( ! isset( $this -> options['handle'] ) || ! isset( $this -> options['app_password'] ) ) {
-            return false;
-        }
-
-        $password = $this -> options['app_password'];
-        $helpers = new BlueSky_Helpers();
-        $password = $helpers -> bluesky_decrypt( $password );
-
-        $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.server.createSession', [
-            'body' => wp_json_encode([
-                'identifier' => $this -> options['handle'],
-                'password' => $password
-            ]),
-            'headers' => [
-                'Content-Type' => 'application/json'
-            ]
-        ]);
-        
-        if ( is_wp_error( $response ) ) {
-            return false;
-        }
-
-        $body = json_decode( wp_remote_retrieve_body( $response ), true);
-        
-        if ( isset( $body['did'] ) && isset( $body['accessJwt']) ) {
-            $this -> did = $body['did'];
-            $this -> access_token = $body['accessJwt'];
-            return true;
-        }
-
-        return false;
-    }*/
-
     public function authenticate( $force = false ) {
         // Check if credentials are set
         if ( ! isset( $this->options['handle'] ) || ! isset( $this->options['app_password'] ) ) {

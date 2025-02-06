@@ -224,4 +224,17 @@ class BlueSky_Helpers {
         
         return isset( $match[1] ) ? $match[1] : null;
     }
+
+    /**
+     * Recursively sanitize a data returning an intval of the data or null is something else was present.
+     * 
+     * @param mixed $data
+     * @return array|int|null
+     */
+    public function sanitize_int_recursive($data) {
+        if (is_array($data)) {
+            return array_map([ $this, 'sanitize_int_recursive' ], $data);
+        }
+        return is_numeric($data) ? intval($data) : null;
+    }
 }

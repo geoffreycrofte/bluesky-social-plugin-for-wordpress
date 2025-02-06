@@ -151,6 +151,7 @@ class BlueSky_Plugin_Setup {
      */
     public function sanitize_settings( $input ) {
         $sanitized = [];
+        $helpers = new BlueSky_Helpers();
         
         // Handle encryption for secret key
         $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
@@ -160,11 +161,13 @@ class BlueSky_Plugin_Setup {
 
         // Handle encryption for password
         if ( isset( $input['app_password'] ) && ! empty( $input['app_password'] ) ) {
-            $helpers = new BlueSky_Helpers();
             $sanitized['app_password'] = $helpers -> bluesky_encrypt( $input['app_password'] );
         } else {
             $sanitized['app_password'] = $this -> options['app_password'] ?? '';
-        }   
+        }
+
+        // Sanitize de customization values (support int value only at the moment)
+        $sanitized['customisation'] = $helpers -> sanitize_int_recursive($input['customisation']);
 
         // Sanitize other fields
         $sanitized['handle'] = isset( $input['handle'] ) ? sanitize_text_field( $input['handle'] ) : '';
@@ -189,7 +192,7 @@ class BlueSky_Plugin_Setup {
         if ( ! get_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date' ) ) {
             add_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date', time() );
         }
-        
+
         return $sanitized;
     }
 
@@ -374,7 +377,8 @@ class BlueSky_Plugin_Setup {
         <div class="cache-duration-fields">
             <label>
                 <input type="number" 
-                        min="0" 
+                        min="0"
+                        id="bluesky_settings_cache_duration"
                         name="bluesky_settings[cache_duration][days]" 
                         value="<?php echo esc_attr( $cache_duration['days'] ); ?>" 
                         style="width: 60px;"> 
@@ -590,29 +594,222 @@ class BlueSky_Plugin_Setup {
 
                         <p><?php echo esc_html__('Decide how you want your Bluesky blocks to look like!', 'social-integration-for-bluesky'); ?></p>
 
+                        <h3><?php echo esc_html__('Customize Font Styling', 'social-integration-for-bluesky'); ?></h3>
+
+                        <div class="bluesky-custom-styles-output" hidden>
+                            <?php 
+                                $render_front = new BlueSky_Render_Front( $this -> api_handler );
+                                $render_front -> render_inline_custom_styles();
+                            ?>
+                        </div>
+
                         <div class="bluesky-social-integration-large-content">
-                            <div class="bluesky-social-integration-interactive">
+                            <section class="bluesky-social-integration-interactive" aria-label="[bluesky_profile]">
                                 <div class="bluesky-social-integration-interactive-visual">
                                     <?php echo do_shortcode('[bluesky_profile]'); ?>
                                 </div>
                                 <div class="bluesky-social-integration-interactive-editor">
+                                    <?php  
+                                        $profile_data = $this->options['customisation']['profile'] ?? [];
+
+                                        $profile_inputs = [
+                                            'name' => [
+                                                'fs' => [
+                                                    'label' => __('Name/Pseudo', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 20,
+                                                    'var' => '--bluesky-profile-custom-name-fs',
+                                                ],
+                                            ],
+                                            'handle' => [
+                                                'fs' => [
+                                                    'label' => __('Nickhandle', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 14,
+                                                    'var' => '--bluesky-profile-custom-handle-fs',
+                                                ],
+                                            ],
+                                            'followers' => [
+                                                'fs' => [
+                                                    'label' => __('Counters', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 16,
+                                                    'var' => '--bluesky-profile-custom-followers-fs',
+                                                ],
+                                            ],
+                                            'description' => [
+                                                'fs' => [
+                                                    'label' => __('Biography', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 16,
+                                                    'var' => '--bluesky-profile-custom-description-fs',
+                                                ],
+                                            ],
+                                        ];
+                                    ?>
                                     <table class="form-table" role="presentation">
                                         <tbody>
+                                            <?php foreach ( $profile_inputs as $element => $properties ) { $index = 0; ?>
                                             <tr>
                                                 <th scope="row">
-                                                    <label for="bluesky_custom_profile_name">Name/Pseudo</label>
+                                                    <?php foreach ( $properties as $prop => $data ) { ?>
+
+                                                    <label for="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>"<?php echo $index > 0 ? 'class="screen-reader-text"' : ''; ?>>
+                                                        <?php echo esc_html( $data['label'] ); ?>
+                                                    </label>
+                                                    
+                                                    <?php $index++; } ?>
                                                 </th>
                                                 <td>
+                                                    <?php foreach ( $properties as $prop => $data ) { ?>
                                                     <span class="bluesky-input-widget">
-                                                        <input type="number" id="bluesky_custom_profile_name" name="bluesky_settings[customisation][profile][name][fs]" value="" placeholder="20" data-var="--bluesky-profile-custom-name-fs" aria-labelledby="bluesky_custom_profile_name bluesky_custom_profile_name_unit" class="bluesky-custom-unit" min="10">
-                                                        <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_profile_name_unit">px</abbr>
+                                                        <input type="number" 
+                                                            id="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>"
+
+                                                            name="bluesky_settings[customisation][profile][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>]" 
+                                                            
+                                                            placeholder="<?php echo esc_attr($data['default']); ?>" 
+                                                            
+                                                            data-var="<?php echo esc_attr($data['var']); ?>" 
+                                                            
+                                                            aria-labelledby="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?> bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit" 
+                                                            
+                                                            class="bluesky-custom-unit"
+                                                            
+                                                            min="<?php echo esc_attr($data['min']); ?>"
+                                                            
+                                                            value="<?php echo ( isset( $profile_data[$element][$prop] ) && intval( $profile_data[$element][$prop] ) >= $data['min'] ) ? intval( $profile_data[$element][$prop] ) : ''; ?>"
+
+                                                            autocomplete="off"
+                                                        >
+
+                                                        <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit">px</abbr>
                                                     </span>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                            <?php } ?>
+                                            <tr class="bluesky-submit-in-table">
+                                                <td colspan="2">
+                                                <?php submit_button(null, 'primary large', null, false); ?>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </section>
+
+                            <section class="bluesky-social-integration-interactive" aria-label="[bluesky_last_posts]">
+                                <div class="bluesky-social-integration-interactive-visual">
+                                    <?php echo do_shortcode('[bluesky_last_posts]'); ?>
+                                </div>
+                                <div class="bluesky-social-integration-interactive-editor">
+                                    <?php  
+                                        $posts_data = $this->options['customisation']['posts'] ?? [];
+
+                                        $posts_inputs = [
+                                            'account-info-names' => [
+                                                'fs' => [
+                                                    'label' => __('Account Name', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 16,
+                                                    'var' => '--bluesky-posts-custom-account-info-names-fs',
+                                                ],
+                                            ],
+                                            'post-content' => [
+                                                'fs' => [
+                                                    'label' => __('Post Content', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 15,
+                                                    'var' => '--bluesky-posts-custom-post-content-fs',
+                                                ],
+                                            ],
+                                            'external-content-title' => [
+                                                'fs' => [
+                                                    'label' => __('External Title', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 18,
+                                                    'var' => '--bluesky-posts-custom-external-content-title-fs',
+                                                ],
+                                            ],
+                                            'external-content-description' => [
+                                                'fs' => [
+                                                    'label' => __('External Description', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 14,
+                                                    'var' => '--bluesky-posts-custom-external-content-description-fs',
+                                                ],
+                                            ],
+                                            'external-content-url' => [
+                                                'fs' => [
+                                                    'label' => __('External URL', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 16,
+                                                    'var' => '--bluesky-posts-custom-external-content-url-fs',
+                                                ],
+                                            ],
+                                            'starterpack-name' => [
+                                                'fs' => [
+                                                    'label' => __('StarterPack Name', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 20,
+                                                    'var' => '--bluesky-posts-custom-starterpack-name-fs',
+                                                ],
+                                            ],
+                                        ];
+                                    ?>
+                                    <table class="form-table" role="presentation">
+                                        <tbody>
+                                            <?php foreach ( $posts_inputs as $element => $properties ) { $index = 0; ?>
+                                            <tr>
+                                                <th scope="row">
+                                                    <?php foreach ( $properties as $prop => $data ) { ?>
+
+                                                    <label for="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>"<?php echo $index > 0 ? 'class="screen-reader-text"' : ''; ?>>
+                                                        <?php echo esc_html( $data['label'] ); ?>
+                                                    </label>
+                                                    
+                                                    <?php $index++; } ?>
+                                                </th>
+                                                <td>
+                                                    <?php foreach ( $properties as $prop => $data ) { ?>
+                                                    <span class="bluesky-input-widget">
+                                                        <input type="number" 
+                                                            id="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>"
+
+                                                            name="bluesky_settings[customisation][posts][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>]" 
+                                                            
+                                                            placeholder="<?php echo esc_attr($data['default']); ?>" 
+                                                            
+                                                            data-var="<?php echo esc_attr($data['var']); ?>" 
+                                                            
+                                                            aria-labelledby="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?> bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit" 
+                                                            
+                                                            class="bluesky-custom-unit"
+                                                            
+                                                            min="<?php echo esc_attr($data['min']); ?>"
+                                                            
+                                                            value="<?php echo ( isset( $posts_data[$element][$prop] ) && intval( $posts_data[$element][$prop] ) >= $data['min'] ) ? intval( $posts_data[$element][$prop] ) : ''; ?>"
+
+                                                            autocomplete="off"
+                                                        >
+
+                                                        <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit">px</abbr>
+                                                    </span>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                            <?php } ?>
+                                            <tr class="bluesky-submit-in-table">
+                                                <td colspan="2">
+                                                <?php submit_button(null, 'primary large', null, false); ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
                         </div>
                     </div>
 
@@ -706,9 +903,9 @@ class BlueSky_Plugin_Setup {
      * Enqueue admin scripts and styles
      */
     public function admin_enqueue_scripts() {
-        wp_enqueue_style( 'bluesky-social-style', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social.css', array(), BLUESKY_PLUGIN_VERSION );
-        wp_enqueue_style( 'bluesky-social-style-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
-        wp_enqueue_style( 'bluesky-social-style-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-admin', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-admin.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_script( 'bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social-admin.js', ['jquery'], BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
     }
 

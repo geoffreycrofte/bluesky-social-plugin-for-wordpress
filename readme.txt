@@ -108,8 +108,7 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 = 1.4.0 =
 * **Features** 
  * Pick among different feed layouts.
- * Customize font-size and line-height.
- * Generate a working shortcode from the shortcode generator.
+ * Customize font-size.
 * **Improvements**
  * Better admin plugin user interface.
 

@@ -37,7 +37,6 @@
         });
 
         if ( localStorage.getItem('bluesky-social-integration-admin-tab') ) {
-            console.log(localStorage.getItem('bluesky-social-integration-admin-tab'));
             document.querySelector('[aria-controls="' + localStorage.getItem('bluesky-social-integration-admin-tab') + '"]').click();
         } else {
             navItems[0].click();
@@ -47,11 +46,12 @@
          * Customisation Editor
          */
         const units = document.querySelectorAll('.bluesky-custom-unit');
-        const styles = document.querySelector('.bluesky-social-integration-interactive-editor');
+        const styles = document.querySelector('.bluesky-custom-styles-output');
 
         units.forEach(unit => {
             unit.addEventListener('change', e => {
                 let styleID = 'bluesky' + e.target.dataset.var;
+                let type = e.target.name.split('][')[1]; // e.g. "posts", "profile"
 
                 if ( ! document.getElementById( styleID ) ) {
                     let style = document.createElement('style');
@@ -59,7 +59,18 @@
                     styles.prepend( style );
                 }
 
-                document.getElementById( styleID ).innerHTML = '.bluesky-social-integration-profile-card{' + e.target.dataset.var + ': ' + e.target.value + 'px}';
+                switch (type) {
+                    case 'profile':
+                        document.getElementById( styleID ).innerHTML = '.bluesky-social-integration-profile-card{' + e.target.dataset.var + ': ' + e.target.value + 'px}';       
+                        break;
+
+                    case 'posts':
+                        document.getElementById( styleID ).innerHTML = '.bluesky-social-integration-last-post{' + e.target.dataset.var + ': ' + e.target.value + 'px}';       
+                        break;
+                
+                    default:
+                        break;
+                }
 
                 if ( e.target.value < 10 || typeof 'e.target.value' === 'null' ) {
                     document.getElementById( styleID ).remove();

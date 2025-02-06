@@ -1,6 +1,6 @@
 <?php
 // Prevent direct access to the plugin
-if ( ! defined('ABSPATH') ) {
+if ( ! defined(constant_name: 'ABSPATH') ) {
     exit;
 }
 
@@ -21,10 +21,10 @@ class BlueSky_Render_Front {
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      */
-    public function __construct(BlueSky_API_Handler $api_handler) {
-        $this->api_handler = $api_handler;
-        $this->options = get_option( BLUESKY_PLUGIN_OPTIONS );
-        $this->init_hooks();
+    public function __construct( BlueSky_API_Handler $api_handler ) {
+        $this -> api_handler = $api_handler;
+        $this -> options = get_option( BLUESKY_PLUGIN_OPTIONS );
+        $this -> init_hooks();
     }
 
     /**
@@ -88,6 +88,7 @@ class BlueSky_Render_Front {
         if ( isset ( $posts ) && is_array( $posts ) && count( $posts ) > 0 ) {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
+            add_action( 'wp_head', [$this, 'render_inline_custom_styles_posts'] );
             ?>
             <aside class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
                 <ul class="bluesky-social-integration-last-post-list">
@@ -348,6 +349,7 @@ class BlueSky_Render_Front {
         
         ob_start();
         do_action('bluesky_before_profile_card_markup', $profile );
+        add_action( 'wp_head', [$this, 'render_inline_custom_styles_profile'] );
         ?>
 
         <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>">
@@ -379,5 +381,102 @@ class BlueSky_Render_Front {
         <?php
         do_action('bluesky_after_profile_card_markup', $profile );
         return ob_get_clean();
+    }
+
+    /**
+     * Generate the inline style for each custom one saved in the plugin options.
+     * The output will vary depending if you are in the admin or the front-end of the website.
+     * - One <style> + selector + custom prop CSS per customisation in the admin (for JS use)
+     * - One <style> mixing all the custom props in one selector for the front-end.
+     * 
+     * @param string $type "posts" or "profile" if targetting specific styles, or "all" for all.
+     * @return string|void The <style> elements usually displayed between <head> tags. Or nothing if $options[customisation]'s missing
+     */
+    public function get_inline_custom_styles($type = 'all') {
+        $options = $this -> options;
+        
+        if ( ! isset( $options['customisation'] ) || ! is_array( $options['customisation'] ) ) {
+            return;
+        }
+
+        $output =  "\n" . '<!-- Added by Social Integration for Bluesky -->' . "\n";
+        $custom = $options['customisation'];
+
+        // The piece of code for Profile Card Customisation
+        if ( isset( $custom['profile'] ) && is_array( $custom['profile'] ) && ( $type === 'all' || $type === 'profile' ) ) {
+            
+            $output .= ! is_admin() ? '<style id="bluesky-profile-custom-styles">' . "\n" : '';
+            $output .= ! is_admin() ? '.bluesky-social-integration-profile-card {' . "\n" : '';
+
+            foreach ( $custom['profile'] as $element => $props ) {
+                if ( is_array( $props ) ) {
+                    foreach ( $props as $k => $prop ) {
+                        $custom_prop = '--bluesky-profile-custom-' . $element . '-' . $k ;
+                        $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
+                        $output .= is_admin() ? '.bluesky-social-integration-profile-card {' . "\n" : '';
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop ) . 'px!important;' . "\n";
+                        $output .= is_admin() ? '}' . "\n" : '';
+                        $output .= is_admin() ? '</style>' . "\n" : '';
+                    }
+                }
+            }
+
+            $output .= ! is_admin() ? '}' . "\n" : '';
+            $output .= ! is_admin() ? '</style>' . "\n" : '';
+        }
+
+        // The piece of code for Feed Customisation
+        if ( isset( $custom['posts'] ) && is_array( $custom['posts'] ) && ( $type === 'all' || $type === 'posts' ) ) {
+            
+            $output .= ! is_admin() ? '<style id="bluesky-posts-custom-styles">' . "\n" : '';
+            $output .= ! is_admin() ? '.bluesky-social-integration-last-post {' . "\n" : '';
+
+            foreach ( $custom['posts'] as $element => $props ) {
+                if ( is_array( $props ) ) {
+                    foreach ( $props as $k => $prop ) {
+                        $custom_prop = '--bluesky-posts-custom-' . $element . '-' . $k ;
+                        $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
+                        $output .= is_admin() ? '.bluesky-social-integration-last-post {' . "\n" : '';
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop ) . 'px!important;' . "\n";
+                        $output .= is_admin() ? '}' . "\n" : '';
+                        $output .= is_admin() ? '</style>' . "\n" : '';
+                    }
+                }
+            }
+
+            $output .= ! is_admin() ? '}' . "\n" : '';
+            $output .= ! is_admin() ? '</style>' . "\n" : '';
+        }
+
+        $output .= '<!-- END OF Social Integration for Bluesky -->' . "\n";
+
+        return $output;   
+    }
+
+    /**
+     * Simply print the output of get_inline_custom_styles() method.
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles() {
+        echo $this -> get_inline_custom_styles();
+    }
+
+    /**
+     * Print the output of get_inline_custom_styles() only for posts
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles_posts() {
+        echo $this -> get_inline_custom_styles('posts');
+    }
+
+    /**
+     * Print the output of get_inline_custom_styles() only for profile
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles_profile() {
+        echo $this -> get_inline_custom_styles('profile');
     }
 }
