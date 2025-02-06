@@ -237,4 +237,13 @@ class BlueSky_Helpers {
         }
         return is_numeric($data) ? intval($data) : null;
     }
+
+    /**
+     * Return the admin URL for this plugin.
+     *
+     * @return string
+     */
+    public function get_the_admin_plugin_url() {
+        return esc_url( get_admin_url( null, 'options-general.php' ) . '?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME );
+    }
 }

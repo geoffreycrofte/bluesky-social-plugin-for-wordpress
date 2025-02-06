@@ -72,6 +72,9 @@ class BlueSky_Plugin_Setup {
 
         // Post syndication
         add_action( 'transition_post_status', [$this, 'syndicate_post_to_bluesky'], 10, 3 );
+
+        // Messaging & Noticing
+        add_action('admin_notices', [$this, 'display_bluesky_logout_message']);
     }
 
     /**
@@ -85,7 +88,8 @@ class BlueSky_Plugin_Setup {
      * Add a link to the setting page
      */
     function add_plugin_action_links( array $links ) {
-        $url = get_admin_url() . 'options-general.php?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME;
+        $helpers = new BlueSky_Helpers();
+        $url = $helpers->get_the_admin_plugin_url();
         $settings_link = '<a href="' . esc_url( $url ) . '">' . esc_html__('Settings', 'social-integration-for-bluesky') . '</a>';
         $links[] = $settings_link;
         return $links;
@@ -282,13 +286,16 @@ class BlueSky_Plugin_Setup {
      * If a password is already set, show a placeholder instead of the actual password
      */
     public function render_password_field() {
+
         $password = $this -> options['app_password'] ?? '';
+        $login = $this -> options['handle'] ?? '';
+
         // Don't show the actual password, just a placeholder if it exists
-        $placeholder = ! empty( $password ) ? '••••••••' : '';
+        $placeholder = ! empty( $password ) && ! empty( $login ) ? '••••••••' : '';
         
         echo '<input type="password" id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_app_password' ) . '" name="bluesky_settings[app_password]" value="" placeholder="' . esc_attr( $placeholder ) . '" aria-describedby="bluesky-password-description" />';
         
-        if ( ! empty( $password ) ) {
+        if ( ! empty( $password ) && ! empty( $login ) ) {
             echo '<p class="description" id="bluesky-password-description">' . esc_html( __('Leave empty to keep the current password.', 'social-integration-for-bluesky') ) . '</p>';
         } else {
             echo '<p class="description" id="bluesky-password-description">' . wp_kses_post(
@@ -299,14 +306,32 @@ class BlueSky_Plugin_Setup {
         }
 
         // Adds a connection check using BlueSky API
-        if ( ! empty( $password ) ) {
+        if ( ! empty( $password ) && ! empty( $login ) ) {
             $api = new BlueSky_API_Handler( $this -> options );
             $auth = $api -> authenticate();
 
-            if ( $auth ) {
-                echo '<div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-success"><p>' . esc_html__('Connection to BlueSky successful!', 'social-integration-for-bluesky') . '</p></div>';
-            } else {
-                echo '<div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-error"><p>' . esc_html__('Connection to BlueSky failed. Please check your credentials. It can also happend if you reached BlueSky request limit.', 'social-integration-for-bluesky') . '</p></div>';
+            if ( $auth ) { ?>
+
+                <div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-success">
+                    <p>
+                        <?php echo  esc_html__('Connection to BlueSky successful!', 'social-integration-for-bluesky'); ?>
+                        <br>
+                        <a class="bluesky-logout-link" href="<?php echo esc_url( admin_url( 'admin-post.php?action=bluesky_logout&nonce=' . wp_create_nonce('bluesky_logout_nonce') ) ); ?>">
+                            <?php esc_html_e( 'Log out from this account', 'social-integration-for-bluesky' ); ?>
+                        </a>
+
+                    </p>
+                </div>
+
+            <?php } else { ?>
+
+                <div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-error">
+                    <p>
+                        <?php echo esc_html__('Connection to BlueSky failed. Please check your credentials. It can also happend if you reached BlueSky request limit.', 'social-integration-for-bluesky'); ?>
+                    </p>
+                </div>
+
+            <?php
             }
         }
     }
@@ -1129,9 +1154,27 @@ class BlueSky_Plugin_Setup {
      *                         - numberofposts (int) Number of posts to display (1-10)
      * @return string HTML markup for the posts feed
      */
-
     public function bluesky_posts_block_render( $attributes = [] ) {
         $render_front = new BlueSky_Render_Front( $this -> api_handler );
         return $render_front -> render_bluesky_posts_list( $attributes );
+    }
+
+    /**
+     * Display logout messages based on the BLueSky_Admin_Actions method and redirection.
+     *
+     * @return void
+     */
+    public function display_bluesky_logout_message() {
+        if ( $message_data = get_transient('bluesky_logout_message') ) {
+            $class = ($message_data['type'] === 'success') ? 'updated' : 'error';
+        ?>
+        
+        <div class="notice <?php echo esc_attr($class); ?> is-dismissible">
+            <p><?php echo esc_html($message_data['message']); ?></p>
+        </div>
+
+        <?php
+            delete_transient('bluesky_logout_message');
+        }
     }
 }

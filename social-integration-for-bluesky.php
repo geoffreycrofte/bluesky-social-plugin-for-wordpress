@@ -33,6 +33,7 @@ require_once( 'classes/BlueSky_API_Handler.php' ); // V.1
 require_once( 'classes/BlueSky_Plugin_Setup.php' ); // V.1
 require_once( 'classes/BlueSky_Render_Front.php' ); // V.1
 require_once( 'classes/BlueSky_Post_Metabox.php' ); // V.1.1
+require_once( 'classes/BlueSky_Admin_Actions.php' ); // V.1.4.0
 
 // Widgets
 require_once( 'classes/widgets/BlueSky_Posts_Widget.php' );
@@ -42,4 +43,5 @@ require_once( 'classes/widgets/BlueSky_Profile_Widget.php' );
 $bluesky_api_handler = new BlueSky_API_Handler( get_option( BLUESKY_PLUGIN_OPTIONS ) ); // V.1
 $bluesky_social_integration = new BlueSky_Plugin_Setup( $bluesky_api_handler ); // V.1
 $bluesky_render_front = new BlueSky_Render_Front( $bluesky_api_handler ); // V.1
-new BlueSky_Post_Metabox(); // V.1.1
+new BlueSky_Admin_Actions(); // V.1.4.0
+new BlueSky_Post_Metabox(); // V.1.1.0

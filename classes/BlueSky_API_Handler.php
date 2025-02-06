@@ -37,6 +37,12 @@ class BlueSky_API_Handler {
         $this -> options = $options;
     }
 
+    /**
+     * Authenticate the user by creating and storing an access and refresh jwt.
+     *
+     * @param mixed $force Wether or not to force the refresh token creation.
+     * @return bool
+     */
     public function authenticate( $force = false ) {
         // Check if credentials are set
         if ( ! isset( $this->options['handle'] ) || ! isset( $this->options['app_password'] ) ) {
@@ -131,6 +137,57 @@ class BlueSky_API_Handler {
         }
     
         return false;
+    }
+
+    /**
+     * Destroy the refresh token and its recordings in database to logout the user.
+     *
+     * @return bool
+     */
+    public function logout() {
+        $helpers = new BlueSky_Helpers();
+        try {
+            // clean the transient of the jwt
+            $this -> cleanup_session_data($helpers);
+            // clean the handle and app_password options
+            $this -> cleanup_login_options();
+            // done.
+            return true;
+            
+        } catch (Exception $e) {
+            error_log('Bluesky Exception during logout: ' . $e -> getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Clean the session information
+     *
+     * @param mixed $helpers
+     * @param mixed $access_tkey
+     * @return void
+     */
+    private function cleanup_session_data($helpers) {
+        delete_transient( $helpers -> get_access_token_transient_key() );
+        delete_transient( $helpers -> get_refresh_token_transient_key() );
+        delete_transient( $helpers -> get_did_transient_key() );
+        
+        $this -> access_token = null;
+        $this -> did = null;
+    }
+
+    /**
+     * Clean the login and password options
+     *
+     * @return void
+     */
+    private function cleanup_login_options() {
+        $options = $this -> options;
+        unset( $options['handle'] );
+        unset( $options['app_password'] );
+
+        update_option( BLUESKY_PLUGIN_OPTIONS, $options );
+        $this -> options = $options; // shoudn't be necessary, but just in case.
     }
 
     /**
