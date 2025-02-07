@@ -691,7 +691,7 @@ class BlueSky_Plugin_Setup {
                                                         <input type="number" 
                                                             id="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>"
 
-                                                            name="bluesky_settings[customisation][profile][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>]" 
+                                                            name="bluesky_settings[customisation][profile][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][value]" 
                                                             
                                                             placeholder="<?php echo esc_attr($data['default']); ?>" 
                                                             
@@ -703,10 +703,13 @@ class BlueSky_Plugin_Setup {
                                                             
                                                             min="<?php echo esc_attr($data['min']); ?>"
                                                             
-                                                            value="<?php echo ( isset( $profile_data[$element][$prop] ) && intval( $profile_data[$element][$prop] ) >= $data['min'] ) ? intval( $profile_data[$element][$prop] ) : ''; ?>"
+                                                            value="<?php echo ( isset( $profile_data[$element][$prop]['value'] ) && intval( $profile_data[$element][$prop]['value'] ) >= $data['min'] ) ? intval( $profile_data[$element][$prop]['value'] ) : ''; ?>"
 
                                                             autocomplete="off"
                                                         >
+                                                        <input type="hidden" name="bluesky_settings[customisation][profile][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][default]" value="<?php echo esc_attr($data['default']); ?>">
+
+                                                        <input type="hidden" name="bluesky_settings[customisation][profile][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][min]" value="<?php echo esc_attr($data['min']); ?>">
 
                                                         <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_profile_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit">px</abbr>
                                                     </span>
@@ -802,7 +805,7 @@ class BlueSky_Plugin_Setup {
                                                         <input type="number" 
                                                             id="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>"
 
-                                                            name="bluesky_settings[customisation][posts][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>]" 
+                                                            name="bluesky_settings[customisation][posts][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][value]" 
                                                             
                                                             placeholder="<?php echo esc_attr($data['default']); ?>" 
                                                             
@@ -814,10 +817,14 @@ class BlueSky_Plugin_Setup {
                                                             
                                                             min="<?php echo esc_attr($data['min']); ?>"
                                                             
-                                                            value="<?php echo ( isset( $posts_data[$element][$prop] ) && intval( $posts_data[$element][$prop] ) >= $data['min'] ) ? intval( $posts_data[$element][$prop] ) : ''; ?>"
+                                                            value="<?php echo ( isset( $posts_data[$element][$prop]['value'] ) && intval( $posts_data[$element][$prop]['value'] ) >= $data['min'] ) ? intval( $posts_data[$element][$prop]['value'] ) : ''; ?>"
 
                                                             autocomplete="off"
                                                         >
+
+                                                        <input type="hidden" name="bluesky_settings[customisation][posts][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][default]" value="<?php echo esc_attr($data['default']); ?>">
+
+                                                        <input type="hidden" name="bluesky_settings[customisation][posts][<?php echo esc_attr($element); ?>][<?php echo esc_attr($prop); ?>][min]" value="<?php echo esc_attr($data['min']); ?>">
 
                                                         <abbr title="pixels" class="bluesky-input-widget-unit" id="bluesky_custom_posts_<?php echo esc_attr( $element . '_' . $prop ); ?>_unit">px</abbr>
                                                     </span>

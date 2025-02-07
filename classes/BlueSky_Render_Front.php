@@ -414,7 +414,7 @@ class BlueSky_Render_Front {
                         $custom_prop = '--bluesky-profile-custom-' . $element . '-' . $k ;
                         $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
                         $output .= is_admin() ? '.bluesky-social-integration-profile-card {' . "\n" : '';
-                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop ) . 'px!important;' . "\n";
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop['value'] ) . 'px!important;' . "\n";
                         $output .= is_admin() ? '}' . "\n" : '';
                         $output .= is_admin() ? '</style>' . "\n" : '';
                     }
@@ -437,7 +437,7 @@ class BlueSky_Render_Front {
                         $custom_prop = '--bluesky-posts-custom-' . $element . '-' . $k ;
                         $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
                         $output .= is_admin() ? '.bluesky-social-integration-last-post {' . "\n" : '';
-                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop ) . 'px!important;' . "\n";
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop['value'] ) . 'px!important;' . "\n";
                         $output .= is_admin() ? '}' . "\n" : '';
                         $output .= is_admin() ? '</style>' . "\n" : '';
                     }

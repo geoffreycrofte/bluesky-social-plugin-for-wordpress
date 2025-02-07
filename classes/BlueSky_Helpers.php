@@ -231,11 +231,18 @@ class BlueSky_Helpers {
      * @param mixed $data
      * @return array|int|null
      */
-    public function sanitize_int_recursive($data) {
-        if (is_array($data)) {
-            return array_map([ $this, 'sanitize_int_recursive' ], $data);
+    public function sanitize_int_recursive( $data ) {
+        if ( is_array( $data ) &&  ! isset( $data['value'] ) ) {
+            return array_map( [ $this, 'sanitize_int_recursive' ], $data );
+        } elseif ( is_array( $data ) &&  isset( $data['value'] ) ) {
+            $data['default'] = intval($data['default']);
+            $data['min'] = intval($data['min']);
+            $data['value'] = empty( $data['value'] ) ? 0 : intval( $data['value'] );
+            $data['value'] = $data['value'] >= $data['min'] ? $data['value'] : $data['default'];
+
+            return array_map( [ $this, 'sanitize_int_recursive' ], $data );
         }
-        return is_numeric($data) ? intval($data) : null;
+        return is_numeric( $data ) ? intval( $data ) : null;
     }
 
     /**
