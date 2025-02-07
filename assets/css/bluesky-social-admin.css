@@ -216,6 +216,11 @@
     vertical-align: middle;
 }
 
+.bluesky-social-integration-interactive .form-table th,
+.bluesky-social-integration-interactive .form-table td {
+    padding-block: 16px;
+}
+
 .bluesky-social-integration-interactive .bluesky-submit-in-table.bluesky-submit-in-table {
     border: none;
 }

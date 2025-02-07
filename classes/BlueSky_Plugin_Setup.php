@@ -619,6 +619,8 @@ class BlueSky_Plugin_Setup {
 
                         <p><?php echo esc_html__('Decide how you want your Bluesky blocks to look like!', 'social-integration-for-bluesky'); ?></p>
 
+                        
+
                         <h3><?php echo esc_html__('Customize Font Styling', 'social-integration-for-bluesky'); ?></h3>
 
                         <div class="bluesky-custom-styles-output" hidden>
@@ -780,7 +782,7 @@ class BlueSky_Plugin_Setup {
                                                 'fs' => [
                                                     'label' => __('StarterPack Name', 'social-integration-for-bluesky'),
                                                     'min' => 10,
-                                                    'default' => 20,
+                                                    'default' => 18,
                                                     'var' => '--bluesky-posts-custom-starterpack-name-fs',
                                                 ],
                                             ],
