@@ -25,11 +25,19 @@
                         }
                     }),
                     el(ToggleControl, {
-                        key: 'replied-toggle',
+                        key: 'replies-toggle',
                         label: __('Hide Replies', 'social-integration-for-bluesky'),
                         checked: attributes.noreplies,
                         onChange: function(value) { 
                             setAttributes({ noreplies: value });
+                        }
+                    }),
+                    el(ToggleControl, {
+                        key: 'reposts-toggle',
+                        label: __('Hide Reposts', 'social-integration-for-bluesky'),
+                        checked: attributes.noreposts,
+                        onChange: function(value) { 
+                            setAttributes({ noreposts: value });
                         }
                     }),
                     el(SelectControl, {
@@ -95,6 +103,10 @@
                 default: true
             },
             noreplies: {
+                type: 'boolean',
+                default: true
+            },
+            noreposts: {
                 type: 'boolean',
                 default: true
             },

@@ -30,8 +30,8 @@ class BlueSky_Helpers {
      * Get the posts transient key
      * @return string
      */
-    public function get_posts_transient_key( $limit = null, $no_replies = false ) {
-        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . ( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' );
+    public function get_posts_transient_key( $limit = null, $no_replies = false, $no_reposts = false, $layout = null ) {
+        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . ( $no_reposts ? 'no-reposts' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
     }
 
     /**
@@ -223,5 +223,45 @@ class BlueSky_Helpers {
         preg_match( '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match );
         
         return isset( $match[1] ) ? $match[1] : null;
+    }
+
+    /**
+     * Recursively sanitize a data returning an intval of the data or null is something else was present.
+     * 
+     * @param mixed $data
+     * @return array|int|null
+     */
+    public function sanitize_int_recursive( $data ) {
+        if ( is_array( $data ) &&  ! isset( $data['value'] ) ) {
+            return array_map( [ $this, 'sanitize_int_recursive' ], $data );
+        } elseif ( is_array( $data ) &&  isset( $data['value'] ) ) {
+            $data['default'] = intval($data['default']);
+            $data['min'] = intval($data['min']);
+            $data['value'] = empty( $data['value'] ) ? 0 : intval( $data['value'] );
+            $data['value'] = $data['value'] >= $data['min'] ? $data['value'] : $data['default'];
+
+            return array_map( [ $this, 'sanitize_int_recursive' ], $data );
+        }
+        return is_numeric( $data ) ? intval( $data ) : null;
+    }
+
+    /**
+     * Return the admin URL for this plugin.
+     *
+     * @return string
+     */
+    public function get_the_admin_plugin_url() {
+        return esc_url( get_admin_url( null, 'options-general.php' ) . '?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME );
+    }
+
+    /**
+     * Make a layouted var_dump();
+     * @param mixed $var the variable to be evaluated.
+     * @return string
+     */
+    public function war_dump($var) {
+        ob_start();
+        var_dump( $var );
+        return '<pre class="bluesky-var-dump"><code class="language-php">' . ob_get_clean() . '</code></pre>';
     }
 }

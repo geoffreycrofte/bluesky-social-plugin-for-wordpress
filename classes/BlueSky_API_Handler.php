@@ -38,43 +38,11 @@ class BlueSky_API_Handler {
     }
 
     /**
-     * Authenticate with BlueSky API
-     * @return bool Whether authentication was successful
+     * Authenticate the user by creating and storing an access and refresh jwt.
+     *
+     * @param mixed $force Wether or not to force the refresh token creation.
+     * @return bool
      */
-    /*public function authenticate() {
-        if ( ! isset( $this -> options['handle'] ) || ! isset( $this -> options['app_password'] ) ) {
-            return false;
-        }
-
-        $password = $this -> options['app_password'];
-        $helpers = new BlueSky_Helpers();
-        $password = $helpers -> bluesky_decrypt( $password );
-
-        $response = wp_remote_post( $this -> bluesky_api_url . 'com.atproto.server.createSession', [
-            'body' => wp_json_encode([
-                'identifier' => $this -> options['handle'],
-                'password' => $password
-            ]),
-            'headers' => [
-                'Content-Type' => 'application/json'
-            ]
-        ]);
-        
-        if ( is_wp_error( $response ) ) {
-            return false;
-        }
-
-        $body = json_decode( wp_remote_retrieve_body( $response ), true);
-        
-        if ( isset( $body['did'] ) && isset( $body['accessJwt']) ) {
-            $this -> did = $body['did'];
-            $this -> access_token = $body['accessJwt'];
-            return true;
-        }
-
-        return false;
-    }*/
-
     public function authenticate( $force = false ) {
         // Check if credentials are set
         if ( ! isset( $this->options['handle'] ) || ! isset( $this->options['app_password'] ) ) {
@@ -172,14 +140,66 @@ class BlueSky_API_Handler {
     }
 
     /**
+     * Destroy the refresh token and its recordings in database to logout the user.
+     *
+     * @return bool
+     */
+    public function logout() {
+        $helpers = new BlueSky_Helpers();
+        try {
+            // clean the transient of the jwt
+            $this -> cleanup_session_data($helpers);
+            // clean the handle and app_password options
+            $this -> cleanup_login_options();
+            // done.
+            return true;
+            
+        } catch (Exception $e) {
+            error_log('Bluesky Exception during logout: ' . $e -> getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Clean the session information
+     *
+     * @param mixed $helpers
+     * @param mixed $access_tkey
+     * @return void
+     */
+    private function cleanup_session_data($helpers) {
+        delete_transient( $helpers -> get_access_token_transient_key() );
+        delete_transient( $helpers -> get_refresh_token_transient_key() );
+        delete_transient( $helpers -> get_did_transient_key() );
+        
+        $this -> access_token = null;
+        $this -> did = null;
+    }
+
+    /**
+     * Clean the login and password options
+     *
+     * @return void
+     */
+    private function cleanup_login_options() {
+        $options = $this -> options;
+        unset( $options['handle'] );
+        unset( $options['app_password'] );
+
+        update_option( BLUESKY_PLUGIN_OPTIONS, $options );
+        $this -> options = $options; // shoudn't be necessary, but just in case.
+    }
+
+    /**
      * Fetch posts from BlueSky feed
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
      */
-    public function fetch_bluesky_posts( $limit = 10, $no_replies = true ) {
+    public function fetch_bluesky_posts( $limit = 10, $no_replies = true, $no_reposts = true ) {
         $helpers = new BlueSky_Helpers();
-        $no_replies = $this -> options['no_replies'] ?? true;
-        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies );
+        $no_replies = $no_replies ?? $this -> options['no_replies']  ?? true;
+        $no_reposts = $no_reposts ?? $this -> options['no_reposts'] ?? true;
+        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies, $no_reposts );
         $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
 
         // Skip cache if duration is 0
@@ -204,7 +224,7 @@ class BlueSky_API_Handler {
             ],
             'body' => [
                 'actor' => $this -> did,
-                'limit' => $no_replies ? 100 : $limit, // Fetch more to account for replies
+                'limit' => ( $no_replies || $no_reposts ) ? 100 : $limit, // Fetch more to account for replies
             ]
         ]);
 
@@ -214,10 +234,30 @@ class BlueSky_API_Handler {
 
         $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true );
 
-        // Filter out replies if necessary
-        $posts = $no_replies ? array_filter( $raw_posts['feed'] ?? [], function( $post ) {
-            return empty( $post['reply'] ); // Exclude posts with a 'reply' key
-        }) : $raw_posts['feed'];
+        $filteredFeed = array_filter($raw_posts['feed'], function ($entry) use($no_replies, $no_reposts, $helpers) {
+            if ( ! isset( $entry['post'] ) ) {
+                return false;
+            }
+        
+            $post = $entry['post'];
+        
+            // Filter out replies (check if 'reply' key exists in record)
+            if ( isset( $post['record']['reply'] ) && $no_replies ) {
+                return false;
+            }
+        
+            // Filter out reposts (check if 'reason' key exists and is a repost)
+            if ( isset( $entry['reason'] ) && $entry['reason']['$type'] === "app.bsky.feed.defs#reasonRepost"  && $no_reposts) {
+                return false;
+            }
+        
+            return true; // Keep original posts
+        });
+        
+        // Reset array keys
+        $posts = array_values($filteredFeed);
+
+
 
         if ( $no_replies ) {
             // Limit to the requested number of posts

@@ -1,0 +1,329 @@
+#wpbody-content:has(.bluesky-social-integration-admin) .notice {
+    margin: 0 0 0 -20px;
+    padding: 16px;
+    box-shadow: 0 0 0;
+    border-left-width: 8px;
+}
+
+#wpbody-content:has(.bluesky-social-integration-admin) .notice-dismiss {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.bluesky-social-integration-admin {
+    --primary: #1185FE;
+    font-size: 14px;
+    margin-left: -20px;
+    line-height: 1.5;
+}
+
+.bluesky-social-integration-admin.bluesky-social-integration-admin p,
+.bluesky-social-integration-admin.bluesky-social-integration-admin li {
+    font-size: 14px;
+}
+
+.bluesky-social-integration-admin .bluesky-social-integration-profile-card {
+    max-width: 560px;
+    width: 100%;
+}
+
+.bluesky-social-integration-admin .privacy-settings-header {
+    margin-bottom: 0;
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper {
+    display: flex;
+    justify-content: safe center;
+    overflow: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a {
+    font-weight: 500;
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus {
+    outline: 0;
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a.active {
+    box-shadow: inset 0 -3px var(--primary);
+}
+
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus-visible {
+    outline: 2px solid var(--primary);
+}
+
+.bluesky-social-integration-admin-content {
+    padding: 40px;
+}
+
+.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content > * {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 680px;
+    margin-inline: auto;
+}
+
+.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content ul {
+    padding-left: 1.5em;
+}
+
+.bluesky-social-integration-admin-content.bluesky-social-integration-admin-content .bluesky-social-integration-last-post-list {
+    padding-left: 0;
+}
+
+.bluesky-social-demo .demo {
+    flex-basis: 100%;
+}
+
+.bluesky-social-integration-admin h1,
+.bluesky-social-integration-admin h2 {
+    line-height: 1.2;
+}
+
+.bluesky-social-integration-admin h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: bold;
+    margin: .5em 0 1em;
+}
+
+.bluesky-social-integration-admin h2 {
+    color: var(--primary);
+    font-size: 1.8em;
+}
+
+.bluesky-social-integration-admin h2:first-child {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.bluesky-social-integration-admin-content * + h2 {
+    margin-top: 2em;
+}
+
+.bluesky-social-integration-admin .cache-duration-fields label {
+    margin-right: 15px;
+}
+
+.bluesky-social-integration-admin .bluesky-cache-status {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: #f8f8f8;
+    border-left: 4px solid #646970;
+    border-radius: 8px;
+}
+
+.bluesky-social-integration-admin .bluesky-cache-status h3 {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.bluesky-social-integration-admin .bluesky-cache-status p {
+    margin: 10px 0;
+}
+
+.bluesky-social-integration-admin .bluesky-connection-check {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px;
+    background: white;
+    border-left: 4px solid #00a32a;
+}
+
+.bluesky-social-integration-admin .bluesky-connection-check p {
+    margin: 0;
+}
+
+.bluesky-social-integration-admin .bluesky-connection-check.notice-error {
+    border-left-color: darkred;
+}
+
+.bluesky-social-integration-admin .form-table {
+    border: 24px solid white;
+    border-top-width: 12px;
+    border-bottom-width: 12px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 16px -8px rgba(0, 0, 0, 0.15), 0 0 24px -16px rgba(0, 0, 0, 0.09), 0 0 32px -8px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+}
+
+.bluesky-social-integration-admin .form-table th,
+.bluesky-social-integration-admin .form-table td {
+    padding-block: 32px;
+}
+
+.bluesky-social-integration-admin .form-table tr + tr {
+    border-top: 1px solid #f0f0f0;
+}
+
+.bluesky-social-integration-admin p {
+    margin-block: 1em;
+}
+
+.bluesky-social-integration-admin ul {
+    list-style: disc;
+    margin: 0.5em;
+}
+
+.bluesky-social-integration-admin ul ul {
+    list-style: circle;
+}
+
+.bluesky-social-integration-admin .button.button-large {
+    font-size: 14px;
+    padding: 4px 16px;
+    border-radius: 8px;
+    background-color: var(--primary);
+    font-weight: bold;
+}
+
+.bluesky-metabox-description.bluesky-metabox-description.bluesky-metabox-description {
+    display: block;
+    margin-top: 0.75em;
+    color: #666;
+}
+
+.bluesky-social-integration-shortcode-demo {
+    padding: 32px;
+}
+
+/* Layout Choice */
+.bluesky-social-integration-layout-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    width: 100%;
+}
+.bluesky-social-integration-layout-options label {
+    position: relative;
+    cursor: pointer;
+}
+
+.bluesky-social-integration-layout-options label input {
+    position: absolute;
+    opacity: 0.01;
+}
+
+.bluesky-social-integration-layout-options label img {
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: all .3s;
+    opacity: 0.8;
+}
+
+.bluesky-social-integration-layout-options label input:checked ~ img {
+    border-color: var(--primary);
+    opacity: 1;
+}
+
+.bluesky-social-integration-layout-options label input:focus-visible ~ img {
+    outline: 2px dotted var(--primary);
+    outline-offset: 2px;
+}
+
+/* Interactive Editor */
+.bluesky-social-integration-admin-content .bluesky-social-integration-large-content {
+    max-width: 1200px;
+}
+
+.bluesky-social-integration-interactive {
+    display: flex;
+    gap: 16px;
+    justify-content: safe center;
+    align-items: stretch;
+}
+
+.bluesky-social-integration-interactive .form-table {
+    margin-top: 0;
+}
+
+.bluesky-social-integration-interactive .form-table th {
+    vertical-align: middle;
+}
+
+.bluesky-social-integration-interactive .form-table th,
+.bluesky-social-integration-interactive .form-table td {
+    padding-block: 16px;
+}
+
+.bluesky-social-integration-interactive .bluesky-submit-in-table.bluesky-submit-in-table {
+    border: none;
+}
+
+.bluesky-social-integration-interactive .bluesky-submit-in-table td {
+    padding: 0;
+}
+
+.bluesky-social-integration-interactive + .bluesky-social-integration-interactive {
+    margin-top: 40px;
+}
+
+.bluesky-social-integration-interactive .bluesky-social-integration-last-post {
+    max-width: 560px;
+}
+
+input.bluesky-custom-unit {
+    width: 4em;
+    padding-right: 0;
+}
+
+.bluesky-debug-sidebar {
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    transition: transform .5s;
+    z-index: 1;
+}
+
+.bluesky-debug-sidebar.is-collapsed {
+    transform: translateX(100%);
+}
+
+.bluesky-debug-sidebar .bluesky-open-button {
+    position: absolute;
+    left: -40px;
+    top: var(--wp-admin--admin-bar--height);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: white;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.bluesky-debug-sidebar .bluesky-open-button:hover,
+.bluesky-debug-sidebar .bluesky-open-button:focus-visible {
+    background: color-mix(in srgb, var(--primary), black 30%);
+}
+
+.bluesky-debug-sidebar .bluesky-open-button:focus-visible {
+    outline: 2px dotted var(--primary);
+    outline-offset: 2px;
+}
+
+.bluesky-debug-sidebar-content {
+    height: calc(100% - 48px);
+    overflow: auto;
+    padding: 24px;
+    background: white;
+    box-shadow: 0 0 40px -12px rgba(0, 0, 0, .1);
+}
+
+.bluesky-debug-sidebar-content summary {
+    font-size: 1.3em;
+}

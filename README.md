@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.7
 - Requires PHP: 7.4
-- Stable tag: 1.3.1
+- Stable tag: 1.4.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -22,6 +22,12 @@ An option is available for syndication of posts for BlueSky Social.
 
 Some other included features:
 
+* Configurable Bluesky Profile Card
+ * Choose to display a banner, or not
+ * Choose to display an avatar, or not
+ * Choose to display your bio, or not
+ * Choose to display your counter, or not
+
 * Embedded posts in the feed
  * Youtube URL detection
  * Embedded video
@@ -29,10 +35,11 @@ Some other included features:
  * Link reference (embedded card with image)
  * Starterpack display
  * Gallery of images (displaying an accessible lightbox)
-* App Password for a more secure connection
+ * Multiple available layouts
+
+* Encrypted App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
 * Dark/Light mode (by default is system/user choice)
-* Lots of options in the display of your profile banner
 
 ## Shortcode usage
 
@@ -51,10 +58,11 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 
 ### Display the last posts
 
-`[bluesky_last_posts displaysembeds="true" theme="system" numberofposts="5"]`
+`[bluesky_last_posts displaysembeds="true" noreplies="true" noreposts="true" theme="system" numberofposts="5"]`
 
 - `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
-- `noReplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
+- `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
+- `noreposts`: either you want to hide your reposts, or include them in your feed (values: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
 - `numberofposts`: any number of posts to display. (advice, don't set a too high value)
 
@@ -106,6 +114,18 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 ## Changelog
 
+### 1.4.0
+* **Features** 
+ * Pick among two feed layouts.
+ * Customize font-size.
+ * Decide to display Reposts or hide them.
+* **Improvements**
+ * Better admin plugin user interface.
+ * Default CSS improvements.
+ * Debug your options using `&godmode` in the setting page URL
+* **Bug fix**
+ * Log out from your account.
+
 ### 1.3.0
 * **Features**
  * Displays links for URL and hashtags.
@@ -144,6 +164,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.4.0
+Be careful, this version comes with multiple new options and behavior. Try in a safe environment before upgrading or wait for the 1.4.1.
 
 ### 1.3.0
 Existing users: you need to save your settings again to ensure proper auto-syndication function.

@@ -1,6 +1,6 @@
 <?php
 // Prevent direct access to the plugin
-if ( ! defined('ABSPATH') ) {
+if ( ! defined(constant_name: 'ABSPATH') ) {
     exit;
 }
 
@@ -21,10 +21,10 @@ class BlueSky_Render_Front {
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      */
-    public function __construct(BlueSky_API_Handler $api_handler) {
-        $this->api_handler = $api_handler;
-        $this->options = get_option( BLUESKY_PLUGIN_OPTIONS );
-        $this->init_hooks();
+    public function __construct( BlueSky_API_Handler $api_handler ) {
+        $this -> api_handler = $api_handler;
+        $this -> options = get_option( BLUESKY_PLUGIN_OPTIONS );
+        $this -> init_hooks();
     }
 
     /**
@@ -47,12 +47,14 @@ class BlueSky_Render_Front {
             'theme' => $this -> options['theme'] ?? 'system',
             'displayembeds' => ! $this -> options['no_embeds'] ?? false,
             'noreplies' => $this -> options['no_replies'] ?? true,
+            'noreposts' => $this -> options['no_reposts'] ?? true,
             'numberofposts' => $this -> options['posts_limit'] ?? 5
         ]);
 
         // Convert string boolean values to actual booleans
         $attributes['displayembeds'] = filter_var( $attributes['displayembeds'], FILTER_VALIDATE_BOOLEAN);
         $attributes['noreplies'] = filter_var( $attributes['noreplies'], FILTER_VALIDATE_BOOLEAN);
+        $attributes['noreposts'] = filter_var( $attributes['noreposts'], FILTER_VALIDATE_BOOLEAN);
         return $this->render_bluesky_posts_list( $attributes );
     }
 
@@ -68,6 +70,7 @@ class BlueSky_Render_Front {
             'theme' => $this -> options['theme'] ?? 'system',
             'displayembeds' => ! $this -> options['no_embeds'] ?? false,
             'noreplies' => $this -> options['no_replies'] ?? true,
+            'noreposts' => $this -> options['no_reposts'] ?? true,
             'numberofposts' => $this -> options['posts_limit'] ?? 5
         ];
 
@@ -77,19 +80,46 @@ class BlueSky_Render_Front {
         // Extract variables
         $display_embeds = $attributes['displayembeds'];
         $no_replies = $attributes['noreplies'];
+        $no_reposts = $attributes['noreposts'];
         $theme = $attributes['theme'];
         $number_of_posts = $attributes['numberofposts'];
+        $layout = $this -> options['styles']['feed_layout'] ?? 'default';
 
-        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies);
+        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies, $no_reposts );
         
         // Apply theme class
-        $theme_class = 'theme-' . esc_attr( $theme );
+        $classes = ' theme-' . esc_attr( $theme );
+        // Apply layout class
+        $classes .= ' display-' . esc_attr( $layout );
 
         if ( isset ( $posts ) && is_array( $posts ) && count( $posts ) > 0 ) {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
+            add_action( 'wp_head', [$this, 'render_inline_custom_styles_posts'] );
             ?>
-            <aside class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
+
+            <aside class="bluesky-social-integration-last-post<?php echo esc_attr( $classes ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
+                    
+                <?php if ( $layout === 'layout_2' ) { ?>
+                <div class="bluesky-social-integration-profile-card-embedded">
+                    <?php $profile = $this -> api_handler -> get_bluesky_profile(); ?>
+
+                    <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
+                        <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
+                        <img class="avatar bluesky-social-integration-avatar" width="40" height="40" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
+
+                        <div class="bluesky-social-integration-content">
+                            <div class="bluesky-social-integration-content-names">
+                                <p class="bluesky-social-integration-name"><?php echo esc_html( $profile['displayName'] ); ?></p>
+                                <p class="bluesky-social-integration-handle"><span>@</span><?php echo esc_html( $profile['handle'] ); ?></p>
+                            </div>
+                            <a class="bluesky-social-integration-profile-button" href="https://bsky.app/profile/<?php echo esc_attr( $profile['handle'] ); ?>"><span class="screen-reader-text"><?php esc_html_e('See Bluesky Profile', 'social-integration-for-bluesky' ); ?></span><svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.1474 1.77775C18.0519 4.08719 14.7224 8.76976 13.4999 11.2827C12.2774 8.76994 8.94803 4.08714 5.85245 1.77775C3.61891 0.111357 -7.41864e-07 -1.17801 -7.41864e-07 2.92481C-7.41864e-07 3.7442 0.47273 9.80811 0.749991 10.7926C1.71375 14.2152 5.22563 15.0881 8.34952 14.5598C2.88903 15.4834 1.49994 18.5426 4.49985 21.6018C10.1973 27.4118 12.6887 20.144 13.3274 18.2817C13.4444 17.9403 13.4992 17.7806 13.5 17.9164C13.5008 17.7806 13.5556 17.9403 13.6726 18.2817C14.311 20.144 16.8024 27.412 22.5002 21.6018C25.5001 18.5426 24.1111 15.4832 18.6505 14.5598C21.7745 15.0881 25.2864 14.2152 26.25 10.7926C26.5273 9.80801 27 3.74411 27 2.92481C27 -1.17801 23.381 0.111357 21.1476 1.77775H21.1474Z" fill="currentColor"/>
+</svg></a>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+
                 <ul class="bluesky-social-integration-last-post-list">
 
                     <?php
@@ -174,7 +204,7 @@ class BlueSky_Render_Front {
 
                                     $video = $post['embedded_media'];
                             ?>
-                                <div class="embedded-video">
+                                <div class="blueksy-social-integration-embedded-video">
                                     <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                                     
                                     <video controls playsinline poster="<?php echo esc_url( $video['thumbnail_url'] ); ?>">
@@ -200,7 +230,7 @@ class BlueSky_Render_Front {
                         ?>
                             <<?php echo $hasURL ? 'a href="' . esc_url( $post['embedded_media']['url'] ) . '"' : 'div'; ?> class="bluesky-social-integration-embedded-record">
                                 <div class="bluesky-social-integration-external-image">
-                                    <svg fill="none" width="58" viewBox="0 0 24 24" height="58"><defs><linearGradient x1="0" y1="0" x2="100%" y2="0" gradientTransform="rotate(45)" id="sky_gkpWQFtGs17eaqFdD5GTv"><stop offset="0" stop-color="#0A7AFF"></stop><stop offset="1" stop-color="#59B9FF"></stop></linearGradient></defs><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M11.26 5.227 5.02 6.899c-.734.197-1.17.95-.973 1.685l1.672 6.24c.197.734.951 1.17 1.685.973l6.24-1.672c.734-.197 1.17-.951.973-1.685L12.945 6.2a1.375 1.375 0 0 0-1.685-.973Zm-6.566.459a2.632 2.632 0 0 0-1.86 3.223l1.672 6.24a2.632 2.632 0 0 0 3.223 1.861l6.24-1.672a2.631 2.631 0 0 0 1.861-3.223l-1.672-6.24a2.632 2.632 0 0 0-3.223-1.861l-6.24 1.672Z"></path><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M15.138 18.411a4.606 4.606 0 1 0 0-9.211 4.606 4.606 0 0 0 0 9.211Zm0 1.257a5.862 5.862 0 1 0 0-11.724 5.862 5.862 0 0 0 0 11.724Z"></path></svg>
+                                    <svg fill="none" width="40" viewBox="0 0 24 24" height="40"><defs><linearGradient x1="0" y1="0" x2="100%" y2="0" gradientTransform="rotate(45)" id="sky_gkpWQFtGs17eaqFdD5GTv"><stop offset="0" stop-color="#0A7AFF"></stop><stop offset="1" stop-color="#59B9FF"></stop></linearGradient></defs><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M11.26 5.227 5.02 6.899c-.734.197-1.17.95-.973 1.685l1.672 6.24c.197.734.951 1.17 1.685.973l6.24-1.672c.734-.197 1.17-.951.973-1.685L12.945 6.2a1.375 1.375 0 0 0-1.685-.973Zm-6.566.459a2.632 2.632 0 0 0-1.86 3.223l1.672 6.24a2.632 2.632 0 0 0 3.223 1.861l6.24-1.672a2.631 2.631 0 0 0 1.861-3.223l-1.672-6.24a2.632 2.632 0 0 0-3.223-1.861l-6.24 1.672Z"></path><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M15.138 18.411a4.606 4.606 0 1 0 0-9.211 4.606 4.606 0 0 0 0 9.211Zm0 1.257a5.862 5.862 0 1 0 0-11.724 5.862 5.862 0 0 0 0 11.724Z"></path></svg>
                                 </div>
                                 <div class="bluesky-social-integration-last-post-content">
                                     <p>
@@ -326,7 +356,7 @@ class BlueSky_Render_Front {
             return '<p class="bluesky-social-integration-error">' . esc_html__('Unable to fetch BlueSky profile.', 'social-integration-for-bluesky') . '</p>';
         }
 
-        $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ];
+        $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ?? '' ];
         
         if ( isset( $attributes['theme'] ) ) {
             $classes[] = 'theme-' . esc_attr( $attributes['theme'] );
@@ -348,6 +378,7 @@ class BlueSky_Render_Front {
         
         ob_start();
         do_action('bluesky_before_profile_card_markup', $profile );
+        add_action( 'wp_head', [$this, 'render_inline_custom_styles_profile'] );
         ?>
 
         <aside class="<?php echo esc_attr( implode(' ', $classes ) ); ?>" aria-label="<?php echo esc_attr( $aria_label ); ?>">
@@ -379,5 +410,102 @@ class BlueSky_Render_Front {
         <?php
         do_action('bluesky_after_profile_card_markup', $profile );
         return ob_get_clean();
+    }
+
+    /**
+     * Generate the inline style for each custom one saved in the plugin options.
+     * The output will vary depending if you are in the admin or the front-end of the website.
+     * - One <style> + selector + custom prop CSS per customisation in the admin (for JS use)
+     * - One <style> mixing all the custom props in one selector for the front-end.
+     * 
+     * @param string $type "posts" or "profile" if targetting specific styles, or "all" for all.
+     * @return string|void The <style> elements usually displayed between <head> tags. Or nothing if $options[customisation]'s missing
+     */
+    public function get_inline_custom_styles($type = 'all') {
+        $options = $this -> options;
+        
+        if ( ! isset( $options['customisation'] ) || ! is_array( $options['customisation'] ) ) {
+            return;
+        }
+
+        $output =  "\n" . '<!-- Added by Social Integration for Bluesky -->' . "\n";
+        $custom = $options['customisation'];
+
+        // The piece of code for Profile Card Customisation
+        if ( isset( $custom['profile'] ) && is_array( $custom['profile'] ) && ( $type === 'all' || $type === 'profile' ) ) {
+            
+            $output .= ! is_admin() ? '<style id="bluesky-profile-custom-styles">' . "\n" : '';
+            $output .= ! is_admin() ? '.bluesky-social-integration-profile-card {' . "\n" : '';
+
+            foreach ( $custom['profile'] as $element => $props ) {
+                if ( is_array( $props ) ) {
+                    foreach ( $props as $k => $prop ) {
+                        $custom_prop = '--bluesky-profile-custom-' . $element . '-' . $k ;
+                        $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
+                        $output .= is_admin() ? '.bluesky-social-integration-profile-card {' . "\n" : '';
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop['value'] ) . 'px!important;' . "\n";
+                        $output .= is_admin() ? '}' . "\n" : '';
+                        $output .= is_admin() ? '</style>' . "\n" : '';
+                    }
+                }
+            }
+
+            $output .= ! is_admin() ? '}' . "\n" : '';
+            $output .= ! is_admin() ? '</style>' . "\n" : '';
+        }
+
+        // The piece of code for Feed Customisation
+        if ( isset( $custom['posts'] ) && is_array( $custom['posts'] ) && ( $type === 'all' || $type === 'posts' ) ) {
+            
+            $output .= ! is_admin() ? '<style id="bluesky-posts-custom-styles">' . "\n" : '';
+            $output .= ! is_admin() ? '.bluesky-social-integration-last-post {' . "\n" : '';
+
+            foreach ( $custom['posts'] as $element => $props ) {
+                if ( is_array( $props ) ) {
+                    foreach ( $props as $k => $prop ) {
+                        $custom_prop = '--bluesky-posts-custom-' . $element . '-' . $k ;
+                        $output .= is_admin() ? '<style id="bluesky' . esc_attr($custom_prop) . '">' . "\n" : '';
+                        $output .= is_admin() ? '.bluesky-social-integration-last-post {' . "\n" : '';
+                        $output .= "\t" . esc_attr( $custom_prop ) . ': ' . intval( $prop['value'] ) . 'px!important;' . "\n";
+                        $output .= is_admin() ? '}' . "\n" : '';
+                        $output .= is_admin() ? '</style>' . "\n" : '';
+                    }
+                }
+            }
+
+            $output .= ! is_admin() ? '}' . "\n" : '';
+            $output .= ! is_admin() ? '</style>' . "\n" : '';
+        }
+
+        $output .= '<!-- END OF Social Integration for Bluesky -->' . "\n";
+
+        return $output;   
+    }
+
+    /**
+     * Simply print the output of get_inline_custom_styles() method.
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles() {
+        echo $this -> get_inline_custom_styles();
+    }
+
+    /**
+     * Print the output of get_inline_custom_styles() only for posts
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles_posts() {
+        echo $this -> get_inline_custom_styles('posts');
+    }
+
+    /**
+     * Print the output of get_inline_custom_styles() only for profile
+     * 
+     * @return void
+     */
+    public function render_inline_custom_styles_profile() {
+        echo $this -> get_inline_custom_styles('profile');
     }
 }

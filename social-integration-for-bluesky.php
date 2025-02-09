@@ -2,7 +2,7 @@
 /*
 Plugin Name: Social Integration for BlueSky
 Description: Integrates BlueSky social features into WordPress including: Post New Articles on BlueSky for you, Shortcode for Profile Card, and Widget to display your last posts. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>.
-Version: 1.3.1
+Version: 1.4.0
 Requires at least: 5.0
 Requires PHP: 7.4
 Author: Geoffrey Crofte
@@ -18,7 +18,7 @@ if ( ! defined('ABSPATH') ) {
     exit;
 }
 
-define( 'BLUESKY_PLUGIN_VERSION', '1.3.1' );
+define( 'BLUESKY_PLUGIN_VERSION', '1.4.0' );
 define( 'BLUESKY_PLUGIN_FILE',  __FILE__ );
 define( 'BLUESKY_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'BLUESKY_PLUGIN_FOLDER', plugin_dir_url( __FILE__ ) );
@@ -33,6 +33,7 @@ require_once( 'classes/BlueSky_API_Handler.php' ); // V.1
 require_once( 'classes/BlueSky_Plugin_Setup.php' ); // V.1
 require_once( 'classes/BlueSky_Render_Front.php' ); // V.1
 require_once( 'classes/BlueSky_Post_Metabox.php' ); // V.1.1
+require_once( 'classes/BlueSky_Admin_Actions.php' ); // V.1.4.0
 
 // Widgets
 require_once( 'classes/widgets/BlueSky_Posts_Widget.php' );
@@ -42,4 +43,5 @@ require_once( 'classes/widgets/BlueSky_Profile_Widget.php' );
 $bluesky_api_handler = new BlueSky_API_Handler( get_option( BLUESKY_PLUGIN_OPTIONS ) ); // V.1
 $bluesky_social_integration = new BlueSky_Plugin_Setup( $bluesky_api_handler ); // V.1
 $bluesky_render_front = new BlueSky_Render_Front( $bluesky_api_handler ); // V.1
-new BlueSky_Post_Metabox(); // V.1.1
+new BlueSky_Admin_Actions(); // V.1.4.0
+new BlueSky_Post_Metabox(); // V.1.1.0
