@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,7 +56,7 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 
 ==== Display the last posts ====
 
-`[bluesky_last_posts displayembeds="true" displayimages="true" theme="system" noreplies="true" noreposts="true" numberofposts="5"]`
+`[bluesky_last_posts displayembeds="true" theme="system" noreplies="true" noreposts="true" numberofposts="5"]`
 
 - `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
 - `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
@@ -109,8 +109,17 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 7. The BlueSky Profile Gutenberg options.
 8. The plugin settings screen.
 9. A post automatically shared after a WordPress publication.
+10. A gallery and a starterpack embedding.
+11. The lightbox when gallery images are available.
+12. The second layout of the Post Feed.
+13. Some other plugin settings options.
 
 == Changelog ==
+
+= 1.4.1 =
+* **Bug fix**
+ * Custom font-size works on Layout 2 display name.
+ * Admin better styles on input numbers and buttons.
 
 = 1.4.0 =
 * **Features** 

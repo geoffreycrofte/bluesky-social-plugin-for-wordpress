@@ -184,6 +184,7 @@
     border-radius: 8px;
     background-color: var(--primary);
     font-weight: bold;
+    border: none;
 }
 
 .bluesky-metabox-description.bluesky-metabox-description.bluesky-metabox-description {
@@ -271,7 +272,7 @@
     max-width: 560px;
 }
 
-input.bluesky-custom-unit {
+input.bluesky-custom-unit.bluesky-custom-unit {
     width: 4em;
     padding-right: 0;
 }
