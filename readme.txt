@@ -20,6 +20,12 @@ An option is available for syndication of posts for BlueSky Social.
 
 Some other included features:
 
+* Configurable Bluesky Profile Card
+ * Choose to display a banner, or not
+ * Choose to display an avatar, or not
+ * Choose to display your bio, or not
+ * Choose to display your counter, or not
+
 * Embedded posts in the feed
  * Youtube URL detection
  * Embedded video
@@ -28,10 +34,10 @@ Some other included features:
  * Starterpack display
  * Gallery of images (displaying an accessible lightbox)
  * Multiple available layouts
-* App Password for a more secure connection
+
+* Encrypted App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
 * Dark/Light mode (by default is system/user choice)
-* Lots of options in the display of your profile banner
 
 === Shortcode usage ===
 
@@ -108,11 +114,15 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 
 = 1.4.0 =
 * **Features** 
- * Pick among different feed layouts.
+ * Pick among two feed layouts.
  * Customize font-size.
- * Decide to display Reposts of hide them.
+ * Decide to display Reposts or hide them.
 * **Improvements**
  * Better admin plugin user interface.
+ * Default CSS improvements.
+ * Debug your options using `&godmode` in the setting page URL
+* **Bug fix**
+ * Log out from your account.
 
 = 1.3.1 =
 * **Improvements**
@@ -160,6 +170,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Be careful, this version comes with multiple new options and behavior. Try in a safe environment before upgrading or wait for the 1.4.1.
 
 = 1.3.0 =
 Existing users: you need to save your settings again to ensure proper auto-syndication function.
