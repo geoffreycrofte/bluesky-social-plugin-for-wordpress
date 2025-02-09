@@ -268,6 +268,10 @@
     word-break: break-word;
  }
 
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-content-names .bluesky-social-integration-name {
+    font-size: var(--bluesky-posts-custom-account-info-names-fs)!important;
+}
+
  .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-profile-button {
     display: inline-flex;
     align-items: center;
