@@ -111,6 +111,10 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 7. The BlueSky Profile Gutenberg options.
 8. The plugin settings screen.
 9. A post automatically shared after a WordPress publication.
+10. A gallery and a starterpack embedding.
+11. The lightbox when gallery images are available.
+12. The second layout of the Post Feed.
+13. Some other plugin settings options.
 
 ## Changelog
 
