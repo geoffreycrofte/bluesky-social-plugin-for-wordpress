@@ -56,7 +56,7 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 
 ==== Display the last posts ====
 
-`[bluesky_last_posts displayembeds="true" displayimages="true" theme="system" noreplies="true" noreposts="true" numberofposts="5"]`
+`[bluesky_last_posts displayembeds="true" theme="system" noreplies="true" noreposts="true" numberofposts="5"]`
 
 - `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
 - `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
