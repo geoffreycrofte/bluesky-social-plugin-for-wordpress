@@ -47,12 +47,14 @@ class BlueSky_Render_Front {
             'theme' => $this -> options['theme'] ?? 'system',
             'displayembeds' => ! $this -> options['no_embeds'] ?? false,
             'noreplies' => $this -> options['no_replies'] ?? true,
+            'noreposts' => $this -> options['no_reposts'] ?? true,
             'numberofposts' => $this -> options['posts_limit'] ?? 5
         ]);
 
         // Convert string boolean values to actual booleans
         $attributes['displayembeds'] = filter_var( $attributes['displayembeds'], FILTER_VALIDATE_BOOLEAN);
         $attributes['noreplies'] = filter_var( $attributes['noreplies'], FILTER_VALIDATE_BOOLEAN);
+        $attributes['noreposts'] = filter_var( $attributes['noreposts'], FILTER_VALIDATE_BOOLEAN);
         return $this->render_bluesky_posts_list( $attributes );
     }
 
@@ -68,6 +70,7 @@ class BlueSky_Render_Front {
             'theme' => $this -> options['theme'] ?? 'system',
             'displayembeds' => ! $this -> options['no_embeds'] ?? false,
             'noreplies' => $this -> options['no_replies'] ?? true,
+            'noreposts' => $this -> options['no_reposts'] ?? true,
             'numberofposts' => $this -> options['posts_limit'] ?? 5
         ];
 
@@ -77,20 +80,46 @@ class BlueSky_Render_Front {
         // Extract variables
         $display_embeds = $attributes['displayembeds'];
         $no_replies = $attributes['noreplies'];
+        $no_reposts = $attributes['noreposts'];
         $theme = $attributes['theme'];
         $number_of_posts = $attributes['numberofposts'];
+        $layout = $this -> options['styles']['feed_layout'] ?? 'default';
 
-        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies);
+        $posts = $this -> api_handler -> fetch_bluesky_posts( intval( $number_of_posts ), (bool) $no_replies, $no_reposts );
         
         // Apply theme class
-        $theme_class = 'theme-' . esc_attr( $theme );
+        $classes = ' theme-' . esc_attr( $theme );
+        // Apply layout class
+        $classes .= ' display-' . esc_attr( $layout );
 
         if ( isset ( $posts ) && is_array( $posts ) && count( $posts ) > 0 ) {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
             add_action( 'wp_head', [$this, 'render_inline_custom_styles_posts'] );
             ?>
-            <aside class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
+
+            <aside class="bluesky-social-integration-last-post<?php echo esc_attr( $classes ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">
+                    
+                <?php if ( $layout === 'layout_2' ) { ?>
+                <div class="bluesky-social-integration-profile-card-embedded">
+                    <?php $profile = $this -> api_handler -> get_bluesky_profile(); ?>
+
+                    <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
+                        <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
+                        <img class="avatar bluesky-social-integration-avatar" width="40" height="40" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
+
+                        <div class="bluesky-social-integration-content">
+                            <div class="bluesky-social-integration-content-names">
+                                <p class="bluesky-social-integration-name"><?php echo esc_html( $profile['displayName'] ); ?></p>
+                                <p class="bluesky-social-integration-handle"><span>@</span><?php echo esc_html( $profile['handle'] ); ?></p>
+                            </div>
+                            <a class="bluesky-social-integration-profile-button" href="https://bsky.app/profile/<?php echo esc_attr( $profile['handle'] ); ?>"><span class="screen-reader-text"><?php esc_html_e('See Bluesky Profile', 'social-integration-for-bluesky' ); ?></span><svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.1474 1.77775C18.0519 4.08719 14.7224 8.76976 13.4999 11.2827C12.2774 8.76994 8.94803 4.08714 5.85245 1.77775C3.61891 0.111357 -7.41864e-07 -1.17801 -7.41864e-07 2.92481C-7.41864e-07 3.7442 0.47273 9.80811 0.749991 10.7926C1.71375 14.2152 5.22563 15.0881 8.34952 14.5598C2.88903 15.4834 1.49994 18.5426 4.49985 21.6018C10.1973 27.4118 12.6887 20.144 13.3274 18.2817C13.4444 17.9403 13.4992 17.7806 13.5 17.9164C13.5008 17.7806 13.5556 17.9403 13.6726 18.2817C14.311 20.144 16.8024 27.412 22.5002 21.6018C25.5001 18.5426 24.1111 15.4832 18.6505 14.5598C21.7745 15.0881 25.2864 14.2152 26.25 10.7926C26.5273 9.80801 27 3.74411 27 2.92481C27 -1.17801 23.381 0.111357 21.1476 1.77775H21.1474Z" fill="currentColor"/>
+</svg></a>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+
                 <ul class="bluesky-social-integration-last-post-list">
 
                     <?php
@@ -327,7 +356,7 @@ class BlueSky_Render_Front {
             return '<p class="bluesky-social-integration-error">' . esc_html__('Unable to fetch BlueSky profile.', 'social-integration-for-bluesky') . '</p>';
         }
 
-        $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ];
+        $classes = [ 'bluesky-social-integration-profile-card', $attributes['styleClass'] ?? '' ];
         
         if ( isset( $attributes['theme'] ) ) {
             $classes[] = 'theme-' . esc_attr( $attributes['theme'] );

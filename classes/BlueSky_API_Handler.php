@@ -195,10 +195,11 @@ class BlueSky_API_Handler {
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
      */
-    public function fetch_bluesky_posts( $limit = 10, $no_replies = true ) {
+    public function fetch_bluesky_posts( $limit = 10, $no_replies = true, $no_reposts = true ) {
         $helpers = new BlueSky_Helpers();
-        $no_replies = $this -> options['no_replies'] ?? true;
-        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies );
+        $no_replies = $no_replies ?? $this -> options['no_replies']  ?? true;
+        $no_reposts = $no_reposts ?? $this -> options['no_reposts'] ?? true;
+        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies, $no_reposts );
         $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
 
         // Skip cache if duration is 0
@@ -223,7 +224,7 @@ class BlueSky_API_Handler {
             ],
             'body' => [
                 'actor' => $this -> did,
-                'limit' => $no_replies ? 100 : $limit, // Fetch more to account for replies
+                'limit' => ( $no_replies || $no_reposts ) ? 100 : $limit, // Fetch more to account for replies
             ]
         ]);
 
@@ -233,10 +234,30 @@ class BlueSky_API_Handler {
 
         $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true );
 
-        // Filter out replies if necessary
-        $posts = $no_replies ? array_filter( $raw_posts['feed'] ?? [], function( $post ) {
-            return empty( $post['reply'] ); // Exclude posts with a 'reply' key
-        }) : $raw_posts['feed'];
+        $filteredFeed = array_filter($raw_posts['feed'], function ($entry) use($no_replies, $no_reposts, $helpers) {
+            if ( ! isset( $entry['post'] ) ) {
+                return false;
+            }
+        
+            $post = $entry['post'];
+        
+            // Filter out replies (check if 'reply' key exists in record)
+            if ( isset( $post['record']['reply'] ) && $no_replies ) {
+                return false;
+            }
+        
+            // Filter out reposts (check if 'reason' key exists and is a repost)
+            if ( isset( $entry['reason'] ) && $entry['reason']['$type'] === "app.bsky.feed.defs#reasonRepost"  && $no_reposts) {
+                return false;
+            }
+        
+            return true; // Keep original posts
+        });
+        
+        // Reset array keys
+        $posts = array_values($filteredFeed);
+
+
 
         if ( $no_replies ) {
             // Limit to the requested number of posts

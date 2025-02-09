@@ -106,7 +106,6 @@
             } );
 
             window.addEventListener('keydown', e => {
-                console.log(e);
                 if ( ! sidebar.classList.contains( closeclass ) && e.key === "Escape" ) {
                     closeSidebar();
                 }

@@ -196,6 +196,40 @@
     padding: 32px;
 }
 
+/* Layout Choice */
+.bluesky-social-integration-layout-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    width: 100%;
+}
+.bluesky-social-integration-layout-options label {
+    position: relative;
+    cursor: pointer;
+}
+
+.bluesky-social-integration-layout-options label input {
+    position: absolute;
+    opacity: 0.01;
+}
+
+.bluesky-social-integration-layout-options label img {
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: all .3s;
+    opacity: 0.8;
+}
+
+.bluesky-social-integration-layout-options label input:checked ~ img {
+    border-color: var(--primary);
+    opacity: 1;
+}
+
+.bluesky-social-integration-layout-options label input:focus-visible ~ img {
+    outline: 2px dotted var(--primary);
+    outline-offset: 2px;
+}
+
 /* Interactive Editor */
 .bluesky-social-integration-admin-content .bluesky-social-integration-large-content {
     max-width: 1200px;
@@ -204,7 +238,7 @@
 .bluesky-social-integration-interactive {
     display: flex;
     gap: 16px;
-    justify-content: center;
+    justify-content: safe center;
     align-items: stretch;
 }
 
@@ -269,6 +303,7 @@ input.bluesky-custom-unit {
     border: 0;
     border-radius: 8px 0 0 8px;
     z-index: 1;
+    cursor: pointer;
 }
 
 .bluesky-debug-sidebar .bluesky-open-button:hover,

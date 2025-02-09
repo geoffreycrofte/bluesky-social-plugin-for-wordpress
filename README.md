@@ -52,10 +52,11 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 
 ### Display the last posts
 
-`[bluesky_last_posts displaysembeds="true" theme="system" numberofposts="5"]`
+`[bluesky_last_posts displaysembeds="true" noreplies="true" noreposts="true" theme="system" numberofposts="5"]`
 
 - `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
-- `noReplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
+- `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
+- `noreposts`: either you want to hide your reposts, or include them in your feed (values: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
 - `numberofposts`: any number of posts to display. (advice, don't set a too high value)
 
@@ -111,6 +112,7 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 * **Features** 
  * Pick among different feed layouts.
  * Customize font-size.
+ * Decide to display Reposts of hide them.
 * **Improvements**
  * Better admin plugin user interface.
 

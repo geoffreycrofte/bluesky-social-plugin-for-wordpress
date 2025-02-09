@@ -162,6 +162,7 @@ class BlueSky_Plugin_Setup {
     public function sanitize_settings( $input ) {
         $sanitized = [];
         $helpers = $this -> helpers;
+        $current_options = $this -> options;
         
         // Handle encryption for secret key
         $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
@@ -184,6 +185,7 @@ class BlueSky_Plugin_Setup {
         $sanitized['auto_syndicate'] = isset( $input['auto_syndicate'] ) ? 1 : 0;
         $sanitized['no_replies'] = isset( $input['no_replies'] ) ? 1 : 0;
         $sanitized['no_embeds'] = isset( $input['no_embeds'] ) ? 1 : 0;
+        $sanitized['no_reposts'] = isset( $input['no_reposts'] ) ? 1 : 0;
         $sanitized['theme'] = isset( $input['theme'] ) ? sanitize_text_field( $input['theme'] ) : 'system';
         $sanitized['posts_limit'] = isset( $input['posts_limit'] ) ? min( 10, max( 1, intval( $input['posts_limit'] ) ) ) : 5;
 
@@ -201,7 +203,12 @@ class BlueSky_Plugin_Setup {
         // Sanitize Layouts
         $sanitized['styles']['feed_layout'] = isset( $input['styles']['feed_layout'] ) && in_array( $input['styles']['feed_layout'], array('default', 'layout_2') ) ? esc_attr( $input['styles']['feed_layout'] ) : 'default';
 
-        unset( $sanitized['styles']['feed-layout'] );
+        // If we go from any layout to 'layout_2' then make some custom setup.
+        if ( isset( $current_options['styles']['feed_layout'] ) && $current_options['styles']['feed_layout'] !== 'layout_2' && $sanitized['styles']['feed_layout'] === 'layout_2' ) {
+            $sanitized['no_replies'] = 1;
+            $sanitized['no_embeds'] = 1;
+            $sanitized['no_reposts'] = 1;
+        }
 
         // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)
         if ( ! get_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date' ) ) {
@@ -244,6 +251,11 @@ class BlueSky_Plugin_Setup {
             'bluesky_no_replies' => [
                 'label' => __('Do not display replies', 'social-integration-for-bluesky'),
                 'callback' => 'render_no_replies_field',
+                'section' => 'bluesky_customization_settings'
+            ],
+            'bluesky_no_reposts' => [
+                'label' => __('Do not display reposts', 'social-integration-for-bluesky'),
+                'callback' => 'render_no_reposts_field',
                 'section' => 'bluesky_customization_settings'
             ],
             'bluesky_no_embeds' => [
@@ -387,6 +399,16 @@ class BlueSky_Plugin_Setup {
 
         echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_replies' ) . '" type="checkbox" name="bluesky_settings[no_replies]" value="1" ' . checked(1, $no_replies, false) . ' aria-describedby="bluesky-no_replies-desc" />';
         echo '<span class="description bluesky-description" id="bluesky-no_replies-desc">' . esc_html( __('If checked, your replies will not be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
+    }
+
+    /**
+     * Render no repost field
+     */
+    public function render_no_reposts_field() {
+        $no_reposts = $this->options['no_reposts'] ?? 0;
+
+        echo '<input id="' . esc_attr( BLUESKY_PLUGIN_OPTIONS . '_no_reposts' ) . '" type="checkbox" name="bluesky_settings[no_reposts]" value="1" ' . checked(1, $no_reposts, false) . ' aria-describedby="bluesky-no_reposts-desc" />';
+        echo '<span class="description bluesky-description" id="bluesky-no_reposts-desc">' . esc_html( __('If checked, the reposts won’t be displayed in your feed.', 'social-integration-for-bluesky') ) . '</span>';
     }
 
     /**
@@ -623,6 +645,8 @@ class BlueSky_Plugin_Setup {
                     <?php
                         settings_fields('bluesky_settings_group');
                         do_settings_sections( BLUESKY_PLUGIN_SETTING_PAGENAME );
+
+                        $style_layout = ! isset( $this -> options['styles']['feed_layout'] ) ? 'default' : $this -> options['styles']['feed_layout'];
                     ?>
 
                     <div id="styles" aria-hidden="false" class="bluesky-social-integration-admin-content">
@@ -636,15 +660,23 @@ class BlueSky_Plugin_Setup {
 
                         <div class="bluesky-social-integration-layout-options">
                             <label for="bluesky_settings_feed_layout_default">
-                                <input id="bluesky_settings_feed_layout_default" type="radio" name="bluesky_settings[styles][feed_layout]" value="default"<?php echo isset( $this -> options['styles']['feed_layout'] ) && $this -> options['styles']['feed_layout'] === 'default' ? ' checked="checked"' : '' ; ?>>
-                                <?php echo esc_html__('Default layout', 'social-integration-for-bluesky'); ?>
+                                <input id="bluesky_settings_feed_layout_default" type="radio" name="bluesky_settings[styles][feed_layout]" value="default"<?php echo $style_layout === 'default' ? ' checked="checked"' : '' ; ?>>
+                                
+                                <span class="screen-reader-text"><?php echo esc_html__('Default layout', 'social-integration-for-bluesky'); ?></span>
+
+                                <img src="<?php echo BLUESKY_PLUGIN_FOLDER . '/assets/img/layout-default.svg'; ?>" alt="" width="150" height="163">
                             </label>
 
                             <label for="bluesky_settings_feed_layout_2">
-                                <input id="bluesky_settings_feed_layout_2" type="radio" name="bluesky_settings[styles][feed_layout]" value="layout_2"<?php echo isset( $this -> options['styles']['feed_layout'] ) && $this -> options['styles']['feed_layout'] === 'layout_2' ? ' checked="checked"' : '' ; ?>>
-                                <?php echo esc_html__('Light Weight Layout', 'social-integration-for-bluesky'); ?>
+                                <input id="bluesky_settings_feed_layout_2" type="radio" name="bluesky_settings[styles][feed_layout]" value="layout_2"<?php echo $style_layout === 'layout_2' ? ' checked="checked"' : '' ; ?>>
+
+                                <span class="screen-reader-text"><?php echo esc_html__('Light Weight Layout', 'social-integration-for-bluesky'); ?></span>
+
+                                <img src="<?php echo BLUESKY_PLUGIN_FOLDER . '/assets/img/layout-layout_2.svg'; ?>" alt="" width="150" height="163">
                             </label>
                         </div>
+
+                        <?php submit_button(null, 'primary large', null, true); ?>
 
                         <h3><?php echo esc_html__('Customize Font Styling', 'social-integration-for-bluesky'); ?></h3>
 
@@ -917,6 +949,7 @@ class BlueSky_Plugin_Setup {
                                 <li><code>displayembeds</code> - <?php echo esc_html__('Whether to display embedded media in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                 <li><code>displayimages</code> - <?php echo esc_html__('Whether to display embedded images in the posts. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                 <li><code>noreplies</code> - <?php echo esc_html__('Whether to hide your replies, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
+                                <li><code>noreposts</code> - <?php echo esc_html__('Whether to hide the reposts, or include them in your feed. Default is true.', 'social-integration-for-bluesky'); ?></li>
                                 <li><code>numberofposts</code> - <?php echo esc_html__('The number of posts to display. Default is 5.', 'social-integration-for-bluesky'); ?></li>
                                 <li><code>theme</code> - <?php echo esc_html__('The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".', 'social-integration-for-bluesky'); ?></li>
                             </ul>
@@ -1100,6 +1133,10 @@ class BlueSky_Plugin_Setup {
                     'type' => 'boolean',
                     'default' => true
                 ],
+                'noreposts' => [
+                    'type' => 'boolean',
+                    'default' => true
+                ],
                 'theme' => [
                     'type' => 'string',
                     'default' => 'system'
@@ -1204,6 +1241,7 @@ class BlueSky_Plugin_Setup {
      * @param array $attributes Block attributes including:
      *                         - displayembeds (bool) Whether to show embedded media in posts
      *                         - noreplies (bool) Whether to show replies in posts
+     *                         - noreposts (bool) Whether to show reposts in posts
      *                         - theme (string) Color theme - 'light', 'dark' or 'system'
      *                         - numberofposts (int) Number of posts to display (1-10)
      * @return string HTML markup for the posts feed

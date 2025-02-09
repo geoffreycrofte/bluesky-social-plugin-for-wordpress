@@ -10,11 +10,36 @@
     --bluesky-card-avatar-size: 90px;
 
     line-height: var(--bluesky-posts-custom-global-line-height, 1.25)!important;
+
+}
+
+.bluesky-social-integration-embedded-record,
+.bluesky-social-integration-last-post {
+    background: var(--bluesky-card-bg)!important;
+    border: var(--bluesky-card-border)!important;
+    padding: 0;
+    list-style: none!important;
+    border-radius: var(--bluesky-card-br)!important;
+    color: var(--bluesky-card-txt)!important;
+    overflow: hidden;
+}
+
+.bluesky-social-integration-last-post,
+.bluesky-social-integration-last-post * {
+    box-sizing: border-box;
 }
 
 .bluesky-social-integration-last-post.has-no-posts {
     padding: 24px;
     text-align: center;
+}
+
+.bluesky-social-integration-last-post .screen-reader-text {
+    position: absolute;
+    inset-inline-start: -9999em;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
 }
 
 .bluesky-social-integration-last-post.has-no-posts svg {
@@ -33,16 +58,6 @@
 .bluesky-social-integration-last-post img {
     max-width: 100%;
     height: auto;
-}
-
-.bluesky-social-integration-embedded-record,
-.bluesky-social-integration-last-post {
-    background: var(--bluesky-card-bg)!important;
-    border: var(--bluesky-card-border)!important;
-    padding: 0;
-    list-style: none!important;
-    border-radius: var(--bluesky-card-br)!important;
-    color: var(--bluesky-card-txt)!important;
 }
 
 .bluesky-social-integration-embedded-record p,
@@ -211,6 +226,72 @@
     background: transparent;
     z-index: 1;
 }
+
+/**
+ * Styles for Layouts
+ */
+ .bluesky-social-integration-last-post.display-layout_2 {
+    --bluesky-card-avatar-size: 42px;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-image {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    align-items: safe center;
+    min-height: 74px;
+    padding: 0 16px;
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--bluesky-card-bg) 90%, black 10%), color-mix(in srgb, var(--bluesky-card-bg) 90%, black 10%) ), var(--bluesky-social-integration-banner);
+    background-blend-mode: hard-light;
+    background-size: cover, cover;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-avatar {
+    position: static;
+    flex-shrink: 0;
+    flex-grow: 0;
+    transform: unset;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-content {
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-content-names p {
+    flex-basis: 100%;
+    margin: 0!important;
+    word-break: break-word;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-profile-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid currentColor;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 ul {
+    padding: 0;
+    margin: 0;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 li {
+    display: block;
+    padding: 16px;
+ }
+
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-last-post-header,
+ .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-post-account-info-names {
+    display: none;
+ }
 
 
 /**
