@@ -77,5 +77,40 @@
                 }
             });
         });
+
+        /**
+         * Debug bar menu
+         */
+        const debugbtn = document.querySelector('.bluesky-open-button');
+        const sidebar = document.querySelector('.bluesky-debug-sidebar');
+        const sidebarContent = sidebar.querySelector('.bluesky-debug-sidebar-content');
+        const closeclass = 'is-collapsed';
+        const closeSidebar = () => {
+            sidebar.classList.add(closeclass);
+            debugbtn.setAttribute('aria-expanded', 'false');
+            sidebarContent.setAttribute('aria-hidden', 'true');
+        };
+        const openSidebar = () => {
+            sidebar.classList.remove(closeclass);
+            debugbtn.setAttribute('aria-expanded', 'true');
+            sidebarContent.setAttribute('aria-hidden', 'false');
+        };
+
+        if ( debugbtn ) {
+            debugbtn.addEventListener('click', e => {
+                if ( sidebar.classList.contains( closeclass ) ) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            } );
+
+            window.addEventListener('keydown', e => {
+                console.log(e);
+                if ( ! sidebar.classList.contains( closeclass ) && e.key === "Escape" ) {
+                    closeSidebar();
+                }
+            } );
+        }
     }
 })(jQuery);

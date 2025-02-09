@@ -30,8 +30,8 @@ class BlueSky_Helpers {
      * Get the posts transient key
      * @return string
      */
-    public function get_posts_transient_key( $limit = null, $no_replies = false ) {
-        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . ( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' );
+    public function get_posts_transient_key( $limit = null, $no_replies = false, $layout = null ) {
+        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
     }
 
     /**
@@ -252,5 +252,16 @@ class BlueSky_Helpers {
      */
     public function get_the_admin_plugin_url() {
         return esc_url( get_admin_url( null, 'options-general.php' ) . '?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME );
+    }
+
+    /**
+     * Make a layouted var_dump();
+     * @param mixed $var the variable to be evaluated.
+     * @return string
+     */
+    public function war_dump($var) {
+        ob_start();
+        var_dump( $var );
+        return '<pre class="bluesky-var-dump"><code class="language-php">' . ob_get_clean() . '</code></pre>';
     }
 }

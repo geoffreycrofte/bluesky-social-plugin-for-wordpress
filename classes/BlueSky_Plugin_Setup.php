@@ -18,11 +18,18 @@ class BlueSky_Plugin_Setup {
     private $api_handler;
 
     /**
+     * Helpers instance
+     * @var BlueSky_Helpers
+     */
+    private $helpers;
+
+    /**
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      */
     public function __construct(BlueSky_API_Handler $api_handler) {
         $this->api_handler = $api_handler;
+        $this->helpers = new BlueSky_Helpers();
         $this->options = get_option( BLUESKY_PLUGIN_OPTIONS );
 
         // On activation
@@ -88,8 +95,7 @@ class BlueSky_Plugin_Setup {
      * Add a link to the setting page
      */
     function add_plugin_action_links( array $links ) {
-        $helpers = new BlueSky_Helpers();
-        $url = $helpers->get_the_admin_plugin_url();
+        $url = $this -> helpers -> get_the_admin_plugin_url();
         $settings_link = '<a href="' . esc_url( $url ) . '">' . esc_html__('Settings', 'social-integration-for-bluesky') . '</a>';
         $links[] = $settings_link;
         return $links;
@@ -155,7 +161,7 @@ class BlueSky_Plugin_Setup {
      */
     public function sanitize_settings( $input ) {
         $sanitized = [];
-        $helpers = new BlueSky_Helpers();
+        $helpers = $this -> helpers;
         
         // Handle encryption for secret key
         $secret_key = get_option( BLUESKY_PLUGIN_OPTIONS . '_secret' );
@@ -191,6 +197,11 @@ class BlueSky_Plugin_Setup {
             'days' => $days,
             'total_seconds' => ( $minutes * 60 ) + ( $hours * 3600 ) + ( $days * 86400 )
         ];
+
+        // Sanitize Layouts
+        $sanitized['styles']['feed_layout'] = isset( $input['styles']['feed_layout'] ) && in_array( $input['styles']['feed_layout'], array('default', 'layout_2') ) ? esc_attr( $input['styles']['feed_layout'] ) : 'default';
+
+        unset( $sanitized['styles']['feed-layout'] );
 
         // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)
         if ( ! get_option( BLUESKY_PLUGIN_OPTIONS . '_activation_date' ) ) {
@@ -436,7 +447,7 @@ class BlueSky_Plugin_Setup {
      * Display cache status
      */
     private function display_cache_status() {
-        $helpers = new BlueSky_Helpers();
+        $helpers = $this -> helpers;
         $profile_transient = get_transient( $helpers -> get_profile_transient_key() );
         $posts_transient = get_transient( $helpers -> get_posts_transient_key() );
         $access_token_transient = get_transient( $helpers -> get_access_token_transient_key() );
@@ -618,10 +629,26 @@ class BlueSky_Plugin_Setup {
                         <h2><?php echo esc_html__('Styles', 'social-integration-for-bluesky'); ?></h2>
 
                         <p><?php echo esc_html__('Decide how you want your Bluesky blocks to look like!', 'social-integration-for-bluesky'); ?></p>
-
                         
+                        <h3><?php echo esc_html__('Customize Feed Layout', 'social-integration-for-bluesky'); ?></h3>
+
+                        <p><?php echo esc_html__('Pick the layout that suits you best. Be careful, some of them could come later, and with specific pre-defined options. (e.g. "no-replies" by default)', 'social-integration-for-bluesky'); ?></p>
+
+                        <div class="bluesky-social-integration-layout-options">
+                            <label for="bluesky_settings_feed_layout_default">
+                                <input id="bluesky_settings_feed_layout_default" type="radio" name="bluesky_settings[styles][feed_layout]" value="default"<?php echo isset( $this -> options['styles']['feed_layout'] ) && $this -> options['styles']['feed_layout'] === 'default' ? ' checked="checked"' : '' ; ?>>
+                                <?php echo esc_html__('Default layout', 'social-integration-for-bluesky'); ?>
+                            </label>
+
+                            <label for="bluesky_settings_feed_layout_2">
+                                <input id="bluesky_settings_feed_layout_2" type="radio" name="bluesky_settings[styles][feed_layout]" value="layout_2"<?php echo isset( $this -> options['styles']['feed_layout'] ) && $this -> options['styles']['feed_layout'] === 'layout_2' ? ' checked="checked"' : '' ; ?>>
+                                <?php echo esc_html__('Light Weight Layout', 'social-integration-for-bluesky'); ?>
+                            </label>
+                        </div>
 
                         <h3><?php echo esc_html__('Customize Font Styling', 'social-integration-for-bluesky'); ?></h3>
+
+                        <p><?php echo esc_html__('Tweak the display of each block by customizing the font sizes. Find the best balance!', 'social-integration-for-bluesky'); ?></p>
 
                         <div class="bluesky-custom-styles-output" hidden>
                             <?php 
@@ -923,12 +950,28 @@ class BlueSky_Plugin_Setup {
                         <?php // translators: %1$s is the link opening tag, %2$s closing link tag. ?>
                         <p><?php echo sprintf( esc_html__( 'Want to support the plugin? %1$sGive a review%2$s', 'social-integration-for-bluesky'), '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' . esc_attr( $title ) . '">', ' ⭐️⭐️⭐️⭐️⭐️</a>' ); ?></p>
 
-                        <h2><?php echo esc_html__('Some Plugin Engine Info', 'social-integration-for-bluesky'); ?></h2>
+                        <h2><?php echo esc_html__( 'Some Plugin Engine Info', 'social-integration-for-bluesky' ); ?></h2>
                         <?php echo $this -> display_cache_status(); ?>
                     </div>
 
                 </form>
             </div>
+            
+            <?php if ( isset( $_GET['godmode'] ) || defined( 'WP_DEBUG' ) || defined( 'WP_DEBUG_DISPLAY' ) ) { ?>
+            <aside class="bluesky-debug-sidebar is-collapsed">
+                <button class="bluesky-open-button" type="button" aria-expanded="false" aria-controls="bluesky-debug-bar">
+                    <span class="screen-reader-text"><?php esc_html_e('Debug Bar', 'social-integration-for-bluesky'); ?></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><path fill="currentColor" d="M8.06561801,18.9432081 L14.565618,4.44320807 C14.7350545,4.06523433 15.1788182,3.8961815 15.5567919,4.06561801 C15.9032679,4.2209348 16.0741922,4.60676263 15.9697642,4.9611247 L15.934382,5.05679193 L9.43438199,19.5567919 C9.26494549,19.9347657 8.82118181,20.1038185 8.44320807,19.934382 C8.09673215,19.7790652 7.92580781,19.3932374 8.03023576,19.0388753 L8.06561801,18.9432081 L14.565618,4.44320807 L8.06561801,18.9432081 Z M2.21966991,11.4696699 L6.46966991,7.21966991 C6.76256313,6.9267767 7.23743687,6.9267767 7.53033009,7.21966991 C7.79659665,7.48593648 7.8208027,7.90260016 7.60294824,8.19621165 L7.53033009,8.28033009 L3.81066017,12 L7.53033009,15.7196699 C7.8232233,16.0125631 7.8232233,16.4874369 7.53033009,16.7803301 C7.26406352,17.0465966 6.84739984,17.0708027 6.55378835,16.8529482 L6.46966991,16.7803301 L2.21966991,12.5303301 C1.95340335,12.2640635 1.9291973,11.8473998 2.14705176,11.5537883 L2.21966991,11.4696699 L6.46966991,7.21966991 L2.21966991,11.4696699 Z M16.4696699,7.21966991 C16.7359365,6.95340335 17.1526002,6.9291973 17.4462117,7.14705176 L17.5303301,7.21966991 L21.7803301,11.4696699 C22.0465966,11.7359365 22.0708027,12.1526002 21.8529482,12.4462117 L21.7803301,12.5303301 L17.5303301,16.7803301 C17.2374369,17.0732233 16.7625631,17.0732233 16.4696699,16.7803301 C16.2034034,16.5140635 16.1791973,16.0973998 16.3970518,15.8037883 L16.4696699,15.7196699 L20.1893398,12 L16.4696699,8.28033009 C16.1767767,7.98743687 16.1767767,7.51256313 16.4696699,7.21966991 Z"></path></svg>
+                </button>
+                <div id="bluesky-debug-bar" class="bluesky-debug-sidebar-content" aria-hidden="true">
+                    <h2><?php esc_html_e( 'Debug Bar', 'social-integration-for-bluesky' ); ?></h2>
+                    <details>
+                        <summary><?php esc_html_e( 'Plugin’s options', 'social-integration-for-bluesky' ); ?></summary>
+                        <?php echo $this -> helpers -> war_dump( $this -> options ); ?>
+                    </details>
+                </div>
+            </aside>
+           <?php } ?>
         </main>
         <?php
     }
@@ -939,8 +982,10 @@ class BlueSky_Plugin_Setup {
     public function admin_enqueue_scripts() {
         wp_enqueue_style( 'bluesky-social-admin', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-admin.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_style( 'bluesky-social-profile', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-profile.css', array(), BLUESKY_PLUGIN_VERSION );
+        wp_enqueue_style( 'bluesky-social-primsjs-css', BLUESKY_PLUGIN_FOLDER . 'assets/css/prism.min.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_style( 'bluesky-social-posts', BLUESKY_PLUGIN_FOLDER . 'assets/css/bluesky-social-posts.css', array(), BLUESKY_PLUGIN_VERSION );
         wp_enqueue_script( 'bluesky-social-script', BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-social-admin.js', ['jquery'], BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
+        wp_enqueue_script( 'bluesky-social-prismjs-js', BLUESKY_PLUGIN_FOLDER . 'assets/js/prism.min.js', array(), BLUESKY_PLUGIN_VERSION, array( 'in_footer' => true, 'strategy' => 'defer' ) );
     }
 
     /**

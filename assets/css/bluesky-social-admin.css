@@ -241,3 +241,54 @@ input.bluesky-custom-unit {
     width: 4em;
     padding-right: 0;
 }
+
+.bluesky-debug-sidebar {
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    transition: transform .5s;
+    z-index: 1;
+}
+
+.bluesky-debug-sidebar.is-collapsed {
+    transform: translateX(100%);
+}
+
+.bluesky-debug-sidebar .bluesky-open-button {
+    position: absolute;
+    left: -40px;
+    top: var(--wp-admin--admin-bar--height);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: white;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+}
+
+.bluesky-debug-sidebar .bluesky-open-button:hover,
+.bluesky-debug-sidebar .bluesky-open-button:focus-visible {
+    background: color-mix(in srgb, var(--primary), black 30%);
+}
+
+.bluesky-debug-sidebar .bluesky-open-button:focus-visible {
+    outline: 2px dotted var(--primary);
+    outline-offset: 2px;
+}
+
+.bluesky-debug-sidebar-content {
+    height: calc(100% - 48px);
+    overflow: auto;
+    padding: 24px;
+    background: white;
+    box-shadow: 0 0 40px -12px rgba(0, 0, 0, .1);
+}
+
+.bluesky-debug-sidebar-content summary {
+    font-size: 1.3em;
+}
