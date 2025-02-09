@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.7
 - Requires PHP: 7.4
-- Stable tag: 1.4.0
+- Stable tag: 1.4.1
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -113,6 +113,11 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 9. A post automatically shared after a WordPress publication.
 
 ## Changelog
+
+### 1.4.1
+* **Bug fix**
+ * Custom font-size works on Layout 2 display name.
+ * Admin better styles on input numbers and buttons.
 
 ### 1.4.0
 * **Features** 
