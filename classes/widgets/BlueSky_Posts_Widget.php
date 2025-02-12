@@ -17,12 +17,14 @@ class BlueSky_Posts_Widget extends WP_Widget {
         $api_handler = new BlueSky_API_Handler( get_option( BLUESKY_PLUGIN_OPTIONS ) );
         $bluesky = new BlueSky_Render_Front( $api_handler );
         $posts = $bluesky -> render_bluesky_posts_list();
+        $styles = $bluesky -> get_inline_custom_styles('posts');
+
 
         $output = $args['before_widget'];
         $output .= $args['before_title'] . __( 'BlueSky Latest Posts', 'social-integration-for-bluesky' ) . $args['after_title'];
         $output .= $posts;
         $output .= $args['after_widget'];
 
-        echo wp_kses( $output, wp_kses_allowed_html('post') );
+        echo wp_kses( $output, wp_kses_allowed_html('post') )  . "\n" . $styles;
     }
 }
