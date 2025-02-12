@@ -17,7 +17,7 @@ class BlueSky_Profile_Widget extends WP_Widget {
         $api_handler = new BlueSky_API_Handler( get_option( BLUESKY_PLUGIN_OPTIONS ) );
         $bluesky = new BlueSky_Render_Front( $api_handler );
         $profile_card = $bluesky -> render_bluesky_profile_card();
-        $styles = $bluesky -> get_inline_custom_styles('posts');
+        $styles = $bluesky -> get_inline_custom_styles('profile');
 
         $output = $args['before_widget'];
         $output .= $args['before_title'] . __( 'BlueSky Profile', 'social-integration-for-bluesky' ) . $args['after_title'];

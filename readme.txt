@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,9 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 13. Some other plugin settings options.
 
 == Changelog ==
+
+= 1.4.3 =
+Typo fix in the Profile Widget that would block the loading of your custom styles. (sorry I was tired when published the 1.4.2)
 
 = 1.4.2 =
 * **Improvements**
