@@ -15,6 +15,7 @@
     border-radius: var(--bluesky-card-br);
     font-size: var(--bluesky-profile-custom-global-fs, 16px)!important;
     line-height: var(--bluesky-profile-custom-global-lh, 1.5)!important;
+    container-type: inline-size;
 }
 
 .no-banner.bluesky-social-integration-profile-card {
@@ -25,7 +26,7 @@
 
 .bluesky-social-integration-image {
     position: relative;
-    min-height: 187px; /* Banner has 3:1 ratio */
+    aspect-ratio: 3/1;
     background-image: var(--bluesky-social-integration-banner);
     background-size: cover;
 }
@@ -159,5 +160,14 @@
     --bluesky-card-txt-alt: rgb(66, 87, 108);
     --bluesky-card-border: 1px solid rgb(212, 219, 226);
     --bluesky-primary-color: #1083fe;
+}
+
+/* If the container is below 340px wide */
+@container (max-width: 340px) {
+    /* On the default layout */
+    .bluesky-social-integration-profile-card {
+        --bluesky-card-avatar-size: 60px;
+        --bluesky-card-spacing: 12px;
+    }
 }
 
