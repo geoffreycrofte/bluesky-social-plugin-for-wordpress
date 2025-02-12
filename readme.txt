@@ -5,7 +5,7 @@ Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,14 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 13. Some other plugin settings options.
 
 == Changelog ==
+
+= 1.4.2 =
+* **Improvements**
+ * Design decision: some styles are applied by default when the container of the widget/block is really small (image, padding size reduction mostly)
+ * Banner on the profile card is now always 3:1 ratio.
+* **Bug fix**
+ * Widget wouldn't display styles. They are now displaying them inline as a degraded solution.
+ * On the Widget in layer 2 of the feed, SVG button wouldn't display properly. It's fixed.
 
 = 1.4.1 =
 * **Bug fix**

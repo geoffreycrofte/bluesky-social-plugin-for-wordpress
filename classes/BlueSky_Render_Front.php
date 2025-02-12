@@ -34,6 +34,68 @@ class BlueSky_Render_Front {
         // Shortcodes
         add_shortcode('bluesky_profile', [$this, 'bluesky_profile_card_shortcode']);
         add_shortcode('bluesky_last_posts', [$this, 'bluesky_last_posts_shortcode']);
+
+        // Some extensions for wp_kses
+        add_filter('wp_kses_allowed_html', [$this, 'allow_svg_tags'], 10, 2);
+    }
+
+    /**
+     * Adds SVG into the post wp_kses_allowed_html in the 'post' context.
+     *
+     * @param mixed $allowed_tags
+     * @param mixed $context
+     * 
+     * @return array The initial array of the array updated.
+     */
+    function allow_svg_tags( $allowed_tags, $context ) {
+        if ( $context === 'post' ) {
+            // Add SVG support to the default allowed tags
+            $svg_elements = [
+                'svg'   => [
+                    'xmlns'      => true,
+                    'viewBox'    => true,
+                    'width'      => true,
+                    'height'     => true,
+                    'fill'       => true,
+                    'stroke'     => true,
+                    'stroke-width' => true,
+                    'class'      => true,
+                    'aria-hidden' => true,
+                    'role'       => true,
+                ],
+                'g'     => [],
+                'path'  => [
+                    'd'         => true,
+                    'fill'      => true,
+                    'stroke'    => true,
+                    'stroke-width' => true,
+                ],
+                'circle' => [
+                    'cx'        => true,
+                    'cy'        => true,
+                    'r'         => true,
+                    'fill'      => true,
+                    'stroke'    => true,
+                ],
+                'rect'   => [
+                    'x'         => true,
+                    'y'         => true,
+                    'width'     => true,
+                    'height'    => true,
+                    'fill'      => true,
+                    'stroke'    => true,
+                ],
+                'polygon' => [
+                    'points'    => true,
+                    'fill'      => true,
+                    'stroke'    => true,
+                ],
+            ];
+    
+            return array_merge( $allowed_tags, $svg_elements );
+        }
+    
+        return $allowed_tags;
     }
 
     /**
@@ -265,7 +327,7 @@ class BlueSky_Render_Front {
             do_action('bluesky_before_post_list_empty_markup', $posts );
         ?>
             
-            <div class="bluesky-social-integration-last-post <?php echo esc_attr( $theme_class ); ?> has-no-posts">
+            <div class="bluesky-social-integration-last-post<?php echo esc_attr( $classes ); ?> has-no-posts">
                 <svg fill="none" width="64" viewBox="0 0 24 24" height="64">
                     <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 4a1 1 0 0 1 1-1h1a8.003 8.003 0 0 1 7.75 6.006A7.985 7.985 0 0 1 19 6h1a1 1 0 0 1 1 1v1a8 8 0 0 1-8 8v4a1 1 0 1 1-2 0v-7a8 8 0 0 1-8-8V4Zm2 1a6 6 0 0 1 6 6 6 6 0 0 1-6-6Zm8 9a6 6 0 0 1 6-6 6 6 0 0 1-6 6Z"></path>
                 </svg>
@@ -485,7 +547,7 @@ class BlueSky_Render_Front {
     /**
      * Simply print the output of get_inline_custom_styles() method.
      * 
-     * @return void
+     * @return string|void
      */
     public function render_inline_custom_styles() {
         echo $this -> get_inline_custom_styles();
@@ -494,7 +556,7 @@ class BlueSky_Render_Front {
     /**
      * Print the output of get_inline_custom_styles() only for posts
      * 
-     * @return void
+     * @return string|void
      */
     public function render_inline_custom_styles_posts() {
         echo $this -> get_inline_custom_styles('posts');
@@ -503,7 +565,7 @@ class BlueSky_Render_Front {
     /**
      * Print the output of get_inline_custom_styles() only for profile
      * 
-     * @return void
+     * @return string|void
      */
     public function render_inline_custom_styles_profile() {
         echo $this -> get_inline_custom_styles('profile');
