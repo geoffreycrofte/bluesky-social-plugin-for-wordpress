@@ -799,10 +799,18 @@ class BlueSky_Plugin_Setup {
                                         $posts_inputs = [
                                             'account-info-names' => [
                                                 'fs' => [
-                                                    'label' => __('Account Name', 'social-integration-for-bluesky'),
+                                                    'label' => __('Name/Pseudo', 'social-integration-for-bluesky'),
                                                     'min' => 10,
                                                     'default' => 16,
                                                     'var' => '--bluesky-posts-custom-account-info-names-fs',
+                                                ],
+                                            ],
+                                            'handle' => [
+                                                'fs' => [
+                                                    'label' => __('Nickhandle', 'social-integration-for-bluesky'),
+                                                    'min' => 10,
+                                                    'default' => 14,
+                                                    'var' => '--bluesky-posts-custom-handle-fs',
                                                 ],
                                             ],
                                             'post-content' => [
