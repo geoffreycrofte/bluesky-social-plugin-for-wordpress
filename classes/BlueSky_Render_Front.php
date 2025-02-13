@@ -158,6 +158,11 @@ class BlueSky_Render_Front {
             ob_start();
             do_action('bluesky_before_post_list_markup', $posts );
             add_action( 'wp_head', [$this, 'render_inline_custom_styles_posts'] );
+            
+            // Spectra plugin may remove wp_head styles for some reasons. Try in wp_footer.
+            if ( defined('UAGB_PLUGIN_DIR') ) {
+                add_action( 'wp_footer', [$this, 'render_inline_custom_styles_posts'] );
+            }
             ?>
 
             <aside class="bluesky-social-integration-last-post<?php echo esc_attr( $classes ); ?>" aria-label="<?php esc_attr_e( 'List of the latest Bluesky Posts', 'social-integration-for-bluesky' ); ?>">

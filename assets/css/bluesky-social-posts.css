@@ -146,9 +146,17 @@
 
 .bluesky-social-integration-post-account-info-names.bluesky-social-integration-post-account-info-names {
     margin: 0 0 6px 0!important;
-    font-size: var(--bluesky-posts-custom-account-info-names-fs, 16px)!important;
     line-height: var(--bluesky-posts-custom-account-info-names-lh, 1.4)!important;
     color: var(--bluesky-card-txt-alt)!important;
+}
+
+.bluesky-social-integration-post-account-info-name.bluesky-social-integration-post-account-info-name {
+    font-size: var(--bluesky-posts-custom-account-info-names-fs, 16px)!important;
+}
+
+.bluesky-social-integration-post-account-info-handle.bluesky-social-integration-post-account-info-handle,
+.bluesky-social-integration-post-account-info-date.bluesky-social-integration-post-account-info-date {
+    font-size: var(--bluesky-posts-custom-handle-fs, 14px)!important;
 }
 
 .bluesky-social-integration-post-account-info-name.bluesky-social-integration-post-account-info-name {
@@ -241,6 +249,7 @@
     align-items: safe center;
     min-height: 74px;
     padding: 0 16px;
+    aspect-ratio: unset;
     background: linear-gradient(to bottom, color-mix(in srgb, var(--bluesky-card-bg) 90%, black 10%), color-mix(in srgb, var(--bluesky-card-bg) 90%, black 10%) ), var(--bluesky-social-integration-banner);
     background-blend-mode: hard-light;
     background-size: cover, cover;
@@ -266,10 +275,11 @@
     flex-basis: 100%;
     margin: 0!important;
     word-break: break-word;
+    font-size: var(--bluesky-posts-custom-handle-fs, 14px)!important;
  }
 
  .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-content-names .bluesky-social-integration-name {
-    font-size: var(--bluesky-posts-custom-account-info-names-fs)!important;
+    font-size: var(--bluesky-posts-custom-account-info-names-fs, 16px)!important;
 }
 
  .bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-profile-button {

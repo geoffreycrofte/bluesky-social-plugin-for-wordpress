@@ -243,6 +243,16 @@
     align-items: stretch;
 }
 
+.bluesky-social-integration-interactive-visual {
+    display: flex;
+    justify-content: center;
+    flex-basis: 100%;
+}
+
+.bluesky-social-integration-interactive-editor {
+    flex-basis: 50%;
+}
+
 .bluesky-social-integration-interactive .form-table {
     margin-top: 0;
 }
@@ -254,6 +264,10 @@
 .bluesky-social-integration-interactive .form-table th,
 .bluesky-social-integration-interactive .form-table td {
     padding-block: 16px;
+}
+
+.bluesky-social-integration-interactive .form-table td {
+    text-align: right;
 }
 
 .bluesky-social-integration-interactive .bluesky-submit-in-table.bluesky-submit-in-table {
@@ -270,6 +284,7 @@
 
 .bluesky-social-integration-interactive .bluesky-social-integration-last-post {
     max-width: 560px;
+    width: 100%;
 }
 
 input.bluesky-custom-unit.bluesky-custom-unit {
