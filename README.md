@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.7
 - Requires PHP: 7.4
-- Stable tag: 1.4.4
+- Stable tag: 1.4.5
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -117,6 +117,10 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 13. Some other plugin settings options.
 
 ## Changelog
+
+### 1.4.5
+* **Bug Fix**
+ * Improved compatibility with PHP7+ (parse error and warnings should disappear)
 
 ### 1.4.4
 * **Bug Fix**
