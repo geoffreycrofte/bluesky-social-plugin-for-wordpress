@@ -1,6 +1,6 @@
 <?php
 // Prevent direct access to the plugin
-if ( ! defined(constant_name: 'ABSPATH') ) {
+if ( ! defined('ABSPATH') ) {
     exit;
 }
 
@@ -171,7 +171,7 @@ class BlueSky_Render_Front {
                 <div class="bluesky-social-integration-profile-card-embedded">
                     <?php $profile = $this -> api_handler -> get_bluesky_profile(); ?>
 
-                    <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
+                    <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
                         <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                         <img class="avatar bluesky-social-integration-avatar" width="40" height="40" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
 
@@ -354,6 +354,7 @@ class BlueSky_Render_Front {
             $text = $post['text'];
             $replacements = [];
             $replacement_length = 0;
+            $replacement = '';
 
             foreach ( $post['facets'] as $facet ) {
                 $start = $facet['index']['byteStart'];
@@ -452,7 +453,7 @@ class BlueSky_Render_Front {
 
             <?php do_action('bluesky_before_profile_card_content', $profile ); ?>
 
-            <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( url: $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
+            <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset( $profile['banner'] ) ? esc_url( $profile['banner'] ) : BLUESKY_PLUGIN_FOLDER . '/assets/img/banner@2x.png'; ?>)">
                 <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
                 <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url( $profile['avatar'] ); ?>" alt="">
             </div>
