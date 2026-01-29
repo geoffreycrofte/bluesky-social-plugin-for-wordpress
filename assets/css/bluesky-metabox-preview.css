@@ -1,0 +1,383 @@
+/**
+ * Bluesky Metabox Preview Styles
+ * Styles for the post preview panel in the WordPress editor
+ */
+
+/* Preview Panel Container */
+.bluesky-preview-panel {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dcdcde;
+}
+
+.bluesky-preview-panel h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.bluesky-preview-panel .description {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    color: #646970;
+}
+
+/* Preview Content Container */
+.bluesky-preview-content {
+    margin-bottom: 12px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    padding: 12px;
+    min-height: 80px;
+}
+
+/* Loading State */
+.bluesky-preview-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    color: #646970;
+    font-size: 13px;
+}
+
+.bluesky-preview-loading .spinner {
+    float: none;
+    margin: 0;
+}
+
+/* Error State */
+.bluesky-preview-error {
+    color: #d63638;
+    font-size: 13px;
+    padding: 10px;
+    text-align: center;
+}
+
+.bluesky-preview-error p {
+    margin: 0;
+}
+
+/* Preview Card */
+.bluesky-preview-card {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Text Preview Section */
+.bluesky-preview-text {
+    margin-bottom: 15px;
+}
+
+.bluesky-preview-text strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #1d2327;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.bluesky-preview-text p {
+    margin: 0 0 6px 0;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    color: #1d2327;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.bluesky-char-count {
+    display: block;
+    color: #646970;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/* Link Card Preview Section */
+.bluesky-preview-linkcard {
+    margin-top: 15px;
+}
+
+.bluesky-preview-linkcard strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #1d2327;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.bluesky-linkcard-preview {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bluesky-linkcard-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #f0f0f1;
+}
+
+.bluesky-linkcard-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bluesky-linkcard-content {
+    padding: 10px;
+}
+
+.bluesky-linkcard-title {
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.bluesky-linkcard-description {
+    color: #646970;
+    font-size: 12px;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.bluesky-linkcard-url {
+    color: #2271b1;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+/* Note Section */
+.bluesky-preview-note {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fff8e5;
+    border: 1px solid #f0e5c8;
+    border-radius: 3px;
+}
+
+.bluesky-preview-note p {
+    margin: 0;
+    color: #646970;
+    font-size: 12px;
+}
+
+/* Refresh Button */
+.bluesky-refresh-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 10px;
+    height: auto;
+    line-height: 1.5;
+}
+
+.bluesky-refresh-preview .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.bluesky-refresh-preview:hover .dashicons {
+    animation: rotate 0.5s ease-in-out;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+    .bluesky-preview-panel h4 {
+        font-size: 14px;
+    }
+
+    .bluesky-preview-content {
+        padding: 10px;
+    }
+
+    .bluesky-preview-text p {
+        font-size: 14px;
+    }
+}
+
+/* Dark mode support (WordPress 5.7+) */
+@media (prefers-color-scheme: dark) {
+    .bluesky-preview-content {
+        background: #1d2327;
+        border-color: #3c434a;
+    }
+
+    .bluesky-preview-text p,
+    .bluesky-linkcard-preview {
+        background: #2c3338;
+        border-color: #3c434a;
+        color: #f0f0f1;
+    }
+
+    .bluesky-preview-text strong,
+    .bluesky-preview-linkcard strong,
+    .bluesky-linkcard-title {
+        color: #f0f0f1;
+    }
+
+    .bluesky-linkcard-description,
+    .bluesky-char-count,
+    .bluesky-preview-note p {
+        color: #c3c4c7;
+    }
+
+    .bluesky-preview-note {
+        background: #3c3a2f;
+        border-color: #4f4c3d;
+    }
+
+    .bluesky-linkcard-image {
+        background: #1d2327;
+    }
+}
+
+/* ============================================
+   Gutenberg Pre-Publish Panel Styles
+   ============================================ */
+
+/* Pre-publish panel container */
+.bluesky-pre-publish-panel .components-panel__body-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bluesky-pre-publish-panel svg {
+    flex-shrink: 0;
+}
+
+.bluesky-pre-publish-content {
+    padding: 0;
+}
+
+.bluesky-pre-publish-content p:first-child {
+    margin-top: 0;
+}
+
+/* Preview wrapper in pre-publish panel */
+.bluesky-preview-wrapper .bluesky-preview-card {
+    margin: 0;
+}
+
+.bluesky-preview-wrapper .bluesky-preview-text {
+    margin-bottom: 12px;
+}
+
+.bluesky-preview-wrapper .bluesky-preview-text strong {
+    font-size: 11px;
+    color: #1e1e1e;
+    margin-bottom: 4px;
+}
+
+.bluesky-preview-wrapper .bluesky-preview-text p {
+    font-size: 13px;
+    padding: 8px;
+    margin: 0 0 4px 0;
+}
+
+.bluesky-preview-wrapper .bluesky-char-count {
+    font-size: 11px;
+    color: #757575;
+}
+
+/* Link card in pre-publish panel */
+.bluesky-preview-wrapper .bluesky-preview-linkcard {
+    margin-top: 12px;
+}
+
+.bluesky-preview-wrapper .bluesky-preview-linkcard strong {
+    font-size: 11px;
+    color: #1e1e1e;
+    margin-bottom: 4px;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-preview {
+    border-radius: 4px;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-image {
+    aspect-ratio: 16 / 9;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-content {
+    padding: 8px;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-title {
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-description {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.bluesky-preview-wrapper .bluesky-linkcard-url {
+    font-size: 11px;
+}
+
+/* Note in pre-publish panel */
+.bluesky-preview-wrapper .bluesky-preview-note {
+    margin-top: 8px;
+    padding: 8px;
+}
+
+.bluesky-preview-wrapper .bluesky-preview-note p {
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Refresh button in pre-publish panel */
+.bluesky-pre-publish-content .components-button.is-secondary.is-small {
+    height: 28px;
+    font-size: 12px;
+}
+
+/* Loading state in pre-publish panel */
+.bluesky-pre-publish-content .bluesky-preview-loading {
+    margin: 12px 0;
+}
+
+.bluesky-pre-publish-content .components-spinner {
+    margin: 0;
+}
+
+/* Error state in pre-publish panel */
+.bluesky-pre-publish-content .bluesky-preview-error {
+    background: #fcf0f1;
+    border: 1px solid #f0c8ca;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+/* Responsive adjustments for pre-publish panel */
+@media screen and (max-width: 782px) {
+    .bluesky-preview-wrapper .bluesky-preview-text p {
+        font-size: 14px;
+    }
+}

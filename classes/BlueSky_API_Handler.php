@@ -1,15 +1,16 @@
 <?php
 // Prevent direct access to the plugin
-if ( ! defined('ABSPATH') ) {
-    exit;
+if (!defined("ABSPATH")) {
+    exit();
 }
 
-class BlueSky_API_Handler {
+class BlueSky_API_Handler
+{
     /**
      * Base URL for BlueSky API
      * @var string
      */
-    private $bluesky_api_url = 'https://bsky.social/xrpc/';
+    private $bluesky_api_url = "https://bsky.social/xrpc/";
 
     /**
      * Plugin options
@@ -33,8 +34,9 @@ class BlueSky_API_Handler {
      * Constructor
      * @param array $options Plugin settings
      */
-    public function __construct( $options ) {
-        $this -> options = $options;
+    public function __construct($options)
+    {
+        $this->options = $options;
     }
 
     /**
@@ -43,99 +45,125 @@ class BlueSky_API_Handler {
      * @param mixed $force Wether or not to force the refresh token creation.
      * @return bool
      */
-    public function authenticate( $force = false ) {
+    public function authenticate($force = false)
+    {
         // Check if credentials are set
-        if ( ! isset( $this->options['handle'] ) || ! isset( $this->options['app_password'] ) ) {
+        if (
+            !isset($this->options["handle"]) ||
+            !isset($this->options["app_password"])
+        ) {
             return false;
         }
 
         $helpers = new BlueSky_Helpers();
-        $access_tkey = $helpers -> get_access_token_transient_key();
-        $refresh_tkey = $helpers -> get_refresh_token_transient_key();
+        $access_tkey = $helpers->get_access_token_transient_key();
+        $refresh_tkey = $helpers->get_refresh_token_transient_key();
         $did_tkey = $helpers->get_did_transient_key();
-    
+
         // Retrieve saved tokens from transients
-        $access_token = get_transient( $access_tkey );
-        $refresh_token = get_transient( $refresh_tkey );
-        $did = get_transient( $did_tkey );
-    
+        $access_token = get_transient($access_tkey);
+        $refresh_token = get_transient($refresh_tkey);
+        $did = get_transient($did_tkey);
+
         // If an access token exists and hasn't expired, use it
-        if ( $access_token && ! $force ) {
+        if ($access_token && !$force) {
             $this->access_token = $access_token;
             $this->did = $did;
             return true;
         }
-    
+
         // Check if refresh token exists to renew the access token
-        if ( $refresh_token && ! $force ) {
-            $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.server.refreshSession', [
-                'body'    => wp_json_encode([
-                    'refreshJwt' => $refresh_token
-                ]),
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $refresh_token,
-                    'Content-Type' => 'application/json',
-                ]
-            ]);
-    
-            if ( is_wp_error( $response ) ) {
+        if ($refresh_token && !$force) {
+            $response = wp_remote_post(
+                $this->bluesky_api_url . "com.atproto.server.refreshSession",
+                [
+                    "body" => wp_json_encode([
+                        "refreshJwt" => $refresh_token,
+                    ]),
+                    "headers" => [
+                        "Authorization" => "Bearer " . $refresh_token,
+                        "Content-Type" => "application/json",
+                    ],
+                ],
+            );
+
+            if (is_wp_error($response)) {
                 return false;
             }
-    
-            $body = json_decode( wp_remote_retrieve_body( $response ), true );
-    
-            if ( isset( $body['accessJwt'] ) && isset( $body['refreshJwt'] ) && isset( $body['did'] ) ) {
+
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+
+            if (
+                isset($body["accessJwt"]) &&
+                isset($body["refreshJwt"]) &&
+                isset($body["did"])
+            ) {
                 // Save new tokens
-                set_transient( $access_tkey, $body['accessJwt'], HOUR_IN_SECONDS );
-                set_transient( $refresh_tkey, $body['refreshJwt'], WEEK_IN_SECONDS );
-                set_transient( $did_tkey, $body['did'] );
-    
-                $this -> access_token = $body['accessJwt'];
-                $this -> did = $body['did'];
+                set_transient(
+                    $access_tkey,
+                    $body["accessJwt"],
+                    HOUR_IN_SECONDS,
+                );
+                set_transient(
+                    $refresh_tkey,
+                    $body["refreshJwt"],
+                    WEEK_IN_SECONDS,
+                );
+                set_transient($did_tkey, $body["did"]);
+
+                $this->access_token = $body["accessJwt"];
+                $this->did = $body["did"];
                 return true;
             }
-            
-            // Force re-authentication if refresh token is invalid
-            delete_transient( $refresh_tkey );
-            delete_transient( $access_tkey );
-            delete_transient( $did_tkey );
 
-            return $this -> authenticate( $force );
+            // Force re-authentication if refresh token is invalid
+            delete_transient($refresh_tkey);
+            delete_transient($access_tkey);
+            delete_transient($did_tkey);
+
+            return $this->authenticate($force);
         }
-    
-        // No valid tokens, 
+
+        // No valid tokens,
         // or forced authentication,
         // then proceed with full authentication
-        $password = $this -> options['app_password'];
-        $password = $helpers -> bluesky_decrypt( $password );
-    
-        $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.server.createSession', [
-            'body'    => wp_json_encode([
-                'identifier' => $this->options['handle'],
-                'password'   => $password
-            ]),
-            'headers' => [
-                'Content-Type' => 'application/json'
-            ]
-        ]);
-    
-        if ( is_wp_error( $response ) ) {
+        $password = $this->options["app_password"];
+        $password = $helpers->bluesky_decrypt($password);
+
+        $response = wp_remote_post(
+            $this->bluesky_api_url . "com.atproto.server.createSession",
+            [
+                "body" => wp_json_encode([
+                    "identifier" => $this->options["handle"],
+                    "password" => $password,
+                ]),
+                "headers" => [
+                    "Content-Type" => "application/json",
+                ],
+            ],
+        );
+
+        if (is_wp_error($response)) {
             return false;
         }
-    
-        $body = json_decode( wp_remote_retrieve_body( $response ), true );
-    
-        if ( isset( $body['did'] ) && isset( $body['accessJwt'] ) && isset( $body['refreshJwt'] ) ) {
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (
+            isset($body["did"]) &&
+            isset($body["accessJwt"]) &&
+            isset($body["refreshJwt"])
+        ) {
             // Save tokens in transients
-            set_transient( $access_tkey, $body['accessJwt'], HOUR_IN_SECONDS );
-            set_transient( $refresh_tkey, $body['refreshJwt'], WEEK_IN_SECONDS );
-            set_transient( $did_tkey, $body['did'] );
-    
-            $this -> did = $body['did'];
-            $this -> access_token = $body['accessJwt'];
+            set_transient($access_tkey, $body["accessJwt"], HOUR_IN_SECONDS);
+            set_transient($refresh_tkey, $body["refreshJwt"], WEEK_IN_SECONDS);
+            set_transient($did_tkey, $body["did"]);
+
+            $this->did = $body["did"];
+            $this->access_token = $body["accessJwt"];
             return true;
         }
-    
+
         return false;
     }
 
@@ -144,22 +172,22 @@ class BlueSky_API_Handler {
      *
      * @return bool
      */
-    public function logout() {
+    public function logout()
+    {
         $helpers = new BlueSky_Helpers();
         try {
             // clean the transient of the jwt
-            $this -> cleanup_session_data($helpers);
+            $this->cleanup_session_data($helpers);
             // clean the handle and app_password options
-            $this -> cleanup_login_options();
+            $this->cleanup_login_options();
             // done.
             return true;
-            
         } catch (Exception $e) {
-            error_log('Bluesky Exception during logout: ' . $e -> getMessage());
+            error_log("Bluesky Exception during logout: " . $e->getMessage());
             return false;
         }
     }
-    
+
     /**
      * Clean the session information
      *
@@ -167,13 +195,14 @@ class BlueSky_API_Handler {
      * @param mixed $access_tkey
      * @return void
      */
-    private function cleanup_session_data($helpers) {
-        delete_transient( $helpers -> get_access_token_transient_key() );
-        delete_transient( $helpers -> get_refresh_token_transient_key() );
-        delete_transient( $helpers -> get_did_transient_key() );
-        
-        $this -> access_token = null;
-        $this -> did = null;
+    private function cleanup_session_data($helpers)
+    {
+        delete_transient($helpers->get_access_token_transient_key());
+        delete_transient($helpers->get_refresh_token_transient_key());
+        delete_transient($helpers->get_did_transient_key());
+
+        $this->access_token = null;
+        $this->did = null;
     }
 
     /**
@@ -181,13 +210,14 @@ class BlueSky_API_Handler {
      *
      * @return void
      */
-    private function cleanup_login_options() {
-        $options = $this -> options;
-        unset( $options['handle'] );
-        unset( $options['app_password'] );
+    private function cleanup_login_options()
+    {
+        $options = $this->options;
+        unset($options["handle"]);
+        unset($options["app_password"]);
 
-        update_option( BLUESKY_PLUGIN_OPTIONS, $options );
-        $this -> options = $options; // shoudn't be necessary, but just in case.
+        update_option(BLUESKY_PLUGIN_OPTIONS, $options);
+        $this->options = $options; // shoudn't be necessary, but just in case.
     }
 
     /**
@@ -195,86 +225,109 @@ class BlueSky_API_Handler {
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
      */
-    public function fetch_bluesky_posts( $limit = 10, $no_replies = true, $no_reposts = true ) {
+    public function fetch_bluesky_posts(
+        $limit = 10,
+        $no_replies = true,
+        $no_reposts = true,
+    ) {
         $helpers = new BlueSky_Helpers();
-        $no_replies = $no_replies ?? $this -> options['no_replies']  ?? true;
-        $no_reposts = $no_reposts ?? $this -> options['no_reposts'] ?? true;
-        $cache_key = $helpers -> get_posts_transient_key( $limit, $no_replies, $no_reposts );
-        $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
+        $no_replies = $no_replies ?? ($this->options["no_replies"] ?? true);
+        $no_reposts = $no_reposts ?? ($this->options["no_reposts"] ?? true);
+        $cache_key = $helpers->get_posts_transient_key(
+            $limit,
+            $no_replies,
+            $no_reposts,
+        );
+        $cache_duration =
+            $this->options["cache_duration"]["total_seconds"] ?? 3600; // Default 1 hour
 
         // Skip cache if duration is 0
-        if ( $cache_duration > 0 ) {
-            $cached_posts = get_transient( $cache_key );
-            if ( $cached_posts !== false ) {
+        if ($cache_duration > 0) {
+            $cached_posts = get_transient($cache_key);
+            if ($cached_posts !== false) {
                 return $cached_posts;
             }
         }
 
         // Ensure authentication
-        if ( ! $this -> authenticate() ) {
+        if (!$this->authenticate()) {
             return false;
         }
 
         // Sanitize limit
-        $limit = max( 1, min( 10, intval( $limit ) ) );
+        $limit = max(1, min(10, intval($limit)));
 
-        $response = wp_remote_get( $this -> bluesky_api_url . 'app.bsky.feed.getAuthorFeed', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this -> access_token
+        $response = wp_remote_get(
+            $this->bluesky_api_url . "app.bsky.feed.getAuthorFeed",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                ],
+                "body" => [
+                    "actor" => $this->did,
+                    "limit" => $no_replies || $no_reposts ? 100 : $limit, // Fetch more to account for replies
+                ],
             ],
-            'body' => [
-                'actor' => $this -> did,
-                'limit' => ( $no_replies || $no_reposts ) ? 100 : $limit, // Fetch more to account for replies
-            ]
-        ]);
+        );
 
-        if ( is_wp_error( $response ) ) {
+        if (is_wp_error($response)) {
             return false;
         }
 
-        $raw_posts = json_decode( wp_remote_retrieve_body( $response ), true );
+        $raw_posts = json_decode(wp_remote_retrieve_body($response), true);
 
-        $filteredFeed = array_filter($raw_posts['feed'], function ($entry) use($no_replies, $no_reposts, $helpers) {
-            if ( ! isset( $entry['post'] ) ) {
+        if (!isset($raw_posts["feed"])) {
+            return false;
+        }
+
+        $filteredFeed = array_filter($raw_posts["feed"], function ($entry) use (
+            $no_replies,
+            $no_reposts,
+            $helpers,
+        ) {
+            if (!isset($entry["post"])) {
                 return false;
             }
-        
-            $post = $entry['post'];
-        
+
+            $post = $entry["post"];
+
             // Filter out replies (check if 'reply' key exists in record)
-            if ( isset( $post['record']['reply'] ) && $no_replies ) {
+            if (isset($post["record"]["reply"]) && $no_replies) {
                 return false;
             }
-        
+
             // Filter out reposts (check if 'reason' key exists and is a repost)
-            if ( isset( $entry['reason'] ) && $entry['reason']['$type'] === "app.bsky.feed.defs#reasonRepost"  && $no_reposts) {
+            if (
+                isset($entry["reason"]) &&
+                $entry["reason"]['$type'] ===
+                    "app.bsky.feed.defs#reasonRepost" &&
+                $no_reposts
+            ) {
                 return false;
             }
-        
+
             return true; // Keep original posts
         });
-        
+
         // Reset array keys
         $posts = array_values($filteredFeed);
 
-
-
-        if ( $no_replies ) {
+        if ($no_replies) {
             // Limit to the requested number of posts
-            $posts = array_slice( $posts, 0, $limit );
+            $posts = array_slice($posts, 0, $limit);
         }
 
         // Process and normalize posts
-        $processed_posts = $this -> process_posts( $posts ?? [] );
+        $processed_posts = $this->process_posts($posts ?? []);
 
         // Sort by most recent first
-        usort( $processed_posts, function( $a, $b) {
-            return strtotime( $b['created_at'] ) - strtotime( $a['created_at'] );
+        usort($processed_posts, function ($a, $b) {
+            return strtotime($b["created_at"]) - strtotime($a["created_at"]);
         });
 
         // Cache the posts if caching is enabled
-        if ( $cache_duration > 0 ) {
-            set_transient( $cache_key, $processed_posts, $cache_duration );
+        if ($cache_duration > 0) {
+            set_transient($cache_key, $processed_posts, $cache_duration);
         }
 
         return $processed_posts;
@@ -284,96 +337,314 @@ class BlueSky_API_Handler {
      * Fetch BlueSky profile
      * @return array|false Profile data or false on failure
      */
-    public function get_bluesky_profile() {
+    public function get_bluesky_profile()
+    {
         $helpers = new BlueSky_Helpers();
-        $cache_key = $helpers -> get_profile_transient_key();
-        $cache_duration = $this -> options['cache_duration']['total_seconds'] ?? 3600; // Default 1 hour
+        $cache_key = $helpers->get_profile_transient_key();
+        $cache_duration =
+            $this->options["cache_duration"]["total_seconds"] ?? 3600; // Default 1 hour
 
         // Skip cache if duration is 0
-        if ( $cache_duration > 0 ) {
-            $cached_profile = get_transient( $cache_key );
-            if ( $cached_profile !== false ) {
+        if ($cache_duration > 0) {
+            $cached_profile = get_transient($cache_key);
+            if ($cached_profile !== false) {
                 return $cached_profile;
             }
         }
 
-        if ( ! $this -> authenticate() ) {
+        if (!$this->authenticate()) {
             return false;
         }
 
-        $response = wp_remote_get( $this -> bluesky_api_url . 'app.bsky.actor.getProfile', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this -> access_token
+        $response = wp_remote_get(
+            $this->bluesky_api_url . "app.bsky.actor.getProfile",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                ],
+                "body" => [
+                    "actor" => $this->did,
+                ],
             ],
-            'body' => [
-                'actor' => $this -> did
-            ]
-        ]);
+        );
 
-        if ( is_wp_error( $response ) ) {
+        if (is_wp_error($response)) {
             return false;
         }
 
-        $decoded = json_decode( wp_remote_retrieve_body( $response ), true );
+        $decoded = json_decode(wp_remote_retrieve_body($response), true);
 
         // Cache the profile if caching is enabled
-        if ( $cache_duration > 0 ) {
-            set_transient( $cache_key, $decoded, $cache_duration);
+        if ($cache_duration > 0) {
+            set_transient($cache_key, $decoded, $cache_duration);
         }
 
         return $decoded;
     }
 
     /**
-     * Syndicate a post to BlueSky
-     * @param string $title Post title
-     * @param string $permalink Post URL
-     * @return bool Whether syndication was successful
+     * Upload an image to Bluesky as a blob
+     * @param string $image_url URL or path to the image
+     * @return array|false Blob data on success, false on failure
      */
-    public function syndicate_post_to_bluesky( $title, $permalink ) {
-        if ( ! $this -> authenticate() ) {
+    private function upload_image_blob($image_url)
+    {
+        if (!$this->authenticate()) {
             return false;
         }
-    
-        // Construct the post text and calculate the link position
-        $text = wp_trim_words( $title, 50 ) . "\n\n" . $permalink;
-        $link_start = strpos( $text, $permalink );
-        $link_end = $link_start + strlen( $permalink );
-    
-        // Post data with facets for link embedding
+
+        // Get image data
+        $image_data = null;
+        $mime_type = null;
+
+        // Check if it's a local file path or URL
+        if (filter_var($image_url, FILTER_VALIDATE_URL)) {
+            // It's a URL, fetch it
+            $response = wp_remote_get($image_url);
+            if (is_wp_error($response)) {
+                return false;
+            }
+            $image_data = wp_remote_retrieve_body($response);
+            $mime_type = wp_remote_retrieve_header($response, "content-type");
+        } else {
+            // It's a local file path
+            if (!file_exists($image_url)) {
+                return false;
+            }
+            $image_data = file_get_contents($image_url);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $image_url);
+            finfo_close($finfo);
+        }
+
+        if (empty($image_data)) {
+            return false;
+        }
+
+        // Ensure mime type is set
+        if (empty($mime_type)) {
+            $mime_type = "image/jpeg"; // Default fallback
+        }
+
+        // Upload blob to Bluesky
+        $response = wp_remote_post(
+            $this->bluesky_api_url . "com.atproto.repo.uploadBlob",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                    "Content-Type" => $mime_type,
+                ],
+                "body" => $image_data,
+            ],
+        );
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return false;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!isset($body["blob"])) {
+            return false;
+        }
+
+        return $body["blob"];
+    }
+
+    /**
+     * Syndicate a post to BlueSky with rich media
+     * @param string $title Post title
+     * @param string $permalink Post URL
+     * @param string $excerpt Post excerpt (optional)
+     * @param string $image_url Post thumbnail or first image URL (optional)
+     * @return array|false Post information array on success, false on failure
+     */
+    public function syndicate_post_to_bluesky(
+        $title,
+        $permalink,
+        $excerpt = "",
+        $image_url = "",
+    ) {
+        if (!$this->authenticate()) {
+            return false;
+        }
+
+        // Bluesky character limit
+        $char_limit = 300;
+
+        // Build the post text respecting character limits
+        // Format: Title + Excerpt (if space allows)
+        $text = "";
+        $title_trimmed = wp_trim_words($title, 20, "...");
+
+        // Calculate space for URL (will be in card, but we'll add it to text too)
+        $url_length = strlen($permalink);
+
+        // Build text with title
+        $text = $title_trimmed;
+
+        // Add excerpt if there's space and it's provided
+        if (!empty($excerpt)) {
+            $excerpt_clean = wp_strip_all_tags($excerpt);
+            $excerpt_clean = preg_replace("/\s+/", " ", $excerpt_clean); // Normalize whitespace
+
+            // Calculate remaining space for excerpt
+            // Account for: current text + newlines + URL + some buffer
+            $space_for_excerpt = $char_limit - strlen($text) - $url_length - 10; // 10 for spacing and buffer
+
+            if ($space_for_excerpt > 50) {
+                // Only add excerpt if meaningful space available
+                $excerpt_trimmed = mb_substr(
+                    $excerpt_clean,
+                    0,
+                    $space_for_excerpt,
+                );
+                // Trim to last complete word
+                $last_space = mb_strrpos($excerpt_trimmed, " ");
+                if ($last_space !== false && $last_space > 30) {
+                    $excerpt_trimmed = mb_substr(
+                        $excerpt_trimmed,
+                        0,
+                        $last_space,
+                    );
+                }
+                $excerpt_trimmed = trim($excerpt_trimmed) . "...";
+                $text .= "\n\n" . $excerpt_trimmed;
+            }
+        }
+
+        // Ensure text doesn't exceed limit
+        if (strlen($text) > $char_limit - 10) {
+            $text = mb_substr($text, 0, $char_limit - 13) . "...";
+        }
+
+        // Post data structure
         $post_data = [
-            '$type' => 'app.bsky.feed.post',
-            'text' => $text,
-            'facets' => [
-                [
-                    'index' => [
-                        'byteStart' => $link_start,
-                        'byteEnd' => $link_end
-                    ],
-                    'features' => [
-                        [
-                            '$type' => 'app.bsky.richtext.facet#link',
-                            'uri' => $permalink
-                        ]
-                    ]
-                ]
-            ],
-            'createdAt' => gmdate( 'c' )
+            '$type' => "app.bsky.feed.post",
+            "text" => $text,
+            "createdAt" => gmdate("c"),
         ];
-    
-        $response = wp_remote_post( $this->bluesky_api_url . 'com.atproto.repo.createRecord', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->access_token,
-                'Content-Type' => 'application/json'
+
+        // If we have an image, create an external embed (link card with thumbnail)
+        if (!empty($image_url)) {
+            $blob = $this->upload_image_blob($image_url);
+
+            if ($blob !== false) {
+                // Create external embed with thumbnail
+                $post_data["embed"] = [
+                    '$type' => "app.bsky.embed.external",
+                    "external" => [
+                        "uri" => $permalink,
+                        "title" => wp_trim_words($title, 15, "..."),
+                        "description" => !empty($excerpt)
+                            ? wp_trim_words(
+                                wp_strip_all_tags($excerpt),
+                                30,
+                                "...",
+                            )
+                            : "",
+                        "thumb" => $blob,
+                    ],
+                ];
+            }
+        }
+
+        // If no image embed was created, fall back to adding URL with facets
+        if (!isset($post_data["embed"])) {
+            $text_with_url = $text . "\n\n" . $permalink;
+            $link_start = strlen($text) + 2; // Position after text and newlines
+            $link_end = $link_start + strlen($permalink);
+
+            $post_data["text"] = $text_with_url;
+            $post_data["facets"] = [
+                [
+                    "index" => [
+                        "byteStart" => $link_start,
+                        "byteEnd" => $link_end,
+                    ],
+                    "features" => [
+                        [
+                            '$type' => "app.bsky.richtext.facet#link",
+                            "uri" => $permalink,
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        $response = wp_remote_post(
+            $this->bluesky_api_url . "com.atproto.repo.createRecord",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                    "Content-Type" => "application/json",
+                ],
+                "body" => wp_json_encode([
+                    "repo" => $this->did,
+                    "collection" => "app.bsky.feed.post",
+                    "record" => $post_data,
+                ]),
             ],
-            'body' => wp_json_encode([
-                'repo' => $this->did,
-                'collection' => 'app.bsky.feed.post',
-                'record' => $post_data
-            ])
-        ]);
-    
-        return !is_wp_error( $response );
+        );
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return false;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!isset($body["uri"])) {
+            return false;
+        }
+
+        // Extract post information from the response
+        $uri_parts = explode("/", $body["uri"]);
+        $post_rkey = end($uri_parts);
+
+        // Get the handle from options, or fetch from profile if not available
+        $handle = $this->options["handle"] ?? "";
+        if (empty($handle)) {
+            $profile = $this->get_bluesky_profile();
+            $handle = $profile["handle"] ?? "";
+        }
+
+        // Construct the Bluesky post URL
+        // If handle is still not available, use DID-based URL format
+        if (!empty($handle)) {
+            $bluesky_post_url =
+                "https://bsky.app/profile/" . $handle . "/post/" . $post_rkey;
+        } else {
+            // Fallback: construct URL using DID (though handle-based is preferred)
+            $bluesky_post_url =
+                "https://bsky.app/profile/" .
+                $this->did .
+                "/post/" .
+                $post_rkey;
+        }
+
+        // Build comprehensive post info array
+        $post_info = [
+            "uri" => $body["uri"],
+            "cid" => $body["cid"] ?? "",
+            "url" => $bluesky_post_url,
+            "created_at" => $body["record"]["createdAt"] ?? gmdate("c"),
+            "text" => $body["record"]["text"] ?? $text,
+            "rkey" => $post_rkey,
+            "handle" => $handle,
+            "did" => $this->did,
+        ];
+
+        return $post_info;
     }
 
     /**
@@ -381,147 +652,256 @@ class BlueSky_API_Handler {
      * @param array $raw_posts Raw posts from BlueSky API
      * @return array Processed posts
      */
-    private function process_posts( $raw_posts ) {
-        
-        return array_map(function( $post ) {
-            $post = $post['post'];
-            
+    private function process_posts($raw_posts)
+    {
+        return array_map(function ($post) {
+            $post = $post["post"];
+
             // Extract embedded images
             $images = [];
-            if ( isset( $post['embed']['images'] ) ) {
-                foreach ( $post['embed']['images'] as $image ) {
-                    $images[] = array(
-                        'url' => $image['fullsize'] ?? $image['thumb'] ?? '',
-                        'alt' => $image['alt'] ?? '',
-                        'width' => $image['aspectRatio']['width'] ?? 0,
-                        'height' => $image['aspectRatio']['height'] ?? 0,
-                    );
+            if (isset($post["embed"]["images"])) {
+                foreach ($post["embed"]["images"] as $image) {
+                    $images[] = [
+                        "url" => $image["fullsize"] ?? ($image["thumb"] ?? ""),
+                        "alt" => $image["alt"] ?? "",
+                        "width" => $image["aspectRatio"]["width"] ?? 0,
+                        "height" => $image["aspectRatio"]["height"] ?? 0,
+                    ];
                 }
             }
 
             // Extract external media
             $external_media = null;
-            if ( isset( $post['embed']['external'] ) ) {
+            if (isset($post["embed"]["external"])) {
                 $external_media = [
-                    'uri' => $post['embed']['external']['uri'],
-                    'title' => $post['embed']['external']['title'] ?? '',
-                    'alt' => $post['embed']['external']['alt'] ?? '',
-                    'thumb' => $post['embed']['external']['thumb'] ?? '',
-                    'description' => $post['embed']['external']['description'] ?? ''
+                    "uri" => $post["embed"]["external"]["uri"],
+                    "title" => $post["embed"]["external"]["title"] ?? "",
+                    "alt" => $post["embed"]["external"]["alt"] ?? "",
+                    "thumb" => $post["embed"]["external"]["thumb"] ?? "",
+                    "description" =>
+                        $post["embed"]["external"]["description"] ?? "",
                 ];
-            } elseif ( isset( $post['embed']['media'] ) ) {
+            } elseif (isset($post["embed"]["media"])) {
                 $external_media = [
-                    'uri' => $post['embed']['media']['external']['uri'],
-                    'title' => $post['embed']['media']['external']['title'] ?? '',
-                    'alt' => $post['embed']['media']['external']['alt'] ?? '',
-                    'thumb' => $post['embed']['media']['external']['thumb'] ?? '',
-                    'description' => $post['embed']['media']['external']['description'] ?? ''
+                    "uri" => $post["embed"]["media"]["external"]["uri"],
+                    "title" =>
+                        $post["embed"]["media"]["external"]["title"] ?? "",
+                    "alt" => $post["embed"]["media"]["external"]["alt"] ?? "",
+                    "thumb" =>
+                        $post["embed"]["media"]["external"]["thumb"] ?? "",
+                    "description" =>
+                        $post["embed"]["media"]["external"]["description"] ??
+                        "",
                 ];
             }
 
             // Check for video embed
-            $embedded_media = $this -> extract_embedded_media( $post );
+            $embedded_media = $this->extract_embedded_media($post);
 
-            $end0fPostURI = isset( $post['uri'] ) ? explode( '/', $post['uri'] ) : array();
+            $end0fPostURI = isset($post["uri"])
+                ? explode("/", $post["uri"])
+                : [];
             return [
-                'text' => $post['record']['text'] ?? 'No text',
-                'langs' => $post['record']['langs'] ?? array('en'),
-                'url' => 'https://bsky.app/profile/' . ( $post['author']['handle'] ?? '') . '/post/' . (isset( $post['uri']) ? end( $end0fPostURI) : ''),
-                'created_at' => $post['record']['createdAt'] ?? '',
-                'account' => [
-                    'did' => $post['author']['did'] ?? '',
-                    'handle' => $post['author']['handle'] ?? '',
-                    'display_name' => $post['author']['displayName'] ?? '',
-                    'avatar' => $post['author']['avatar'] ?? '',
+                "text" => $post["record"]["text"] ?? "No text",
+                "langs" => $post["record"]["langs"] ?? ["en"],
+                "url" =>
+                    "https://bsky.app/profile/" .
+                    ($post["author"]["handle"] ?? "") .
+                    "/post/" .
+                    (isset($post["uri"]) ? end($end0fPostURI) : ""),
+                "created_at" => $post["record"]["createdAt"] ?? "",
+                "account" => [
+                    "did" => $post["author"]["did"] ?? "",
+                    "handle" => $post["author"]["handle"] ?? "",
+                    "display_name" => $post["author"]["displayName"] ?? "",
+                    "avatar" => $post["author"]["avatar"] ?? "",
                 ],
-                'images' => $images,
-                'external_media' => $external_media,
-                'embedded_media' => $embedded_media,
-                'counts' => [
-                    'reply' => $post['replyCount'] ?? '',
-                    'repost' => $post['repostCount'] ?? '',
-                    'like' => $post['likeCount'] ?? '',
-                    'quote' => $post['quoteCount'] ?? ''
+                "images" => $images,
+                "external_media" => $external_media,
+                "embedded_media" => $embedded_media,
+                "counts" => [
+                    "reply" => $post["replyCount"] ?? "",
+                    "repost" => $post["repostCount"] ?? "",
+                    "like" => $post["likeCount"] ?? "",
+                    "quote" => $post["quoteCount"] ?? "",
                 ],
-                'facets' => $post['record']['facets'] ?? [],
+                "facets" => $post["record"]["facets"] ?? [],
             ];
         }, $raw_posts);
     }
 
     /**
-     * Extract embedded media from a post
+     * Get Bluesky post thread with replies and stats
+     * @param string $post_uri The AT Protocol URI of the post
+     * @return array|false Thread data or false on failure
+     */
+    public function get_post_thread($post_uri)
+    {
+        if (!$this->authenticate()) {
+            return false;
+        }
+
+        $response = wp_remote_get(
+            $this->bluesky_api_url . "app.bsky.feed.getPostThread",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                ],
+                "body" => [
+                    "uri" => $post_uri,
+                    "depth" => 10, // Get up to 10 levels of replies
+                ],
+            ],
+        );
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return false;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!isset($body["thread"])) {
+            return false;
+        }
+
+        return $body["thread"];
+    }
+
+    /**
+     * Get Bluesky post statistics and details
+     * @param string $post_uri The AT Protocol URI of the post
+     * @return array|false Post data with stats or false on failure
+     */
+    public function get_post_stats($post_uri)
+    {
+        if (!$this->authenticate()) {
+            return false;
+        }
+
+        $response = wp_remote_get(
+            $this->bluesky_api_url . "app.bsky.feed.getPosts",
+            [
+                "headers" => [
+                    "Authorization" => "Bearer " . $this->access_token,
+                ],
+                "body" => [
+                    "uris" => [$post_uri],
+                ],
+            ],
+        );
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            return false;
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (!isset($body["posts"]) || empty($body["posts"])) {
+            return false;
+        }
+
+        return $body["posts"][0];
+    }
+
+    /**
+     * Extract embedded media from post
      * @param array $post Post data
      * @return array|null Embedded media details
      */
-    private function extract_embedded_media( $post) {
+    private function extract_embedded_media($post)
+    {
         $embedded_media = null;
         // Video embed
-        if ( isset( $post['embed']['video'] ) || 
-            ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.video' ) ) ) {
-
-            $video_embed = $post['embed'];
+        if (
+            isset($post["embed"]["video"]) ||
+            (isset($post["embed"]['$type']) &&
+                strstr($post["embed"]['$type'], "app.bsky.embed.video"))
+        ) {
+            $video_embed = $post["embed"];
             $embedded_media = [
-                'type' => 'video',
-                'alt' => $video_embed['alt'] ?? '',
-                'width' => $video_embed['aspectRatio']['width'] ?? null,
-                'height' => $video_embed['aspectRatio']['height'] ?? null,
-                'playlist_url' => $video_embed['playlist'] ?? '',
-                'thumbnail_url' => $video_embed['thumbnail'] ?? ''
+                "type" => "video",
+                "alt" => $video_embed["alt"] ?? "",
+                "width" => $video_embed["aspectRatio"]["width"] ?? null,
+                "height" => $video_embed["aspectRatio"]["height"] ?? null,
+                "playlist_url" => $video_embed["playlist"] ?? "",
+                "thumbnail_url" => $video_embed["thumbnail"] ?? "",
             ];
         }
 
         // Record (embedded post) embed
-        elseif ( isset( $post['embed']['record'] ) || 
-                ( isset( $post['embed']['$type'] ) && strstr( $post['embed']['$type'], 'app.bsky.embed.record') ) ) {
-            
+        elseif (
+            isset($post["embed"]["record"]) ||
+            (isset($post["embed"]['$type']) &&
+                strstr($post["embed"]['$type'], "app.bsky.embed.record"))
+        ) {
             // For some reasons, sometimes the API returns record in the record array. (multi embedded items?)
-            $record_embed = isset( $post['embed']['record']['record'] ) ? $post['embed']['record']['record'] : $post['embed']['record'];
+            $record_embed = isset($post["embed"]["record"]["record"])
+                ? $post["embed"]["record"]["record"]
+                : $post["embed"]["record"];
 
-            if( 'app.bsky.graph.starterpack' == $record_embed['$type'] ) {
-                $end0fURI = explode( '/', $post['embed']['record']['uri'] );
-                $author = $post['embed']['record']['creator'];
+            if ("app.bsky.graph.starterpack" == $record_embed['$type']) {
+                $end0fURI = explode("/", $post["embed"]["record"]["uri"]);
+                $author = $post["embed"]["record"]["creator"];
                 $embedded_media = [
-                    'type' => 'starterpack',
-                    'author' => [
-                        'did' => $author['did'] ?? '',
-                        'handle' => $author['handle'] ?? '',
-                        'display_name' => $author['displayName'] ?? ''
+                    "type" => "starterpack",
+                    "author" => [
+                        "did" => $author["did"] ?? "",
+                        "handle" => $author["handle"] ?? "",
+                        "display_name" => $author["displayName"] ?? "",
                     ],
-                    'title' => $record_embed['name'] ?? '',
-                    'text' => $record_embed['description'] ?? '',
-                    'created_at' => $record_embed['createdAt'] ?? '',
-                    'like_count' => $record_embed['likeCount'] ?? 0,
-                    'reply_count' => $record_embed['replyCount'] ?? 0,
-                    'url' => 'https://bsky.app/starter-pack/' . ( $author['handle'] ?? '') . '/' . end( $end0fURI )
+                    "title" => $record_embed["name"] ?? "",
+                    "text" => $record_embed["description"] ?? "",
+                    "created_at" => $record_embed["createdAt"] ?? "",
+                    "like_count" => $record_embed["likeCount"] ?? 0,
+                    "reply_count" => $record_embed["replyCount"] ?? 0,
+                    "url" =>
+                        "https://bsky.app/starter-pack/" .
+                        ($author["handle"] ?? "") .
+                        "/" .
+                        end($end0fURI),
                 ];
             } else {
-                $end0fURI = explode( '/', $record_embed['uri'] );
+                $end0fURI = explode("/", $record_embed["uri"]);
                 $embedded_media = [
-                    'type' => 'record',
-                    'author' => [
-                        'did' => $record_embed['author']['did'] ?? '',
-                        'handle' => $record_embed['author']['handle'] ?? '',
-                        'display_name' => $record_embed['author']['displayName'] ?? ''
+                    "type" => "record",
+                    "author" => [
+                        "did" => $record_embed["author"]["did"] ?? "",
+                        "handle" => $record_embed["author"]["handle"] ?? "",
+                        "display_name" =>
+                            $record_embed["author"]["displayName"] ?? "",
                     ],
-                    'text' => $record_embed['value']['text'] ?? '',
-                    'created_at' => $record_embed['value']['createdAt'] ?? '',
-                    'like_count' => $record_embed['likeCount'] ?? 0,
-                    'reply_count' => $record_embed['replyCount'] ?? 0,
-                    'url' => 'https://bsky.app/profile/' . ( $record_embed['author']['handle'] ?? '') . '/post/' . ( $record_embed['uri'] ? end( $end0fURI ) : '')
+                    "text" => $record_embed["value"]["text"] ?? "",
+                    "created_at" => $record_embed["value"]["createdAt"] ?? "",
+                    "like_count" => $record_embed["likeCount"] ?? 0,
+                    "reply_count" => $record_embed["replyCount"] ?? 0,
+                    "url" =>
+                        "https://bsky.app/profile/" .
+                        ($record_embed["author"]["handle"] ?? "") .
+                        "/post/" .
+                        ($record_embed["uri"] ? end($end0fURI) : ""),
                 ];
             }
 
             // Check if the embedded record has its own media (like a video)
-            if ( isset( $record_embed['value']['embed']['video'] ) ) {
-
-                $embedvideo = $record_embed['value']['embed'];
-                $embedded_media['embedded_video'] = [
-                    'type' => 'video',
-                    'alt' => $embedvideo['alt'] ?? '',
-                    'width' => $embedvideo['aspectRatio']['width'] ?? null,
-                    'height' => $embedvideo['aspectRatio']['height'] ?? null,
-                    'playlist_url' => $embedvideo['playlist'] ?? '',
-                    'thumbnail_url' => $embedvideo['thumbnail'] ?? ''
+            if (isset($record_embed["value"]["embed"]["video"])) {
+                $embedvideo = $record_embed["value"]["embed"];
+                $embedded_media["embedded_video"] = [
+                    "type" => "video",
+                    "alt" => $embedvideo["alt"] ?? "",
+                    "width" => $embedvideo["aspectRatio"]["width"] ?? null,
+                    "height" => $embedvideo["aspectRatio"]["height"] ?? null,
+                    "playlist_url" => $embedvideo["playlist"] ?? "",
+                    "thumbnail_url" => $embedvideo["thumbnail"] ?? "",
                 ];
             }
         }

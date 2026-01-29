@@ -13,8 +13,8 @@
     border: var(--bluesky-card-border);
     background: var(--bluesky-card-bg);
     border-radius: var(--bluesky-card-br);
-    font-size: var(--bluesky-profile-custom-global-fs, 16px)!important;
-    line-height: var(--bluesky-profile-custom-global-lh, 1.5)!important;
+    font-size: var(--bluesky-profile-custom-global-fs, 16px) !important;
+    line-height: var(--bluesky-profile-custom-global-lh, 1.5) !important;
     container-type: inline-size;
 }
 
@@ -40,8 +40,8 @@
 }
 
 .bluesky-social-integration-profile-card p {
-    color: var(--bluesky-card-txt)!important;
-    margin: 0!important; 
+    color: var(--bluesky-card-txt) !important;
+    margin: 0 !important;
 }
 
 .bluesky-social-integration-avatar {
@@ -66,11 +66,20 @@
 }
 
 .bluesky-social-integration-content {
-    padding: calc( var(--bluesky-card-avatar-size)/2 + var(--bluesky-card-spacing)) var(--bluesky-card-spacing) var(--bluesky-card-spacing) var(--bluesky-card-spacing);
+    padding: calc(
+            var(--bluesky-card-avatar-size) / 2 + var(--bluesky-card-spacing)
+        )
+        var(--bluesky-card-spacing) var(--bluesky-card-spacing)
+        var(--bluesky-card-spacing);
 }
 
 .bluesky-social-integration-content a {
-    color: var(--bluesky-primary-color)!important;
+    color: var(--bluesky-primary-color) !important;
+}
+
+/* Avoid annoying click/redirection when trying to get the block option */
+body.block-editor-page .wp-block-bluesky-social-profile a {
+    pointer-events: none;
 }
 
 .no-avatar .bluesky-social-integration-content,
@@ -79,21 +88,21 @@
 }
 
 .bluesky-social-integration-name {
-    color: var(--bluesky-primary-color)!important;
-    font-weight: bold!important;
-    font-size: var(--bluesky-profile-custom-name-fs, 20px)!important;
+    color: var(--bluesky-primary-color) !important;
+    font-weight: bold !important;
+    font-size: var(--bluesky-profile-custom-name-fs, 20px) !important;
 }
 
 .bluesky-social-integration-handle.bluesky-social-integration-handle {
-    color: var(--bluesky-card-txt-alt)!important;
-    font-size: var(--bluesky-profile-custom-handle-fs, 14px)!important;
+    color: var(--bluesky-card-txt-alt) !important;
+    font-size: var(--bluesky-profile-custom-handle-fs, 14px) !important;
 }
 
 .bluesky-social-integration-description.bluesky-social-integration-description {
     margin-top: calc(var(--bluesky-card-spacing) / 2);
     word-wrap: break-word;
     word-break: break-word;
-    font-size: var(--bluesky-profile-custom-description-fs, 16px)!important;
+    font-size: var(--bluesky-profile-custom-description-fs, 16px) !important;
 }
 
 .no-bio .bluesky-social-integration-description {
@@ -101,9 +110,9 @@
 }
 
 .bluesky-social-integration-followers.bluesky-social-integration-followers {
-    margin-block: calc(var(--bluesky-card-spacing) / 2)!important;
-    color: var(--bluesky-card-txt-alt)!important;
-    font-size: var(--bluesky-profile-custom-followers-fs, 16px)!important;
+    margin-block: calc(var(--bluesky-card-spacing) / 2) !important;
+    color: var(--bluesky-card-txt-alt) !important;
+    font-size: var(--bluesky-profile-custom-followers-fs, 16px) !important;
 }
 
 .no-counters .bluesky-social-integration-followers {
@@ -111,21 +120,21 @@
 }
 
 .bluesky-social-integration-followers .nb {
-    font-weight: 700!important;
-    color: var(--bluesky-card-txt)!important;
+    font-weight: 700 !important;
+    color: var(--bluesky-card-txt) !important;
 }
 
 .bluesky-social-integration-followers span + span::before {
-    content: '• ';
+    content: "• ";
     opacity: 0.4;
 }
-
 
 .bluesky-profile-block {
     position: relative;
 }
 
-.bluesky-profile-block::after {
+/* Only apply overlay on frontend, not in block editor */
+body:not(.block-editor-page) .bluesky-profile-block::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -170,4 +179,3 @@
         --bluesky-card-spacing: 12px;
     }
 }
-
