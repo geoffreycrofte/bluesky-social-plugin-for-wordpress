@@ -3,30 +3,30 @@ Contributors: CreativeJuiz
 Donate link: https://paypal.me/crofte
 Tags: BlueSky, Syndicate, Profile, Feed
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.4.5
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Provides auto syndication (optional), a profile banner, and a last posts Gutenberg blocks for BlueSky Social.
+Provides auto syndication (optional), a profile banner, and a list of your latest posts on BlueSky as Gutenberg blocks. It also adds the ability to link syndicated WordPress posts in the comment section, "importing" BlueSky discussions.
 
 == Description ==
 
 This plugin provides your website with Gutenberg blocks including a configurable profile banner (followers, posts and followings counts, banner, avatar, and name) and a list of your latest posts on BlueSky.
 A Shortcodes (`[bluesky_profile]` and `[bluesky_last_posts]`) and Widgets are given as well for older sites.
 
-An option is available for syndication of posts for BlueSky Social.
+An option is available for the syndication of your posts for BlueSky Social. This syndication allows you to display BlueSky discussions directly in the comment section of your WordPress posts. (it's an option)
 
 Some other included features:
 
-* Configurable Bluesky Profile Card
+* **Configurable Bluesky Profile Card**
  * Choose to display a banner, or not
  * Choose to display an avatar, or not
  * Choose to display your bio, or not
  * Choose to display your counter, or not
 
-* Embedded posts in the feed
+* **Embedded posts in the feed**
  * Youtube URL detection
  * Embedded video
  * Quote embedded
@@ -35,9 +35,22 @@ Some other included features:
  * Gallery of images (displaying an accessible lightbox)
  * Multiple available layouts
 
+* **Auto-post new WordPress posts on BlueSky**
+ * Preview the post for BlueSky on WordPress pre-post checks panel (if activated)
+ * Display the syndicated post directly below the Gutenberg editor for reference.
+ * It displays also the discussion on this BlueSky post if any.
+
+* **Make BlueSky discussions for syndicated posts visible**
+ * Activate the "Discussions" option to display Bluesky discussion even if the comment section of your posts is deactivated.
+ * Choose to display only first level, or multi-level comments.
+ * Choose between collasped or visible multi-level comments.
+ * Choose to include photos, videos and attachments.
+ * Important: people you mute or block on Bluesky won't be visible in the discussions.
+
 * Encrypted App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
-* Dark/Light mode (by default is system/user choice)
+* Dark/Light mode (by default system/user choice)
+* Custom font sizing for both blocks/shortcods
 
 === Shortcode usage ===
 
@@ -61,6 +74,7 @@ In the shortcodes below, the complete list of attributes is displayed. You can o
 - `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
 - `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
 - `noreposts`: either you want to hide your reposts, or include them in your feed (values: `true`, `false`)
+- `nocounters` - Whether to hide like, repost, reply, and quote counters (value: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
 - `numberofposts`: any number of posts to display. (advice, don't set a too high value)
 
@@ -96,7 +110,7 @@ The more info you give, the better the support will be. Be patient, I work alone
 
 = Is this an official BlueSky Plugin =
 
-No it is not, but it is under evaluation of BlueSky's Team to take part of the developpement of this plugin.
+No it is not. But I'm always happy when core team developers suggest new features, ideas, or code improvements. ;)
 
 == Screenshots ==
 
@@ -113,8 +127,23 @@ No it is not, but it is under evaluation of BlueSky's Team to take part of the d
 11. The lightbox when gallery images are available.
 12. The second layout of the Post Feed.
 13. Some other plugin settings options.
+14. The discussion on BlueSky added to the syndicated blog post.
 
 == Changelog ==
+
+= 1.5.0=
+* **Improvements**
+ * **Auto-published new posts:**
+  * Added the "rich card" support for syndication: now posts in Bluesky look better with image, title, excerpt and link, with an embedded media/card.
+  * Added a preview of the syndicated post into the pre-post checks panel of WordPress.
+ * **Bluesky Discussions:**
+  * Display the Bluesky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
+  * Added the ability to display Bluesky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
+* **Latest BlueSky Posts**
+  * Counters now have the option to be displayed (likes, comments, repost, bookmarks)
+* **Compatibility**
+ * Tested with WordPress 6.9.
+ * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
 
 = 1.4.5 =
 * **Bug Fix**
@@ -146,7 +175,7 @@ Typo fix in the Profile Widget that would block the loading of your custom style
  * Admin better styles on input numbers and buttons.
 
 = 1.4.0 =
-* **Features** 
+* **Features**
  * Pick among two feed layouts.
  * Customize font-size.
  * Decide to display Reposts or hide them.

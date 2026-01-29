@@ -1,0 +1,743 @@
+/**
+ * Bluesky Discussion Frontend Styles
+ * Uses CSS custom properties and respects theme settings
+ */
+
+/* ============================================
+   CSS Custom Properties
+   ============================================ */
+
+.bluesky-discussion-section {
+    --bluesky-discussion-primary: #1185fe;
+    --bluesky-discussion-bg: #ffffff;
+    --bluesky-discussion-text: #1d2327;
+    --bluesky-discussion-text-secondary: #666666;
+    --bluesky-discussion-text-muted: #999999;
+    --bluesky-discussion-border: #e0e0e0;
+    --bluesky-discussion-hover-bg: #f8f9fa;
+    --bluesky-discussion-card-bg: #ffffff;
+    --bluesky-discussion-nested-bg-1: #f9f9f9;
+    --bluesky-discussion-nested-bg-2: #f6f7f7;
+    --bluesky-discussion-nested-bg-3: #f0f0f1;
+    --bluesky-discussion-nested-bg-4: #e8e8e9;
+    --bluesky-discussion-shadow: rgba(0, 0, 0, 0.1);
+    --bluesky-discussion-radius: 8px;
+    --bluesky-discussion-radius-sm: 4px;
+    --bluesky-discussion-spacing: 20px;
+    --bluesky-discussion-spacing-sm: 12px;
+}
+
+/* Dark theme */
+[data-theme="dark"] .bluesky-discussion-section,
+.bluesky-discussion-section[data-theme="dark"] {
+    --bluesky-discussion-bg: #1d2327;
+    --bluesky-discussion-text: #f0f0f1;
+    --bluesky-discussion-text-secondary: #c3c4c7;
+    --bluesky-discussion-text-muted: #999999;
+    --bluesky-discussion-border: #3c434a;
+    --bluesky-discussion-hover-bg: #2c3338;
+    --bluesky-discussion-card-bg: #2c3338;
+    --bluesky-discussion-nested-bg-1: #23282d;
+    --bluesky-discussion-nested-bg-2: #1d2327;
+    --bluesky-discussion-nested-bg-3: #191e23;
+    --bluesky-discussion-nested-bg-4: #15191d;
+    --bluesky-discussion-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* System preference for dark mode */
+@media (prefers-color-scheme: dark) {
+    .bluesky-discussion-section:not([data-theme="light"]) {
+        --bluesky-discussion-bg: #1d2327;
+        --bluesky-discussion-text: #f0f0f1;
+        --bluesky-discussion-text-secondary: #c3c4c7;
+        --bluesky-discussion-text-muted: #999999;
+        --bluesky-discussion-border: #3c434a;
+        --bluesky-discussion-hover-bg: #2c3338;
+        --bluesky-discussion-card-bg: #2c3338;
+        --bluesky-discussion-nested-bg-1: #23282d;
+        --bluesky-discussion-nested-bg-2: #1d2327;
+        --bluesky-discussion-nested-bg-3: #191e23;
+        --bluesky-discussion-nested-bg-4: #15191d;
+        --bluesky-discussion-shadow: rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ============================================
+   Discussion Section Container
+   ============================================ */
+
+.bluesky-discussion-section {
+    margin: 40px 0;
+    clear: both;
+}
+
+/* ============================================
+   Standalone Discussion (No Comments)
+   ============================================ */
+
+.bluesky-discussion-standalone {
+    background: var(--bluesky-discussion-card-bg);
+    padding: 30px;
+    border-radius: var(--bluesky-discussion-radius);
+    box-shadow: 0 2px 8px var(--bluesky-discussion-shadow);
+}
+
+.bluesky-discussion-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--bluesky-discussion-spacing);
+    gap: var(--bluesky-discussion-spacing);
+    flex-wrap: wrap;
+}
+
+.bluesky-discussion-standalone h2,
+.bluesky-discussion-with-comments h2 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--bluesky-discussion-text);
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+}
+
+/* ============================================
+   Discussion with Comments
+   ============================================ */
+
+.bluesky-discussion-with-comments {
+    background: var(--bluesky-discussion-card-bg);
+    padding: 30px;
+    border-radius: var(--bluesky-discussion-radius);
+    box-shadow: 0 2px 8px var(--bluesky-discussion-shadow);
+    margin-top: 40px;
+}
+
+/* ============================================
+   View on Bluesky Link (in title row)
+   ============================================ */
+
+.bluesky-discussion-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--bluesky-discussion-primary);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: var(--bluesky-discussion-radius-sm);
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.bluesky-discussion-link:hover {
+    background: color-mix(
+        in srgb,
+        var(--bluesky-discussion-primary),
+        black 20%
+    );
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.bluesky-discussion-link::before {
+    content: "🦋";
+    font-size: 18px;
+}
+
+/* ============================================
+   Discussion Thread
+   ============================================ */
+
+.bluesky-discussion-thread {
+    margin-top: var(--bluesky-discussion-spacing);
+}
+
+.bluesky-discussion-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* No Replies State */
+.bluesky-no-replies {
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--bluesky-discussion-hover-bg);
+    border-radius: 6px;
+    color: var(--bluesky-discussion-text-secondary);
+}
+
+.bluesky-no-replies p {
+    margin: 0;
+    font-size: 16px;
+    font-style: italic;
+}
+
+/* ============================================
+   Reply Item (using <li> for semantic HTML)
+   ============================================ */
+
+.bluesky-reply {
+    padding: var(--bluesky-discussion-spacing);
+    margin-bottom: 15px;
+    background: var(--bluesky-discussion-card-bg);
+    border: 1px solid var(--bluesky-discussion-border);
+    border-radius: var(--bluesky-discussion-radius);
+    transition: all 0.3s ease;
+    list-style: none;
+}
+
+.bluesky-reply:hover {
+    border-color: var(--bluesky-discussion-primary);
+    box-shadow: 0 2px 8px
+        color-mix(in srgb, var(--bluesky-discussion-primary) 10%, transparent);
+}
+
+/* Nested replies indentation */
+.bluesky-reply[data-depth="1"] {
+    margin-left: 30px;
+    background: var(--bluesky-discussion-nested-bg-1);
+}
+
+.bluesky-reply[data-depth="2"] {
+    margin-left: 60px;
+    background: var(--bluesky-discussion-nested-bg-2);
+}
+
+.bluesky-reply[data-depth="3"] {
+    margin-left: 90px;
+    background: var(--bluesky-discussion-nested-bg-3);
+}
+
+.bluesky-reply[data-depth="4"],
+.bluesky-reply[data-depth="5"] {
+    margin-left: 120px;
+    background: var(--bluesky-discussion-nested-bg-4);
+}
+
+/* ============================================
+   Reply Header
+   ============================================ */
+
+.bluesky-reply-header {
+    display: flex;
+    align-items: center;
+    gap: var(--bluesky-discussion-spacing-sm);
+    margin-bottom: var(--bluesky-discussion-spacing-sm);
+}
+
+.bluesky-reply-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--bluesky-discussion-border);
+}
+
+.bluesky-reply-author {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2px;
+}
+
+.bluesky-reply-author-name {
+    font-weight: 700;
+    color: var(--bluesky-discussion-text);
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.bluesky-reply-author-handle {
+    color: var(--bluesky-discussion-text-secondary);
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.bluesky-reply-time {
+    color: var(--bluesky-discussion-text-muted);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ============================================
+   Reply Content
+   ============================================ */
+
+.bluesky-reply-content {
+    margin: var(--bluesky-discussion-spacing-sm) 0;
+    padding-left: 60px; /* Align with avatar */
+}
+
+.bluesky-reply-content p {
+    margin: 0;
+    color: var(--bluesky-discussion-text);
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* ============================================
+   Reply Footer (Stats + Actions)
+   ============================================ */
+
+.bluesky-reply-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 60px;
+    margin-top: var(--bluesky-discussion-spacing-sm);
+    flex-wrap: wrap;
+    gap: var(--bluesky-discussion-spacing-sm);
+}
+
+.bluesky-reply-stats {
+    display: flex;
+    gap: 16px;
+}
+
+.bluesky-reply-stat {
+    font-size: 13px;
+    color: var(--bluesky-discussion-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.bluesky-reply-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: color-mix(
+        in srgb,
+        var(--bluesky-discussion-primary) 10%,
+        transparent
+    );
+    color: var(--bluesky-discussion-primary);
+    text-decoration: none;
+    border-radius: var(--bluesky-discussion-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--bluesky-discussion-primary);
+    transition: all 0.3s ease;
+}
+
+.bluesky-reply-link:hover {
+    background: var(--bluesky-discussion-primary);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.bluesky-reply-link::before {
+    content: "↩️";
+}
+
+/* ============================================
+   Nested Replies / Collapse
+   ============================================ */
+
+.bluesky-reply-children {
+    margin-top: 15px;
+    padding-left: 0;
+}
+
+.bluesky-nested-replies {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bluesky-reply-children.collapsed .bluesky-nested-replies {
+    display: none;
+}
+
+.bluesky-toggle-replies {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    background: var(--bluesky-discussion-hover-bg);
+    border: 1px solid var(--bluesky-discussion-border);
+    border-radius: 6px;
+    color: var(--bluesky-discussion-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.bluesky-toggle-replies:hover {
+    background: color-mix(
+        in srgb,
+        var(--bluesky-discussion-hover-bg),
+        var(--bluesky-discussion-border) 20%
+    );
+    border-color: var(--bluesky-discussion-primary);
+}
+
+.bluesky-toggle-replies::before {
+    content: "▶ ";
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.bluesky-reply-children:not(.collapsed) .bluesky-toggle-replies::before {
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   Media Attachments
+   ============================================ */
+
+.bluesky-reply-media {
+    margin-top: var(--bluesky-discussion-spacing-sm);
+    margin-bottom: var(--bluesky-discussion-spacing-sm);
+}
+
+/* Images */
+.bluesky-reply-images {
+    padding-left: 60px; /* Align with content */
+}
+
+.bluesky-images-grid {
+    display: grid;
+    gap: 8px;
+    border-radius: var(--bluesky-discussion-radius);
+    overflow: hidden;
+}
+
+.bluesky-images-grid.single {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+}
+
+.bluesky-images-grid.double {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.bluesky-images-grid.grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.bluesky-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    background: var(--bluesky-discussion-nested-bg-1);
+    border-radius: var(--bluesky-discussion-radius-sm);
+}
+
+.bluesky-image-wrapper.is-animated {
+    border: 2px solid var(--bluesky-discussion-border);
+}
+
+.bluesky-reply-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.bluesky-image-wrapper:hover .bluesky-reply-image {
+    transform: scale(1.05);
+}
+
+/* Video */
+.bluesky-reply-video {
+    padding-left: 60px; /* Align with content */
+    max-width: 600px;
+}
+
+.bluesky-video {
+    width: 100%;
+    height: auto;
+    border-radius: var(--bluesky-discussion-radius);
+    background: #000000;
+    display: block;
+}
+
+/* External Link Preview */
+.bluesky-reply-external {
+    padding-left: 60px; /* Align with content */
+    max-width: 600px;
+}
+
+.bluesky-external-link {
+    display: flex;
+    border: 1px solid var(--bluesky-discussion-border);
+    border-radius: var(--bluesky-discussion-radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    background: var(--bluesky-discussion-card-bg);
+}
+
+.bluesky-external-link:hover {
+    border-color: var(--bluesky-discussion-primary);
+    box-shadow: 0 2px 8px
+        color-mix(in srgb, var(--bluesky-discussion-primary) 10%, transparent);
+    text-decoration: none;
+}
+
+.bluesky-external-thumb {
+    flex-shrink: 0;
+    width: 120px;
+    background: var(--bluesky-discussion-nested-bg-1);
+    overflow: hidden;
+}
+
+.bluesky-external-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bluesky-external-content {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.bluesky-external-title {
+    font-weight: 600;
+    color: var(--bluesky-discussion-text);
+    font-size: 15px;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.bluesky-external-description {
+    font-size: 13px;
+    color: var(--bluesky-discussion-text-secondary);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.bluesky-external-url {
+    font-size: 12px;
+    color: var(--bluesky-discussion-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media screen and (max-width: 782px) {
+    .bluesky-discussion-standalone,
+    .bluesky-discussion-with-comments {
+        padding: var(--bluesky-discussion-spacing);
+    }
+
+    .bluesky-discussion-standalone h2,
+    .bluesky-discussion-with-comments h2 {
+        font-size: 20px;
+    }
+
+    .bluesky-reply {
+        padding: 15px;
+    }
+
+    .bluesky-reply[data-depth="1"] {
+        margin-left: 20px;
+    }
+
+    .bluesky-reply[data-depth="2"] {
+        margin-left: 40px;
+    }
+
+    .bluesky-reply[data-depth="3"],
+    .bluesky-reply[data-depth="4"],
+    .bluesky-reply[data-depth="5"] {
+        margin-left: 60px;
+    }
+
+    .bluesky-reply-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .bluesky-reply-content {
+        padding-left: 52px;
+    }
+
+    .bluesky-reply-footer {
+        padding-left: 52px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Media responsive */
+    .bluesky-reply-images,
+    .bluesky-reply-video,
+    .bluesky-reply-external {
+        padding-left: 52px;
+    }
+
+    .bluesky-external-thumb {
+        width: 100px;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .bluesky-reply-time {
+        display: none;
+    }
+    .bluesky-reply-author-handle {
+        word-break: break-all;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .bluesky-reply[data-depth="1"],
+    .bluesky-reply[data-depth="2"],
+    .bluesky-reply[data-depth="3"],
+    .bluesky-reply[data-depth="4"],
+    .bluesky-reply[data-depth="5"] {
+        margin-left: 10px;
+    }
+
+    .bluesky-discussion-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .bluesky-reply-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .bluesky-reply-content {
+        padding-left: 0;
+    }
+
+    .bluesky-reply-footer {
+        padding-left: 0;
+    }
+
+    .bluesky-reply-author-name {
+        font-size: 15px;
+    }
+
+    .bluesky-reply-author-handle {
+        font-size: 13px;
+    }
+
+    .bluesky-reply-content p {
+        font-size: 14px;
+    }
+
+    /* Media mobile */
+    .bluesky-reply-images,
+    .bluesky-reply-video,
+    .bluesky-reply-external {
+        padding-left: 0;
+    }
+
+    .bluesky-external-link {
+        flex-direction: column;
+    }
+
+    .bluesky-external-thumb {
+        width: 100%;
+        height: 200px;
+    }
+
+    .bluesky-images-grid.double,
+    .bluesky-images-grid.grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+    .bluesky-toggle-replies {
+        display: none;
+    }
+
+    .bluesky-reply-children.collapsed .bluesky-nested-replies {
+        display: block;
+    }
+
+    .bluesky-reply-link {
+        display: none;
+    }
+
+    .bluesky-reply {
+        page-break-inside: avoid;
+        box-shadow: none;
+    }
+
+    .bluesky-reply-media {
+        page-break-inside: avoid;
+    }
+}
+
+/* ============================================
+   Integration with WordPress Comments
+   ============================================ */
+
+.bluesky-discussion-section .comment-respond {
+    margin-top: 30px;
+}
+
+.bluesky-discussion-section .comments-area {
+    margin: 0;
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+
+.bluesky-discussion-link:focus-visible,
+.bluesky-toggle-replies:focus-visible,
+.bluesky-reply-link:focus-visible {
+    outline: 2px solid var(--bluesky-discussion-primary);
+    outline-offset: 2px;
+}
+
+.bluesky-reply:focus-within {
+    border-color: var(--bluesky-discussion-primary);
+    box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--bluesky-discussion-primary) 10%, transparent);
+}
+
+/* Screen reader only text */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
