@@ -34,7 +34,7 @@ require_once "classes/BlueSky_Plugin_Setup.php"; // V.1
 require_once "classes/BlueSky_Render_Front.php"; // V.1
 require_once "classes/BlueSky_Post_Metabox.php"; // V.1.1
 require_once "classes/BlueSky_Admin_Actions.php"; // V.1.4.0
-require_once "classes/BlueSky_Discussion_Display.php"; // V.1.4.5
+require_once "classes/BlueSky_Discussion_Display.php"; // V.1.5.0
 
 // Widgets
 require_once "classes/widgets/BlueSky_Posts_Widget.php";
