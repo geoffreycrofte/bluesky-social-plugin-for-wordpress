@@ -233,6 +233,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 
 == Upgrade Notice ==
 
+= 1.5.0 =
+This new version comes with new features, a bug fix on gutenberg blocks not being clickable, and some UI improvements here and there.
+
 = 1.4.0 =
 Be careful, this version comes with multiple new options and behavior. Try in a safe environment before upgrading or wait for the 1.4.1.
 

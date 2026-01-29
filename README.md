@@ -23,31 +23,31 @@ An option is available for the syndication of your posts for BlueSky Social. Thi
 Some other included features:
 
 * **Configurable Bluesky Profile Card**
- * Choose to display a banner, or not
- * Choose to display an avatar, or not
- * Choose to display your bio, or not
- * Choose to display your counter, or not
+  * Choose to display a banner, or not
+  * Choose to display an avatar, or not
+  * Choose to display your bio, or not
+  * Choose to display your counter, or not
 
 * **Embedded posts in the feed**
- * Youtube URL detection
- * Embedded video
- * Quote embedded
- * Link reference (embedded card with image)
- * Starterpack display
- * Gallery of images (displaying an accessible lightbox)
- * Multiple available layouts
+  * Youtube URL detection
+  * Embedded video
+  * Quote embedded
+  * Link reference (embedded card with image)
+  * Starterpack display
+  * Gallery of images (displaying an accessible lightbox)
+  * Multiple available layouts
  
 * **Auto-post new WordPress posts on BlueSky**
- * Preview the post for BlueSky on WordPress pre-post checks panel (if activated)
- * Display the syndicated post directly below the Gutenberg editor for reference.
- * It displays also the discussion on this BlueSky post if any.
+  * Preview the post for BlueSky on WordPress pre-post checks panel (if activated)
+  * Display the syndicated post directly below the Gutenberg editor for reference.
+  * It displays also the discussion on this BlueSky post if any.
  
 * **Make BlueSky discussions for syndicated posts visible**
- * Activate the "Discussions" option to display Bluesky discussion even if the comment section of your posts is deactivated.
- * Choose to display only first level, or multi-level comments.
- * Choose between collasped or visible multi-level comments.
- * Choose to include photos, videos and attachments.
- * Important: people you mute or block on Bluesky won't be visible in the discussions.
+  * Activate the "Discussions" option to display Bluesky discussion even if the comment section of your posts is deactivated.
+  * Choose to display only first level, or multi-level comments.
+  * Choose between collasped or visible multi-level comments.
+  * Choose to include photos, videos and attachments.
+  * Important: people you mute or block on Bluesky won't be visible in the discussions.
 
 * Encrypted App Password for a more secure connection
 * Cache for a more performant display and avoid BlueSky request limitations
@@ -135,89 +135,89 @@ No it is not. But I'm always happy when core team developers suggest new feature
 
 ### 1.5.0
 * **Improvements**
- * **Auto-published new posts:**
-  * Added the "rich card" support for syndication: now posts in Bluesky look better with image, title, excerpt and link, with an embedded media/card.
-  * Added a preview of the syndicated post into the pre-post checks panel of WordPress.
- * **Bluesky Discussions:**
-  * Display the Bluesky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
-  * Added the ability to display Bluesky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
- * **Latest BlueSky Posts**
-  * Counters now have the option to be displayed (likes, comments, repost, bookmarks)  
-* **Compatibility**
- * Tested with WordPress 6.9.
- * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
+  * **Auto-published new posts:**
+    * Added the "rich card" support for syndication: now posts in Bluesky look better with image, title, excerpt and link, with an embedded media/card.
+    * Added a preview of the syndicated post into the pre-post checks panel of WordPress.
+  * **Bluesky Discussions:**
+    * Display the Bluesky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
+    * Added the ability to display Bluesky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
+  * **Latest BlueSky Posts**
+    * Counters now have the option to be displayed (likes, comments, repost, bookmarks)  
+*  **Compatibility**
+   * Tested with WordPress 6.9.
+   * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
 
 ### 1.4.5
 * **Bug Fix**
- * Improved compatibility with PHP7+ (parse error and warnings should disappear)
+  * Improved compatibility with PHP7+ (parse error and warnings should disappear)
 
 ### 1.4.4
 * **Bug Fix**
- * Fix the block admin preview being broken in some cases.
- * Fix a bug in layout 2 where the banner would displays in 3:1 ratio too.
+  * Fix the block admin preview being broken in some cases.
+  * Fix a bug in layout 2 where the banner would displays in 3:1 ratio too.
 * **Improvement**
- * Rename the Account Name font-size setting into Name/Pseudo and add the Handle option.
+  * Rename the Account Name font-size setting into Name/Pseudo and add the Handle option.
 * **Compatibility**
- * Tries fixing a Spectra block compatibility
+  * Tries fixing a Spectra block compatibility
 
 ### 1.4.3
 Typo fix in the Profile Widget that would block the loading of your custom styles. (sorry I was tired when published the 1.4.2)
 
 ### 1.4.2
 * **Improvements**
- * Design decision: some styles are applied by default when the container of the widget/block is really small (image, padding size reduction mostly)
- * Banner on the profile card is now always 3:1 ratio.
+  * Design decision: some styles are applied by default when the container of the widget/block is really small (image, padding size reduction mostly)
+  *  Banner on the profile card is now always 3:1 ratio.
 * **Bug fix**
- * Widget wouldn't display styles. They are now displaying them inline as a degraded solution.
- * On the Widget in layer 2 of the feed, SVG button wouldn't display properly. It's fixed.
+  * Widget wouldn't display styles. They are now displaying them inline as a degraded solution.
+  * On the Widget in layer 2 of the feed, SVG button wouldn't display properly. It's fixed.
 
 ### 1.4.1
 * **Bug fix**
- * Custom font-size works on Layout 2 display name.
- * Admin better styles on input numbers and buttons.
+  * Custom font-size works on Layout 2 display name.
+  * Admin better styles on input numbers and buttons.
 
 ### 1.4.0
 * **Features** 
- * Pick among two feed layouts.
- * Customize font-size.
- * Decide to display Reposts or hide them.
+  * Pick among two feed layouts.
+  * Customize font-size.
+  * Decide to display Reposts or hide them.
 * **Improvements**
- * Better admin plugin user interface.
- * Default CSS improvements.
- * Debug your options using `&godmode` in the setting page URL
+  * Better admin plugin user interface.
+  * Default CSS improvements.
+  * Debug your options using `&godmode` in the setting page URL
 * **Bug fix**
- * Log out from your account.
+  * Log out from your account.
 
 ### 1.3.0
 * **Features**
- * Displays links for URL and hashtags.
- * Displays Open Graph Image for embedded link cards.
- * Better empty states for new accounts.
- * Default avatar and banner for empty accounts.
+  * Displays links for URL and hashtags.
+  * Displays Open Graph Image for embedded link cards.
+  * Better empty states for new accounts.
+  * Default avatar and banner for empty accounts.
 * **Improvements**
- * Auto-syndication only auto-post posts created after plugin activation (🚨 existing users: you need to save your settings again)
+  * Auto-syndication only auto-post posts created after plugin activation (🚨 existing users: you need to save your settings again)
 
 ### 1.2.0
 * **Bug fix**
- * Text wrap renders better now.
- * numberofposts shortcode attribute works now.
- * displayembeds shortcode attribute works now.
+  * Text wrap renders better now.
+  * numberofposts shortcode attribute works now.
+  * displayembeds shortcode attribute works now.
 * **Features**
- * Decide if you want to include images, video, links and other embeds, or not, in your feed in the global params
- * Display an accessible lightbox to display embedded images. (mostly useful for galleries)
- * Support Starterpack embed in posts
+  * Decide if you want to include images, video, links and other embeds, or not, in your feed in the global params
+  * Display an accessible lightbox to display embedded images. (mostly useful for galleries)
+  * Support Starterpack embed in posts
 
 ### 1.1.1
 WordPress still distributing 1.0.1 instead of 1.1.0. Forcing a version number update.
 
 ### 1.1.0
-- **Bug fix**:
- - Connexion with bluesky should be more consistent now.
- - Light mode in non-system mode wasn't overriding the system preference.
-- **Features**:
- - Deactivate syndication for a specific post before publishing your post
- - Remove the replies from the post feed
- - Display the 2 shortcodes in demo within the admin page
+* **Bug fix**:
+  * Connexion with bluesky should be more consistent now.
+  * Light mode in non-system mode wasn't overriding the system preference.
+* **Features**:
+  * Deactivate syndication for a specific post before publishing your post
+  * Remove the replies from the post feed
+  * Display the 2 shortcodes in demo within the admin page
 
 ### 1.0.1
 Adds the proper information about the shortcodes in the setting page, the plugin description and the mini-description.
@@ -226,6 +226,9 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 ## Upgrade Notice
+
+### 1.5.0
+This new version comes with new features, a bug fix on gutenberg blocks not being clickable, and some UI improvements here and there.
 
 ### 1.4.0
 Be careful, this version comes with multiple new options and behavior. Try in a safe environment before upgrading or wait for the 1.4.1.
