@@ -106,48 +106,48 @@ Existing auto-syndication on publish and pre-publish preview stay. These add opt
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ACCT-01 | TBD | Pending |
-| ACCT-02 | TBD | Pending |
-| ACCT-03 | TBD | Pending |
-| ACCT-04 | TBD | Pending |
-| ACCT-05 | TBD | Pending |
-| ACCT-06 | TBD | Pending |
-| PROF-01 | TBD | Pending |
-| PROF-02 | TBD | Pending |
-| PROF-03 | TBD | Pending |
-| DISP-01 | TBD | Pending |
-| DISP-02 | TBD | Pending |
-| DISP-03 | TBD | Pending |
-| DISP-04 | TBD | Pending |
-| CUST-01 | TBD | Pending |
-| CUST-02 | TBD | Pending |
-| CUST-03 | TBD | Pending |
-| CUST-04 | TBD | Pending |
-| CUST-05 | TBD | Pending |
-| SYND-01 | TBD | Pending |
-| SYND-02 | TBD | Pending |
-| SYND-03 | TBD | Pending |
-| SYND-04 | TBD | Pending |
-| UX-01 | TBD | Pending |
-| UX-02 | TBD | Pending |
-| UX-03 | TBD | Pending |
-| UX-04 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| PERF-03 | TBD | Pending |
-| PERF-04 | TBD | Pending |
-| CODE-01 | TBD | Pending |
-| CODE-02 | TBD | Pending |
-| CODE-03 | TBD | Pending |
-| CODE-04 | TBD | Pending |
-| CODE-05 | TBD | Pending |
-| CODE-06 | TBD | Pending |
+| ACCT-01 | Phase 1 | Pending |
+| ACCT-02 | Phase 1 | Pending |
+| ACCT-03 | Phase 1 | Pending |
+| ACCT-04 | Phase 1 | Pending |
+| ACCT-05 | Phase 1 | Pending |
+| ACCT-06 | Phase 1 | Pending |
+| CODE-01 | Phase 2 | Pending |
+| CODE-02 | Phase 2 | Pending |
+| CODE-03 | Phase 2 | Pending |
+| CODE-04 | Phase 2 | Pending |
+| CODE-05 | Phase 2 | Pending |
+| CODE-06 | Phase 2 | Pending |
+| PERF-01 | Phase 3 | Pending |
+| PERF-02 | Phase 3 | Pending |
+| PERF-03 | Phase 3 | Pending |
+| PERF-04 | Phase 3 | Pending |
+| UX-01 | Phase 4 | Pending |
+| UX-02 | Phase 4 | Pending |
+| UX-03 | Phase 4 | Pending |
+| UX-04 | Phase 4 | Pending |
+| PROF-01 | Phase 5 | Pending |
+| PROF-02 | Phase 5 | Pending |
+| PROF-03 | Phase 5 | Pending |
+| DISP-01 | Phase 5 | Pending |
+| DISP-02 | Phase 5 | Pending |
+| DISP-03 | Phase 5 | Pending |
+| DISP-04 | Phase 5 | Pending |
+| CUST-01 | Phase 6 | Pending |
+| CUST-02 | Phase 6 | Pending |
+| CUST-03 | Phase 6 | Pending |
+| CUST-04 | Phase 6 | Pending |
+| CUST-05 | Phase 6 | Pending |
+| SYND-01 | Phase 7 | Pending |
+| SYND-02 | Phase 7 | Pending |
+| SYND-03 | Phase 7 | Pending |
+| SYND-04 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32
+- v1 requirements: 36 total
+- Mapped to phases: 36
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-14*
-*Last updated: 2026-02-14 after initial definition*
+*Last updated: 2026-02-14 after roadmap creation*
