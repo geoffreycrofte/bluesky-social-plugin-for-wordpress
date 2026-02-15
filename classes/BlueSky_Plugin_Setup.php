@@ -371,6 +371,13 @@ class BlueSky_Plugin_Setup
             );
         }
 
+        // Clear content caches if the account handle changed
+        $old_handle = $current_options["handle"] ?? "";
+        $new_handle = $sanitized["handle"] ?? "";
+        if ($old_handle !== $new_handle) {
+            $this->clear_content_transients();
+        }
+
         // Sanitize Layouts
         $sanitized["styles"]["feed_layout"] =
             isset($input["styles"]["feed_layout"]) &&
@@ -2319,6 +2326,31 @@ class BlueSky_Plugin_Setup
         $auth = $api->authenticate();
 
         wp_send_json_success(["authenticated" => $auth]);
+    }
+
+    /**
+     * Clear all Bluesky content transients (profile, posts).
+     * Called when the account changes or on logout.
+     */
+    public function clear_content_transients()
+    {
+        $helpers = $this->helpers;
+
+        // Clear profile transient
+        delete_transient($helpers->get_profile_transient_key());
+
+        // Clear posts transients for all parameter combinations
+        global $wpdb;
+        $prefix = BLUESKY_PLUGIN_TRANSIENT . '-posts-';
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options}
+                 WHERE option_name LIKE %s
+                 OR option_name LIKE %s",
+                '_transient_' . $wpdb->esc_like($prefix) . '%',
+                '_transient_timeout_' . $wpdb->esc_like($prefix) . '%',
+            ),
+        );
     }
 
     /**

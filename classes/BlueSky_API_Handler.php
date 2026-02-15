@@ -178,6 +178,8 @@ class BlueSky_API_Handler
         try {
             // clean the transient of the jwt
             $this->cleanup_session_data($helpers);
+            // clean cached content (profile, posts) so stale data isn't served
+            $this->cleanup_content_transients($helpers);
             // clean the handle and app_password options
             $this->cleanup_login_options();
             // done.
@@ -218,6 +220,29 @@ class BlueSky_API_Handler
 
         update_option(BLUESKY_PLUGIN_OPTIONS, $options);
         $this->options = $options; // shoudn't be necessary, but just in case.
+    }
+
+    /**
+     * Clear cached content transients (profile and all posts variants)
+     *
+     * @param BlueSky_Helpers $helpers
+     * @return void
+     */
+    private function cleanup_content_transients($helpers)
+    {
+        delete_transient($helpers->get_profile_transient_key());
+
+        global $wpdb;
+        $prefix = BLUESKY_PLUGIN_TRANSIENT . '-posts-';
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options}
+                 WHERE option_name LIKE %s
+                 OR option_name LIKE %s",
+                '_transient_' . $wpdb->esc_like($prefix) . '%',
+                '_transient_timeout_' . $wpdb->esc_like($prefix) . '%',
+            ),
+        );
     }
 
     /**
