@@ -179,3 +179,20 @@ body:not(.block-editor-page) .bluesky-profile-block::after {
         --bluesky-card-spacing: 12px;
     }
 }
+
+/* Async loading skeleton */
+.bluesky-social-integration-profile-card.bluesky-async-placeholder {
+    animation: bluesky-pulse 1.5s ease-in-out infinite;
+}
+.bluesky-connection-check.bluesky-async-placeholder {
+    animation: bluesky-pulse 1.5s ease-in-out infinite;
+}
+.bluesky-skeleton-box {
+    background: currentColor;
+    opacity: 0.12;
+    border-radius: 4px;
+}
+@keyframes bluesky-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+}

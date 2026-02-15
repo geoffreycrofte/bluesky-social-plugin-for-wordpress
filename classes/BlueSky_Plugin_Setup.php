@@ -95,6 +95,28 @@ class BlueSky_Plugin_Setup
             "ajax_get_bluesky_profile",
         ]);
 
+        // Async loading AJAX actions
+        add_action("wp_ajax_bluesky_async_posts", [
+            $this,
+            "ajax_async_posts",
+        ]);
+        add_action("wp_ajax_nopriv_bluesky_async_posts", [
+            $this,
+            "ajax_async_posts",
+        ]);
+        add_action("wp_ajax_bluesky_async_profile", [
+            $this,
+            "ajax_async_profile",
+        ]);
+        add_action("wp_ajax_nopriv_bluesky_async_profile", [
+            $this,
+            "ajax_async_profile",
+        ]);
+        add_action("wp_ajax_bluesky_async_auth", [
+            $this,
+            "ajax_async_auth",
+        ]);
+
         // Widgets and Gutenberg blocks
         add_action("widgets_init", [$this, "register_widgets"]);
         add_action("init", [$this, "register_gutenberg_blocks"]);
@@ -638,48 +660,22 @@ class BlueSky_Plugin_Setup
                 "</p>";
         }
 
-        // Adds a connection check using BlueSky API
-        if (!empty($password) && !empty($login)) {
-            $api = new BlueSky_API_Handler($this->options);
-            $auth = $api->authenticate();
-
-            if ($auth) { ?>
-
-                <div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-success">
-                    <p>
-                        <?php echo esc_html__(
-                            "Connection to BlueSky successful!",
-                            "social-integration-for-bluesky",
-                        ); ?>
-                        <br>
-                        <a class="bluesky-logout-link" href="<?php echo esc_url(
-                            admin_url(
-                                "admin-post.php?action=bluesky_logout&nonce=" .
-                                    wp_create_nonce("bluesky_logout_nonce"),
-                            ),
-                        ); ?>">
-                            <?php esc_html_e(
-                                "Log out from this account",
-                                "social-integration-for-bluesky",
-                            ); ?>
-                        </a>
-
-                    </p>
-                </div>
-
-            <?php } else { ?>
-
-                <div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check notice-error">
-                    <p>
-                        <?php echo esc_html__(
-                            "Connection to BlueSky failed. Please check your credentials. It can also happend if you reached BlueSky request limit.",
-                            "social-integration-for-bluesky",
-                        ); ?>
-                    </p>
-                </div>
-
-            <?php }
-        }
+        // Connection check via AJAX — no blocking API call during page render
+        if (!empty($password) && !empty($login)) { ?>
+            <div aria-live="polite" aria-atomic="true" id="bluesky-connection-test" class="description bluesky-connection-check bluesky-async-placeholder" data-bluesky-async="auth" data-bluesky-logout-url="<?php echo esc_url(
+                admin_url(
+                    "admin-post.php?action=bluesky_logout&nonce=" .
+                        wp_create_nonce("bluesky_logout_nonce"),
+                ),
+            ); ?>">
+                <p>
+                    <?php esc_html_e(
+                        "Checking connection...",
+                        "social-integration-for-bluesky",
+                    ); ?>
+                </p>
+            </div>
+        <?php }
     }
 
     /**
@@ -1295,9 +1291,8 @@ class BlueSky_Plugin_Setup
      */
     public function render_settings_page()
     {
-        // Adds a connection check using BlueSky API
-        $api = new BlueSky_API_Handler($this->options);
-        $auth = $api->authenticate();
+        // Render all tabs immediately — auth check happens via AJAX
+        $auth = true;
         ?>
         <main class="bluesky-social-integration-admin">
             <header role="banner" class="privacy-settings-header">
@@ -2178,6 +2173,17 @@ class BlueSky_Plugin_Setup
             BLUESKY_PLUGIN_VERSION,
             ["in_footer" => true, "strategy" => "defer"],
         );
+        wp_enqueue_script(
+            "bluesky-async-loader",
+            BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-async-loader.js",
+            [],
+            BLUESKY_PLUGIN_VERSION,
+            ["in_footer" => true, "strategy" => "defer"],
+        );
+        wp_localize_script("bluesky-async-loader", "blueskyAsync", [
+            "ajaxUrl" => admin_url("admin-ajax.php"),
+            "nonce" => wp_create_nonce("bluesky_async_nonce"),
+        ]);
     }
 
     /**
@@ -2198,6 +2204,17 @@ class BlueSky_Plugin_Setup
                 [],
                 BLUESKY_PLUGIN_VERSION,
             );
+            wp_enqueue_script(
+                "bluesky-async-loader",
+                BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-async-loader.js",
+                [],
+                BLUESKY_PLUGIN_VERSION,
+                ["in_footer" => true, "strategy" => "defer"],
+            );
+            wp_localize_script("bluesky-async-loader", "blueskyAsync", [
+                "ajaxUrl" => admin_url("admin-ajax.php"),
+                "nonce" => wp_create_nonce("bluesky_async_nonce"),
+            ]);
         }
     }
 
@@ -2230,6 +2247,78 @@ class BlueSky_Plugin_Setup
             wp_send_json_error("Could not fetch profile");
         }
         wp_die();
+    }
+
+    /**
+     * AJAX handler for async posts rendering
+     */
+    public function ajax_async_posts()
+    {
+        check_ajax_referer("bluesky_async_nonce", "nonce");
+
+        $params = isset($_POST["params"]) ? json_decode(
+            sanitize_text_field(wp_unslash($_POST["params"])),
+            true,
+        ) : [];
+
+        $attributes = [
+            "theme" => sanitize_text_field($params["theme"] ?? ($this->options["theme"] ?? "system")),
+            "numberofposts" => intval($params["numberofposts"] ?? ($this->options["posts_limit"] ?? 5)),
+            "noreplies" => filter_var($params["noreplies"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "noreposts" => filter_var($params["noreposts"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "nocounters" => filter_var($params["nocounters"] ?? false, FILTER_VALIDATE_BOOLEAN),
+            "displayembeds" => filter_var($params["displayembeds"] ?? true, FILTER_VALIDATE_BOOLEAN),
+        ];
+
+        $render = new BlueSky_Render_Front($this->api_handler);
+        $html = $render->render_bluesky_posts_list($attributes);
+
+        wp_send_json_success(["html" => $html]);
+    }
+
+    /**
+     * AJAX handler for async profile rendering
+     */
+    public function ajax_async_profile()
+    {
+        check_ajax_referer("bluesky_async_nonce", "nonce");
+
+        $params = isset($_POST["params"]) ? json_decode(
+            sanitize_text_field(wp_unslash($_POST["params"])),
+            true,
+        ) : [];
+
+        $attributes = [
+            "theme" => sanitize_text_field($params["theme"] ?? ($this->options["theme"] ?? "system")),
+            "styleClass" => sanitize_text_field($params["styleClass"] ?? ""),
+            "displaybanner" => filter_var($params["displaybanner"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "displayavatar" => filter_var($params["displayavatar"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "displaycounters" => filter_var($params["displaycounters"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "displaybio" => filter_var($params["displaybio"] ?? true, FILTER_VALIDATE_BOOLEAN),
+        ];
+
+        $render = new BlueSky_Render_Front($this->api_handler);
+        $html = $render->render_bluesky_profile_card($attributes);
+
+        wp_send_json_success(["html" => $html]);
+    }
+
+    /**
+     * AJAX handler for async auth check (admin only)
+     */
+    public function ajax_async_auth()
+    {
+        check_ajax_referer("bluesky_async_nonce", "nonce");
+
+        if (!current_user_can("manage_options")) {
+            wp_send_json_error("Unauthorized");
+            return;
+        }
+
+        $api = new BlueSky_API_Handler($this->options);
+        $auth = $api->authenticate();
+
+        wp_send_json_success(["authenticated" => $auth]);
     }
 
     /**

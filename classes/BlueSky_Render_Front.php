@@ -174,11 +174,37 @@ class BlueSky_Render_Front
         $no_counters = $attributes["nocounters"];
         $layout = $this->options["styles"]["feed_layout"] ?? "default";
 
-        $posts = $this->api_handler->fetch_bluesky_posts(
+        // Cache-first: check transient before making any API call
+        $helpers = new BlueSky_Helpers();
+        $cache_key = $helpers->get_posts_transient_key(
             intval($number_of_posts),
             (bool) $no_replies,
             $no_reposts,
         );
+        $cached_posts = get_transient($cache_key);
+
+        if ($cached_posts !== false) {
+            // Fast path: render from cache (no API call)
+            $posts = $cached_posts;
+        } elseif (!defined('DOING_AJAX') || !DOING_AJAX) {
+            // No cache and not an AJAX request: return skeleton placeholder
+            $params = wp_json_encode([
+                "theme" => $theme,
+                "numberofposts" => $number_of_posts,
+                "noreplies" => $no_replies,
+                "noreposts" => $no_reposts,
+                "nocounters" => $no_counters,
+                "displayembeds" => $display_embeds,
+            ]);
+            return $this->render_posts_skeleton($theme, $layout, $params);
+        } else {
+            // AJAX request: fetch fresh data
+            $posts = $this->api_handler->fetch_bluesky_posts(
+                intval($number_of_posts),
+                (bool) $no_replies,
+                $no_reposts,
+            );
+        }
 
         // Apply theme class
         $classes = " theme-" . esc_attr($theme);
@@ -207,10 +233,28 @@ class BlueSky_Render_Front
     "social-integration-for-bluesky",
 ); ?>">
 
-                <?php if ($layout === "layout_2") { ?>
+                <?php if ($layout === "layout_2") {
+                    $profile_helpers = new BlueSky_Helpers();
+                    $profile_cache_key = $profile_helpers->get_profile_transient_key();
+                    $profile = get_transient($profile_cache_key);
+                    if ($profile === false && (!defined('DOING_AJAX') || !DOING_AJAX)) {
+                        // No cached profile: render a small profile skeleton
+                        ?>
+                        <div class="bluesky-social-integration-profile-card-embedded bluesky-async-placeholder">
+                            <div class="bluesky-social-integration-image">
+                                <span class="avatar bluesky-social-integration-avatar bluesky-skeleton-box" style="width:40px;height:40px;display:inline-block;"></span>
+                                <div class="bluesky-social-integration-content">
+                                    <div class="bluesky-social-integration-content-names">
+                                        <p class="bluesky-social-integration-name"><span class="bluesky-skeleton-box" style="width:100px;height:1em;display:inline-block;"></span></p>
+                                        <p class="bluesky-social-integration-handle"><span class="bluesky-skeleton-box" style="width:80px;height:1em;display:inline-block;"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } elseif ($profile) {
+                        // Cached profile: render full embedded profile
+                    ?>
                 <div class="bluesky-social-integration-profile-card-embedded">
-                    <?php $profile = $this->api_handler->get_bluesky_profile(); ?>
-
                     <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset(
                         $profile["banner"],
                     )
@@ -243,7 +287,8 @@ class BlueSky_Render_Front
                         </div>
                     </div>
                 </div>
-                <?php } ?>
+                    <?php }
+                } ?>
 
                 <ul class="bluesky-social-integration-last-post-list">
 
@@ -814,9 +859,37 @@ class BlueSky_Render_Front
      */
     public function render_bluesky_profile_card($attributes = [])
     {
-        $profile = $this->api_handler->get_bluesky_profile();
+        // Cache-first: check transient before making any API call
+        $helpers = new BlueSky_Helpers();
+        $profile_cache_key = $helpers->get_profile_transient_key();
+        $cached_profile = get_transient($profile_cache_key);
 
-        // TODO: write a fallback solution using cache
+        if ($cached_profile !== false) {
+            // Fast path: use cached profile
+            $profile = $cached_profile;
+        } elseif (!defined('DOING_AJAX') || !DOING_AJAX) {
+            // No cache and not AJAX: return skeleton placeholder
+            $classes_arr = [
+                "bluesky-social-integration-profile-card",
+                $attributes["styleClass"] ?? "",
+            ];
+            if (isset($attributes["theme"])) {
+                $classes_arr[] = "theme-" . esc_attr($attributes["theme"]);
+            }
+            $params = wp_json_encode([
+                "theme" => $attributes["theme"] ?? ($this->options["theme"] ?? "system"),
+                "styleClass" => $attributes["styleClass"] ?? "",
+                "displaybanner" => $attributes["displaybanner"] ?? true,
+                "displayavatar" => $attributes["displayavatar"] ?? true,
+                "displaycounters" => $attributes["displaycounters"] ?? true,
+                "displaybio" => $attributes["displaybio"] ?? true,
+            ]);
+            return $this->render_profile_skeleton(implode(" ", $classes_arr), $params);
+        } else {
+            // AJAX request: fetch fresh data
+            $profile = $this->api_handler->get_bluesky_profile();
+        }
+
         if (!$profile) {
             return '<p class="bluesky-social-integration-error">' .
                 esc_html__(
@@ -1081,5 +1154,70 @@ class BlueSky_Render_Front
     public function render_inline_custom_styles_profile()
     {
         echo $this->get_inline_custom_styles("profile");
+    }
+
+    /**
+     * Render a skeleton placeholder for the posts feed
+     * @param string $theme Theme class
+     * @param string $layout Layout class
+     * @param string $params JSON-encoded render parameters
+     * @return string HTML skeleton
+     */
+    private function render_posts_skeleton($theme, $layout, $params)
+    {
+        $classes = " theme-" . esc_attr($theme);
+        $classes .= " display-" . esc_attr($layout);
+
+        ob_start();
+        ?>
+        <aside class="bluesky-social-integration-last-post<?php echo esc_attr($classes); ?> bluesky-async-placeholder" data-bluesky-async="posts" data-bluesky-params="<?php echo esc_attr($params); ?>" aria-label="<?php esc_attr_e("Loading Bluesky Posts", "social-integration-for-bluesky"); ?>">
+            <ul class="bluesky-social-integration-last-post-list">
+                <?php for ($i = 0; $i < 3; $i++): ?>
+                <li class="bluesky-social-integration-last-post-item">
+                    <div class="bluesky-social-integration-last-post-header">
+                        <span class="bluesky-skeleton-box" style="width:42px;height:42px;border-radius:50%;display:inline-block;"></span>
+                    </div>
+                    <div class="bluesky-social-integration-last-post-content">
+                        <p class="bluesky-social-integration-post-account-info-names">
+                            <span class="bluesky-skeleton-box" style="width:120px;height:1em;display:inline-block;"></span>
+                            <span class="bluesky-skeleton-box" style="width:80px;height:1em;display:inline-block;"></span>
+                        </p>
+                        <div class="bluesky-social-integration-post-content-text">
+                            <span class="bluesky-skeleton-box" style="width:100%;height:1em;display:block;margin-bottom:0.4em;"></span>
+                            <span class="bluesky-skeleton-box" style="width:75%;height:1em;display:block;"></span>
+                        </div>
+                    </div>
+                </li>
+                <?php endfor; ?>
+            </ul>
+        </aside>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Render a skeleton placeholder for the profile card
+     * @param string $classes CSS class string
+     * @param string $params JSON-encoded render parameters
+     * @return string HTML skeleton
+     */
+    private function render_profile_skeleton($classes, $params)
+    {
+        ob_start();
+        ?>
+        <aside class="<?php echo esc_attr($classes); ?> bluesky-async-placeholder" data-bluesky-async="profile" data-bluesky-params="<?php echo esc_attr($params); ?>" aria-label="<?php esc_attr_e("Loading Bluesky Profile", "social-integration-for-bluesky"); ?>">
+            <div class="bluesky-social-integration-image">
+                <span class="bluesky-skeleton-box" style="width:80px;height:80px;border-radius:50%;display:inline-block;"></span>
+            </div>
+            <div class="bluesky-social-integration-content">
+                <p class="bluesky-social-integration-name"><span class="bluesky-skeleton-box" style="width:150px;height:1.2em;display:inline-block;"></span></p>
+                <p class="bluesky-social-integration-handle"><span class="bluesky-skeleton-box" style="width:120px;height:1em;display:inline-block;"></span></p>
+                <p class="bluesky-social-integration-followers">
+                    <span class="bluesky-skeleton-box" style="width:200px;height:1em;display:inline-block;"></span>
+                </p>
+            </div>
+        </aside>
+        <?php
+        return ob_get_clean();
     }
 }
