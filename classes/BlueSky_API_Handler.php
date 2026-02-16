@@ -31,12 +31,35 @@ class BlueSky_API_Handler
     private $access_token = null;
 
     /**
+     * Last authentication error details
+     * @var array|null
+     */
+    private $last_auth_error = null;
+
+    /**
      * Constructor
      * @param array $options Plugin settings
      */
     public function __construct($options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * Factory method to create an API handler for a specific account
+     *
+     * @param array $account Account array from BlueSky_Account_Manager
+     * @return BlueSky_API_Handler Configured API handler instance
+     */
+    public static function create_for_account($account)
+    {
+        // Build minimal options array that the API handler needs
+        $options = [
+            'handle' => $account['handle'],
+            'app_password' => $account['app_password'] // Already encrypted in storage
+        ];
+
+        return new self($options);
     }
 
     /**
@@ -47,11 +70,18 @@ class BlueSky_API_Handler
      */
     public function authenticate($force = false)
     {
+        $this->last_auth_error = null;
+
         // Check if credentials are set
         if (
             !isset($this->options["handle"]) ||
             !isset($this->options["app_password"])
         ) {
+            $this->last_auth_error = [
+                "code" => "MissingCredentials",
+                "message" => "Handle or app password is not configured.",
+                "status" => 0,
+            ];
             return false;
         }
 
@@ -77,6 +107,7 @@ class BlueSky_API_Handler
             $response = wp_remote_post(
                 $this->bluesky_api_url . "com.atproto.server.refreshSession",
                 [
+                    "timeout" => 15,
                     "body" => wp_json_encode([
                         "refreshJwt" => $refresh_token,
                     ]),
@@ -88,6 +119,11 @@ class BlueSky_API_Handler
             );
 
             if (is_wp_error($response)) {
+                $this->last_auth_error = [
+                    "code" => "NetworkError",
+                    "message" => $response->get_error_message(),
+                    "status" => 0,
+                ];
                 return false;
             }
 
@@ -133,6 +169,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.server.createSession",
             [
+                "timeout" => 15,
                 "body" => wp_json_encode([
                     "identifier" => $this->options["handle"],
                     "password" => $password,
@@ -144,9 +181,15 @@ class BlueSky_API_Handler
         );
 
         if (is_wp_error($response)) {
+            $this->last_auth_error = [
+                "code" => "NetworkError",
+                "message" => $response->get_error_message(),
+                "status" => 0,
+            ];
             return false;
         }
 
+        $http_status = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if (
@@ -164,7 +207,36 @@ class BlueSky_API_Handler
             return true;
         }
 
+        // Capture error details from the API response
+        $this->last_auth_error = [
+            "code" => $body["error"] ?? "UnknownError",
+            "message" => $body["message"] ?? "",
+            "status" => $http_status,
+        ];
+
+        // Add rate limit info if available
+        $ratelimit_remaining = wp_remote_retrieve_header(
+            $response,
+            "ratelimit-remaining",
+        );
+        if ($ratelimit_remaining !== "") {
+            $this->last_auth_error["ratelimit_remaining"] =
+                $ratelimit_remaining;
+            $this->last_auth_error["ratelimit_reset"] =
+                wp_remote_retrieve_header($response, "ratelimit-reset");
+        }
+
         return false;
+    }
+
+    /**
+     * Get the last authentication error details
+     *
+     * @return array|null Error array with 'code', 'message', 'status' keys, or null if no error
+     */
+    public function get_last_auth_error()
+    {
+        return $this->last_auth_error;
     }
 
     /**
@@ -285,6 +357,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getAuthorFeed",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -384,6 +457,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.actor.getProfile",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -425,7 +499,9 @@ class BlueSky_API_Handler
         // Check if it's a local file path or URL
         if (filter_var($image_url, FILTER_VALIDATE_URL)) {
             // It's a URL, fetch it
-            $response = wp_remote_get($image_url);
+            $response = wp_remote_get($image_url, [
+                "timeout" => 15,
+            ]);
             if (is_wp_error($response)) {
                 return false;
             }
@@ -455,6 +531,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.repo.uploadBlob",
             [
+                "timeout" => 30,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                     "Content-Type" => $mime_type,
@@ -605,6 +682,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.repo.createRecord",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                     "Content-Type" => "application/json",
@@ -769,6 +847,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getPostThread",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -811,6 +890,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getPosts",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
