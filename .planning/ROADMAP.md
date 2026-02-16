@@ -33,10 +33,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Existing single-account data migrates to multi-account structure without data loss
   5. User can select which account(s) to syndicate to on a per-post basis in editor
   6. User can switch which account to display content from (profile cards, feeds)
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md -- Account Manager class with CRUD, migration, feature toggle, UUID generation
+- [ ] 01-02-PLAN.md -- Settings page multi-account UI with progressive disclosure
+- [ ] 01-03-PLAN.md -- Multi-account syndication execution and editor account selection
+- [ ] 01-04-PLAN.md -- Async pipeline account threading, cache scoping, discussion display
+- [ ] 01-05-PLAN.md -- End-to-end verification checkpoint (human verify)
 
 ### Phase 2: Codebase Refactoring
 **Goal**: Codebase is decomposed into maintainable services with test coverage and security fixes
@@ -135,7 +139,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Multi-Account Foundation | 0/TBD | Not started | - |
+| 1. Multi-Account Foundation | 0/5 | Planned | - |
 | 2. Codebase Refactoring | 0/TBD | Not started | - |
 | 3. Performance & Resilience | 0/TBD | Not started | - |
 | 4. Error Handling & UX | 0/TBD | Not started | - |
@@ -145,4 +149,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 ---
 *Roadmap created: 2026-02-14*
-*Last updated: 2026-02-14*
+*Last updated: 2026-02-16*
