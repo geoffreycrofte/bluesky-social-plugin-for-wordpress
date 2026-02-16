@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 ## Current Position
 
 Phase: 1 of 7 (Multi-Account Foundation)
-Plan: 3 of 5 completed (01-03)
+Plan: 4 of 5 completed (01-04)
 Status: In progress
-Last activity: 2026-02-16 — Completed 01-03-PLAN.md (Multi-Account Syndication)
+Last activity: 2026-02-16 — Completed 01-04-PLAN.md (Async Pipeline & Discussion Account Threading)
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 2.7 minutes
-- Total execution time: 0.13 hours
+- Total plans completed: 4
+- Average duration: 3.8 minutes
+- Total execution time: 0.25 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 3 | 8 min | 2.7 min |
+| 01 | 4 | 15 min | 3.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 01-03 (3 min)
-- Trend: Consistent execution pace
+- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 01-03 (3 min), 01-04 (7 min)
+- Trend: Plan 04 took longer due to 9 file modifications across async, discussion, and UI layers
 
 *Updated after each plan completion*
 
@@ -57,6 +57,9 @@ Recent decisions affecting current work:
 - Auto-syndicate accounts pre-selected for new posts when no explicit selection — 01-03
 - Per-account results keyed by account UUID in _bluesky_syndication_bs_post_info — 01-03
 - First successful account ID saved for backward compatibility with Discussion display — 01-03
+- Cache keys include account_id when provided for multi-account scoping — 01-04
+- Discussion display uses centralized helper for syndication info extraction (supports old/new formats) — 01-04
+- Account selector uses progressive disclosure (only shown when 2+ accounts exist) — 01-04
 
 ### Pending Todos
 
@@ -69,7 +72,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 01-03-PLAN.md (Multi-Account Syndication)
+Stopped at: Completed 01-04-PLAN.md (Async Pipeline & Discussion Account Threading)
 Resume file: None
 
 ---
