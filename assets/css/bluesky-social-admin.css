@@ -343,3 +343,68 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 .bluesky-debug-sidebar-content summary {
     font-size: 1.3em;
 }
+
+/* Multi-Account UI */
+#bluesky-multi-account-section {
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+    border-top: 1px solid #c3c4c7;
+}
+
+/* Account List Table */
+.bluesky-account-list {
+    margin-top: 1em;
+}
+
+.bluesky-account-list .bluesky-account-active {
+    font-weight: bold;
+}
+
+.bluesky-account-list .column-status {
+    width: 140px;
+}
+
+.bluesky-account-list .column-auto-syndicate {
+    width: 120px;
+    text-align: center;
+}
+
+.bluesky-account-list .column-actions {
+    width: 180px;
+}
+
+/* Status Badges */
+.bluesky-status-authenticated {
+    color: #00a32a;
+}
+
+.bluesky-status-expired {
+    color: #dba617;
+}
+
+.bluesky-status-error {
+    color: #d63638;
+}
+
+.bluesky-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.bluesky-status-badge .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Active Account Indicator */
+.bluesky-active-indicator {
+    display: inline-block;
+    background: #2271b1;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin-left: 8px;
+}

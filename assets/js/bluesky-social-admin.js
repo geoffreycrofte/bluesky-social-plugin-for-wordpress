@@ -137,6 +137,46 @@
     }
 
     /**
+     * Multi-account progressive disclosure
+     */
+    const multiAccountToggle = document.getElementById("bluesky-enable-multi-account");
+    const multiAccountSection = document.getElementById("bluesky-multi-account-section");
+
+    if (multiAccountToggle && multiAccountSection) {
+      // Set initial state
+      if (multiAccountToggle.checked) {
+        multiAccountSection.style.display = "block";
+      } else {
+        multiAccountSection.style.display = "none";
+      }
+
+      // Toggle on change
+      multiAccountToggle.addEventListener("change", function () {
+        if (this.checked) {
+          $(multiAccountSection).slideDown(200);
+        } else {
+          $(multiAccountSection).slideUp(200);
+        }
+      });
+    }
+
+    /**
+     * Remove account confirmation
+     */
+    const removeAccountButtons = document.querySelectorAll(".bluesky-remove-account-btn");
+
+    removeAccountButtons.forEach(function (button) {
+      button.addEventListener("click", function (e) {
+        const confirmed = confirm(
+          "Remove this account? Discussion threads for posts syndicated with this account will no longer load.",
+        );
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    /**
      * Discussion settings enable/disable toggle
      */
     const enableDiscussionsCheckbox = document.getElementById(
