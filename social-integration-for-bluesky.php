@@ -46,7 +46,7 @@ $bluesky_account_manager = new BlueSky_Account_Manager(); // V.1.5.0
 $bluesky_api_handler = new BlueSky_API_Handler(
     get_option(BLUESKY_PLUGIN_OPTIONS),
 ); // V.1
-$bluesky_social_integration = new BlueSky_Plugin_Setup($bluesky_api_handler); // V.1
+$bluesky_social_integration = new BlueSky_Plugin_Setup($bluesky_api_handler, $bluesky_account_manager); // V.1
 $bluesky_render_front = new BlueSky_Render_Front($bluesky_api_handler); // V.1
 new BlueSky_Admin_Actions(); // V.1.4.0
 new BlueSky_Post_Metabox(); // V.1.1.0
