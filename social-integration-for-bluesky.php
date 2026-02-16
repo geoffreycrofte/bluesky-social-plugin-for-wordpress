@@ -29,6 +29,7 @@ define("BLUESKY_PLUGIN_TRANSIENT", "bluesky_cache_" . BLUESKY_PLUGIN_VERSION);
 
 // Core features (attempt)
 require_once "classes/BlueSky_Helpers.php"; // V.1
+require_once "classes/BlueSky_Account_Manager.php"; // V.1.5.0
 require_once "classes/BlueSky_API_Handler.php"; // V.1
 require_once "classes/BlueSky_Plugin_Setup.php"; // V.1
 require_once "classes/BlueSky_Render_Front.php"; // V.1
@@ -41,6 +42,7 @@ require_once "classes/widgets/BlueSky_Posts_Widget.php";
 require_once "classes/widgets/BlueSky_Profile_Widget.php";
 
 // Initialize the plugin
+$bluesky_account_manager = new BlueSky_Account_Manager(); // V.1.5.0
 $bluesky_api_handler = new BlueSky_API_Handler(
     get_option(BLUESKY_PLUGIN_OPTIONS),
 ); // V.1
