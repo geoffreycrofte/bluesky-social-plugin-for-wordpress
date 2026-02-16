@@ -19,6 +19,12 @@ class BlueSky_Discussion_Display
     private $api_handler;
 
     /**
+     * Account Manager instance
+     * @var BlueSky_Account_Manager
+     */
+    private $account_manager;
+
+    /**
      * Plugin options
      * @var array
      */
@@ -32,6 +38,7 @@ class BlueSky_Discussion_Display
     {
         $this->api_handler = $api_handler;
         $this->options = get_option(BLUESKY_PLUGIN_OPTIONS);
+        $this->account_manager = new BlueSky_Account_Manager();
 
         // Add metabox
         add_action("add_meta_boxes", [$this, "add_discussion_metabox"]);
@@ -48,6 +55,54 @@ class BlueSky_Discussion_Display
         // Frontend hooks
         add_filter("the_content", [$this, "add_discussion_to_content"]);
         add_action("wp_enqueue_scripts", [$this, "enqueue_frontend_scripts"]);
+    }
+
+    /**
+     * Get syndication info for discussion display
+     * Handles both old format (direct object) and new format (account-keyed)
+     *
+     * @param int $post_id WordPress post ID
+     * @return array|null Bluesky post info or null if not found
+     */
+    private function get_syndication_info_for_discussion($post_id)
+    {
+        $raw = get_post_meta($post_id, '_bluesky_syndication_bs_post_info', true);
+        if (empty($raw)) {
+            return null;
+        }
+
+        $data = json_decode($raw, true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        // Check if this is the OLD format (single blob with 'uri' key directly)
+        // vs NEW format (account-keyed structure)
+        if (isset($data['uri'])) {
+            // Old format — return as-is for backward compatibility
+            return $data;
+        }
+
+        // New account-keyed format: {account_uuid: {uri, cid, ...}, ...}
+        if ($this->account_manager->is_multi_account_enabled()) {
+            // Get configured discussion account
+            $discussion_account_id = $this->account_manager->get_discussion_account();
+
+            // Try the configured discussion account first
+            if ($discussion_account_id && isset($data[$discussion_account_id])) {
+                return $data[$discussion_account_id];
+            }
+
+            // Fall back to first successful syndication
+            foreach ($data as $account_id => $info) {
+                if (!empty($info['uri']) && (!isset($info['success']) || $info['success'])) {
+                    return $info;
+                }
+            }
+        }
+
+        // Final fallback: return first entry
+        return reset($data) ?: null;
     }
 
     /**
@@ -132,14 +187,10 @@ class BlueSky_Discussion_Display
      */
     public function render_discussion_metabox($post)
     {
-        // Get syndication info
-        $post_info_json = get_post_meta(
-            $post->ID,
-            "_bluesky_syndication_bs_post_info",
-            true,
-        );
+        // Get syndication info using helper method
+        $post_info = $this->get_syndication_info_for_discussion($post->ID);
 
-        if (empty($post_info_json)) {
+        if (!$post_info) {
             echo "<p>" .
                 esc_html__(
                     "No Bluesky post information found.",
@@ -148,8 +199,6 @@ class BlueSky_Discussion_Display
                 "</p>";
             return;
         }
-
-        $post_info = json_decode($post_info_json, true);
 
         if (!isset($post_info["uri"])) {
             echo "<p>" .
@@ -226,8 +275,20 @@ class BlueSky_Discussion_Display
      */
     private function fetch_and_render_discussion($post_info)
     {
+        // Use per-account API handler if multi-account enabled
+        $api_handler = $this->api_handler;
+        if ($this->account_manager->is_multi_account_enabled()) {
+            $discussion_account_id = $this->account_manager->get_discussion_account();
+            if ($discussion_account_id) {
+                $account = $this->account_manager->get_account($discussion_account_id);
+                if ($account) {
+                    $api_handler = BlueSky_API_Handler::create_for_account($account);
+                }
+            }
+        }
+
         // Get post stats
-        $post_data = $this->api_handler->get_post_stats($post_info["uri"]);
+        $post_data = $api_handler->get_post_stats($post_info["uri"]);
 
         if (!$post_data) {
             return '<div class="bluesky-discussion-error">' .
@@ -241,7 +302,7 @@ class BlueSky_Discussion_Display
         }
 
         // Get thread with replies
-        $thread = $this->api_handler->get_post_thread($post_info["uri"]);
+        $thread = $api_handler->get_post_thread($post_info["uri"]);
 
         $html = "";
 
@@ -579,17 +640,11 @@ class BlueSky_Discussion_Display
             wp_send_json_error("Invalid permissions");
         }
 
-        $post_info_json = get_post_meta(
-            $post_id,
-            "_bluesky_syndication_bs_post_info",
-            true,
-        );
+        $post_info = $this->get_syndication_info_for_discussion($post_id);
 
-        if (empty($post_info_json)) {
+        if (!$post_info) {
             wp_send_json_error("No Bluesky post information found");
         }
-
-        $post_info = json_decode($post_info_json, true);
 
         // Clear cache
         $cache_key = "bluesky_discussion_" . md5($post_info["uri"]);
@@ -621,17 +676,11 @@ class BlueSky_Discussion_Display
 
         $args = wp_parse_args($args, $defaults);
 
-        $post_info_json = get_post_meta(
-            $post_id,
-            "_bluesky_syndication_bs_post_info",
-            true,
-        );
+        $post_info = $this->get_syndication_info_for_discussion($post_id);
 
-        if (empty($post_info_json)) {
+        if (!$post_info) {
             return "";
         }
-
-        $post_info = json_decode($post_info_json, true);
 
         if (!isset($post_info["uri"])) {
             return "";
@@ -673,20 +722,10 @@ class BlueSky_Discussion_Display
             return $content;
         }
 
-        // Get post info
-        $post_info_json = get_post_meta(
-            $post->ID,
-            "_bluesky_syndication_bs_post_info",
-            true,
-        );
+        // Get post info using helper method
+        $post_info = $this->get_syndication_info_for_discussion($post->ID);
 
-        if (empty($post_info_json)) {
-            return $content;
-        }
-
-        $post_info = json_decode($post_info_json, true);
-
-        if (!isset($post_info["uri"]) || !isset($post_info["url"])) {
+        if (!$post_info || !isset($post_info["uri"]) || !isset($post_info["url"])) {
             return $content;
         }
 
