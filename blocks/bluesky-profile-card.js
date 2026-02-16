@@ -11,12 +11,36 @@
     const { attributes, setAttributes } = props;
     const blockProps = useBlockProps();
 
+    // Check if we should show account selector
+    const showAccountSelector =
+      window.blueskyBlockData &&
+      window.blueskyBlockData.accounts &&
+      window.blueskyBlockData.accounts.length > 1;
+
     return el(
       "div",
       blockProps,
       el(
         InspectorControls,
         { key: "inspector" },
+        showAccountSelector
+          ? el(
+              PanelBody,
+              {
+                key: "account-options",
+                title: __("Account", "social-integration-for-bluesky"),
+              },
+              el(SelectControl, {
+                key: "account-select",
+                label: __("Display Account", "social-integration-for-bluesky"),
+                value: attributes.accountId,
+                options: window.blueskyBlockData.accounts,
+                onChange: function (value) {
+                  setAttributes({ accountId: value });
+                },
+              }),
+            )
+          : null,
         el(
           PanelBody,
           {
@@ -137,6 +161,10 @@
       theme: {
         type: "string",
         default: "system",
+      },
+      accountId: {
+        type: "string",
+        default: "",
       },
     },
     supports: {

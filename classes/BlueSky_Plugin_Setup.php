@@ -3111,6 +3111,25 @@ class BlueSky_Plugin_Setup
      */
     public function register_gutenberg_blocks()
     {
+        // Prepare account data for blocks
+        $account_options = [
+            ["value" => "", "label" => __("Active Account (default)", "social-integration-for-bluesky")]
+        ];
+
+        if ($this->account_manager->is_multi_account_enabled()) {
+            $accounts = $this->account_manager->get_accounts();
+            foreach ($accounts as $account) {
+                $account_options[] = [
+                    "value" => $account["id"],
+                    "label" => sprintf(
+                        "%s (@%s)",
+                        $account["name"] ?? $account["handle"],
+                        $account["handle"]
+                    )
+                ];
+            }
+        }
+
         // Register Posts Feed
         wp_register_script(
             "bluesky-posts-block",
@@ -3127,6 +3146,12 @@ class BlueSky_Plugin_Setup
                 "in_footer" => true,
                 "strategy" => "defer",
             ],
+        );
+
+        wp_localize_script(
+            "bluesky-posts-block",
+            "blueskyBlockData",
+            ["accounts" => $account_options]
         );
 
         register_block_type("bluesky-social/posts", [
@@ -3159,6 +3184,10 @@ class BlueSky_Plugin_Setup
                     "default" =>
                         get_option(BLUESKY_PLUGIN_OPTIONS)["posts_limit"] ?? 5,
                 ],
+                "accountId" => [
+                    "type" => "string",
+                    "default" => "",
+                ],
             ],
         ]);
 
@@ -3178,6 +3207,12 @@ class BlueSky_Plugin_Setup
                 "in_footer" => true,
                 "strategy" => "defer",
             ],
+        );
+
+        wp_localize_script(
+            "bluesky-profile-block",
+            "blueskyBlockData",
+            ["accounts" => $account_options]
         );
 
         register_block_type("bluesky-social/profile", [
@@ -3210,6 +3245,10 @@ class BlueSky_Plugin_Setup
                 "style" => [
                     "type" => "string",
                     "default" => "default",
+                ],
+                "accountId" => [
+                    "type" => "string",
+                    "default" => "",
                 ],
             ],
             "styles" => [
