@@ -7,6 +7,7 @@ if (!defined("ABSPATH")) {
 class BlueSky_Post_Metabox
 {
     private $options;
+    private $account_manager;
 
     /**
      * Constructor
@@ -18,6 +19,7 @@ class BlueSky_Post_Metabox
         add_action("admin_enqueue_scripts", [$this, "enqueue_metabox_scripts"]);
         add_action("init", [$this, "register_post_meta"]);
         $this->options = get_option(BLUESKY_PLUGIN_OPTIONS);
+        $this->account_manager = new BlueSky_Account_Manager();
         // Register the AJAX handler
         $this->register_ajax_handler();
     }
@@ -31,6 +33,16 @@ class BlueSky_Post_Metabox
             "show_in_rest" => true,
             "single" => true,
             "type" => "string",
+            "default" => "",
+            "auth_callback" => function () {
+                return current_user_can("edit_posts");
+            },
+        ]);
+
+        register_post_meta("post", "_bluesky_syndication_accounts", [
+            "show_in_rest" => true,
+            "single" => true,
+            "type" => "string", // JSON-encoded array of account UUIDs
             "default" => "",
             "auth_callback" => function () {
                 return current_user_can("edit_posts");
@@ -83,13 +95,26 @@ class BlueSky_Post_Metabox
             // Create nonce for the metabox
             $nonce = wp_create_nonce("bluesky_meta_box_nonce");
 
+            $localize_data = [
+                "nonce" => $nonce,
+                "postId" => $post->ID,
+            ];
+
+            // Add account data if multi-account is enabled
+            if ($this->account_manager->is_multi_account_enabled()) {
+                $localize_data["multiAccountEnabled"] = true;
+                $localize_data["accounts"] = array_values(
+                    $this->account_manager->get_accounts()
+                );
+            } else {
+                $localize_data["multiAccountEnabled"] = false;
+                $localize_data["accounts"] = [];
+            }
+
             wp_localize_script(
                 "bluesky-pre-publish-panel",
                 "blueskyPrePublishData",
-                [
-                    "nonce" => $nonce,
-                    "postId" => $post->ID,
-                ],
+                $localize_data
             );
         }
     }
@@ -165,6 +190,83 @@ class BlueSky_Post_Metabox
                 "Check to avoid sending the post on Bluesky. Uncheck to send this post on Bluesky.",
                 "social-integration-for-bluesky",
             ); ?></p>
+
+            <?php
+        // Multi-account selection UI
+        if ($this->account_manager->is_multi_account_enabled()) {
+            $accounts = $this->account_manager->get_accounts();
+            $selected_json = get_post_meta(
+                $post->ID,
+                "_bluesky_syndication_accounts",
+                true
+            );
+            $selected = $selected_json ? json_decode($selected_json, true) : [];
+
+            // If new post and no selection yet, pre-select auto-syndicate accounts
+            if (
+                empty($selected) &&
+                get_post_status($post->ID) !== "publish"
+            ) {
+                $selected = [];
+                foreach ($accounts as $account) {
+                    if (!empty($account["auto_syndicate"])) {
+                        $selected[] = $account["id"];
+                    }
+                }
+            }
+
+            if (!empty($accounts)) {
+                echo '<div class="bluesky-account-selection" id="bluesky-account-selection" style="margin-top: 12px;">';
+                echo '<p><strong>' .
+                    esc_html__(
+                        "Syndicate to:",
+                        "social-integration-for-bluesky"
+                    ) .
+                    "</strong></p>";
+
+                foreach ($accounts as $account) {
+                    $checked = in_array($account["id"], $selected)
+                        ? "checked"
+                        : "";
+                    printf(
+                        '<label style="display:block;margin:4px 0;"><input type="checkbox" name="bluesky_syndication_accounts[]" value="%s" %s class="bluesky-account-checkbox"> %s (@%s)</label>',
+                        esc_attr($account["id"]),
+                        $checked,
+                        esc_html($account["name"]),
+                        esc_html($account["handle"])
+                    );
+                }
+
+                echo "</div>";
+
+                // Add inline script to disable account checkboxes when "Don't syndicate" is checked
+                ?>
+                <script type="text/javascript">
+                (function() {
+                    var dontSyndicateCheckbox = document.getElementById('bluesky_dont_syndicate');
+                    var accountCheckboxes = document.querySelectorAll('.bluesky-account-checkbox');
+                    var accountSelection = document.getElementById('bluesky-account-selection');
+
+                    function toggleAccountSelection() {
+                        var disabled = dontSyndicateCheckbox.checked;
+                        accountCheckboxes.forEach(function(checkbox) {
+                            checkbox.disabled = disabled;
+                        });
+                        if (accountSelection) {
+                            accountSelection.style.opacity = disabled ? '0.5' : '1';
+                        }
+                    }
+
+                    if (dontSyndicateCheckbox) {
+                        dontSyndicateCheckbox.addEventListener('change', toggleAccountSelection);
+                        toggleAccountSelection(); // Run on load
+                    }
+                })();
+                </script>
+                <?php
+            }
+        }
+        ?>
         </div>
         <?php
     }
@@ -202,6 +304,22 @@ class BlueSky_Post_Metabox
             update_post_meta($post_id, "_bluesky_dont_syndicate", "1");
         } else {
             delete_post_meta($post_id, "_bluesky_dont_syndicate");
+        }
+
+        // Save selected accounts (multi-account mode)
+        if (isset($_POST["bluesky_syndication_accounts"])) {
+            $accounts = array_map(
+                "sanitize_text_field",
+                $_POST["bluesky_syndication_accounts"]
+            );
+            update_post_meta(
+                $post_id,
+                "_bluesky_syndication_accounts",
+                wp_json_encode($accounts)
+            );
+        } else {
+            // Clear selection if no accounts checked
+            delete_post_meta($post_id, "_bluesky_syndication_accounts");
         }
     }
 

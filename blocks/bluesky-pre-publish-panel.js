@@ -7,9 +7,10 @@
     const { registerPlugin } = wp.plugins;
     const { PluginPrePublishPanel } = wp.editPost;
     const { Component, Fragment } = wp.element;
-    const { withSelect } = wp.data;
-    const { Spinner } = wp.components;
+    const { withSelect, withDispatch } = wp.data;
+    const { Spinner, CheckboxControl } = wp.components;
     const { __ } = wp.i18n;
+    const { compose } = wp.compose;
 
     class BlueSkyPrePublishPanel extends Component {
         constructor(props) {
@@ -98,6 +99,70 @@
                 });
         }
 
+        renderAccountSelection() {
+            const multiAccountEnabled = window.blueskyPrePublishData && window.blueskyPrePublishData.multiAccountEnabled;
+            const accounts = window.blueskyPrePublishData && window.blueskyPrePublishData.accounts || [];
+
+            if (!multiAccountEnabled || accounts.length === 0) {
+                return null;
+            }
+
+            const { meta, updateMeta } = this.props;
+            const selectedAccountsJson = meta._bluesky_syndication_accounts || '';
+            let selectedAccounts = [];
+
+            try {
+                selectedAccounts = selectedAccountsJson ? JSON.parse(selectedAccountsJson) : [];
+            } catch (e) {
+                selectedAccounts = [];
+            }
+
+            // If no selection yet and new post, pre-select auto-syndicate accounts
+            if (selectedAccounts.length === 0) {
+                selectedAccounts = accounts
+                    .filter(account => account.auto_syndicate)
+                    .map(account => account.id);
+            }
+
+            const dontSyndicate = meta._bluesky_dont_syndicate === '1';
+
+            return wp.element.createElement('div', {
+                className: 'bluesky-account-selection',
+                style: {
+                    marginTop: '12px',
+                    paddingTop: '12px',
+                    borderTop: '1px solid #ddd',
+                    opacity: dontSyndicate ? 0.5 : 1
+                }
+            },
+                wp.element.createElement('p', {
+                    style: { fontWeight: 600, marginBottom: '8px', fontSize: '13px' }
+                }, __('Syndicate to:', 'social-integration-for-bluesky')),
+                accounts.map(account => {
+                    const isChecked = selectedAccounts.includes(account.id);
+                    return wp.element.createElement(CheckboxControl, {
+                        key: account.id,
+                        label: `${account.name} (@${account.handle})`,
+                        checked: isChecked,
+                        disabled: dontSyndicate,
+                        onChange: (checked) => {
+                            let newSelection = [...selectedAccounts];
+                            if (checked) {
+                                if (!newSelection.includes(account.id)) {
+                                    newSelection.push(account.id);
+                                }
+                            } else {
+                                newSelection = newSelection.filter(id => id !== account.id);
+                            }
+                            updateMeta({
+                                _bluesky_syndication_accounts: JSON.stringify(newSelection)
+                            });
+                        }
+                    });
+                })
+            );
+        }
+
         render() {
             const { loading, preview, error } = this.state;
             const dontSyndicate = this.props.meta._bluesky_dont_syndicate;
@@ -145,6 +210,8 @@
                     wp.element.createElement('p', {
                         style: { color: '#757575', fontSize: '13px', marginTop: 0 }
                     }, __('This is what will be posted to Bluesky:', 'social-integration-for-bluesky')),
+
+                    this.renderAccountSelection(),
 
                     loading && wp.element.createElement('div', {
                         className: 'bluesky-preview-loading',
@@ -207,22 +274,32 @@
     }
 
     // Connect to WordPress data store
-    const BlueSkyPrePublishPanelWithData = withSelect((select) => {
-        const editor = select('core/editor');
-        const postId = editor.getCurrentPostId();
-        const title = editor.getEditedPostAttribute('title');
-        const content = editor.getEditedPostAttribute('content');
-        const excerpt = editor.getEditedPostAttribute('excerpt');
-        const meta = editor.getEditedPostAttribute('meta') || {};
+    const BlueSkyPrePublishPanelWithData = compose([
+        withSelect((select) => {
+            const editor = select('core/editor');
+            const postId = editor.getCurrentPostId();
+            const title = editor.getEditedPostAttribute('title');
+            const content = editor.getEditedPostAttribute('content');
+            const excerpt = editor.getEditedPostAttribute('excerpt');
+            const meta = editor.getEditedPostAttribute('meta') || {};
 
-        return {
-            postId,
-            title,
-            content,
-            excerpt,
-            meta
-        };
-    })(BlueSkyPrePublishPanel);
+            return {
+                postId,
+                title,
+                content,
+                excerpt,
+                meta
+            };
+        }),
+        withDispatch((dispatch) => {
+            const { editPost } = dispatch('core/editor');
+            return {
+                updateMeta: (newMeta) => {
+                    editPost({ meta: newMeta });
+                }
+            };
+        })
+    ])(BlueSkyPrePublishPanel);
 
     // Register the plugin
     registerPlugin('bluesky-pre-publish-panel', {
