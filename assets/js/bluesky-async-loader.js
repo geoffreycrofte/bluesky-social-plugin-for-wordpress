@@ -34,6 +34,12 @@
 
         if (type !== "auth") {
             body.append("params", paramsRaw);
+        } else {
+            // For auth type, extract account_id from params if present
+            var params = JSON.parse(paramsRaw);
+            if (params.account_id) {
+                body.append("account_id", params.account_id);
+            }
         }
 
         fetch(ajaxUrl, {
@@ -78,6 +84,52 @@
         el.parentNode.replaceChild(fragment, el);
     }
 
+    function getAuthErrorMessage(error) {
+        if (!error || !error.code) {
+            return "Connection to BlueSky failed. Please check your credentials.";
+        }
+
+        switch (error.code) {
+            case "MissingCredentials":
+                return "Handle or app password is not configured.";
+            case "NetworkError":
+                return (
+                    "Could not reach BlueSky servers: " +
+                    (error.message || "network error") +
+                    "."
+                );
+            case "RateLimitExceeded":
+                var msg =
+                    "BlueSky rate limit exceeded. Please wait a few minutes before trying again.";
+                if (error.ratelimit_reset) {
+                    var resetDate = new Date(
+                        parseInt(error.ratelimit_reset, 10) * 1000
+                    );
+                    msg +=
+                        " Resets at " +
+                        resetDate.toLocaleTimeString() +
+                        ".";
+                }
+                return msg;
+            case "AuthFactorTokenRequired":
+                return "BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA.";
+            case "AccountTakedown":
+                return "This BlueSky account has been taken down.";
+            case "AuthenticationRequired":
+                return "Invalid handle or password. Please check your credentials.";
+            default:
+                // Show the API error code and message for any other error
+                var detail = error.code;
+                if (error.message) {
+                    detail += " \u2014 " + error.message;
+                }
+                if (error.status) {
+                    detail += " (HTTP " + error.status + ")";
+                }
+                return "Connection failed: " + detail;
+        }
+    }
+
     function handleAuth(el, data) {
         el.classList.remove("bluesky-async-placeholder");
 
@@ -104,8 +156,7 @@
             p.appendChild(a);
         } else {
             el.className = "description bluesky-connection-check notice-error";
-            p.textContent =
-                "Connection to BlueSky failed. Please check your credentials. It can also happen if you reached BlueSky request limit.";
+            p.textContent = getAuthErrorMessage(data.error);
         }
 
         el.appendChild(p);

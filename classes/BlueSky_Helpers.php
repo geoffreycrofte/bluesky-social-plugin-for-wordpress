@@ -20,42 +20,59 @@ class BlueSky_Helpers {
 
     /**
      * Get the profile transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_profile_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-profile';
+    public function get_profile_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-profile';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the posts transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
+     * @param int|null $limit Post limit
+     * @param bool $no_replies Exclude replies
+     * @param bool $no_reposts Exclude reposts
+     * @param string|null $layout Feed layout
      * @return string
      */
-    public function get_posts_transient_key( $limit = null, $no_replies = false, $no_reposts = false, $layout = null ) {
-        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . ( $no_reposts ? 'no-reposts' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
+    public function get_posts_transient_key( $account_id = null, $limit = null, $no_replies = false, $no_reposts = false, $layout = null ) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-posts-';
+        if ($account_id) {
+            $base .= $account_id . '-';
+        }
+        return $base . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . ( $no_reposts ? 'no-reposts' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
     }
 
     /**
      * Get the access token transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_access_token_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-access-token';
+    public function get_access_token_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-access-token';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the refresh token transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_refresh_token_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-refresh-token';
+    public function get_refresh_token_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-refresh-token';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the "did" transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_did_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-did';
+    public function get_did_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-did';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
@@ -282,5 +299,21 @@ class BlueSky_Helpers {
 
         // Format as UUID string
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
+     * Clear all cached data for a specific account
+     *
+     * @param string $account_id Account UUID to clear cache for
+     * @return void
+     */
+    public function clear_account_cache($account_id) {
+        global $wpdb;
+        $prefix = BLUESKY_PLUGIN_TRANSIENT . '-';
+        // Delete all transients containing this account_id
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            '%' . $wpdb->esc_like($prefix . '%' . $account_id) . '%'
+        ));
     }
 }

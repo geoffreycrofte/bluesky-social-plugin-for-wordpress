@@ -2683,9 +2683,20 @@ class BlueSky_Plugin_Setup
             "noreposts" => filter_var($params["noreposts"] ?? true, FILTER_VALIDATE_BOOLEAN),
             "nocounters" => filter_var($params["nocounters"] ?? false, FILTER_VALIDATE_BOOLEAN),
             "displayembeds" => filter_var($params["displayembeds"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "account_id" => sanitize_text_field($params["account_id"] ?? ""),
         ];
 
-        $render = new BlueSky_Render_Front($this->api_handler);
+        // Create per-account API handler if account_id provided and multi-account enabled
+        $api_handler = $this->api_handler;
+        $account_id = $attributes["account_id"];
+        if (!empty($account_id) && $this->account_manager->is_multi_account_enabled()) {
+            $account = $this->account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = BlueSky_API_Handler::create_for_account($account);
+            }
+        }
+
+        $render = new BlueSky_Render_Front($api_handler);
         $html = $render->render_bluesky_posts_list($attributes);
 
         wp_send_json_success(["html" => $html]);
@@ -2710,9 +2721,20 @@ class BlueSky_Plugin_Setup
             "displayavatar" => filter_var($params["displayavatar"] ?? true, FILTER_VALIDATE_BOOLEAN),
             "displaycounters" => filter_var($params["displaycounters"] ?? true, FILTER_VALIDATE_BOOLEAN),
             "displaybio" => filter_var($params["displaybio"] ?? true, FILTER_VALIDATE_BOOLEAN),
+            "account_id" => sanitize_text_field($params["account_id"] ?? ""),
         ];
 
-        $render = new BlueSky_Render_Front($this->api_handler);
+        // Create per-account API handler if account_id provided and multi-account enabled
+        $api_handler = $this->api_handler;
+        $account_id = $attributes["account_id"];
+        if (!empty($account_id) && $this->account_manager->is_multi_account_enabled()) {
+            $account = $this->account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = BlueSky_API_Handler::create_for_account($account);
+            }
+        }
+
+        $render = new BlueSky_Render_Front($api_handler);
         $html = $render->render_bluesky_profile_card($attributes);
 
         wp_send_json_success(["html" => $html]);
@@ -2730,7 +2752,20 @@ class BlueSky_Plugin_Setup
             return;
         }
 
-        $api = new BlueSky_API_Handler($this->options);
+        // Check if account_id provided for per-account auth check
+        $account_id = isset($_POST["account_id"]) ? sanitize_text_field(wp_unslash($_POST["account_id"])) : "";
+
+        if (!empty($account_id) && $this->account_manager->is_multi_account_enabled()) {
+            $account = $this->account_manager->get_account($account_id);
+            if ($account) {
+                $api = BlueSky_API_Handler::create_for_account($account);
+            } else {
+                $api = new BlueSky_API_Handler($this->options);
+            }
+        } else {
+            $api = new BlueSky_API_Handler($this->options);
+        }
+
         $auth = $api->authenticate();
 
         $result = ["authenticated" => $auth];

@@ -123,6 +123,7 @@ class BlueSky_Render_Front
             "noreposts" => $this->options["no_reposts"] ?? true,
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
+            "account_id" => "",
         ]);
 
         // Convert string boolean values to actual booleans
@@ -160,6 +161,7 @@ class BlueSky_Render_Front
             "noreposts" => $this->options["no_reposts"] ?? true,
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
+            "account_id" => "",
         ];
 
         // Merge defaults with provided attributes
@@ -172,11 +174,13 @@ class BlueSky_Render_Front
         $theme = $attributes["theme"];
         $number_of_posts = $attributes["numberofposts"];
         $no_counters = $attributes["nocounters"];
+        $account_id = $attributes["account_id"];
         $layout = $this->options["styles"]["feed_layout"] ?? "default";
 
         // Cache-first: check transient before making any API call
         $helpers = new BlueSky_Helpers();
         $cache_key = $helpers->get_posts_transient_key(
+            $account_id,
             intval($number_of_posts),
             (bool) $no_replies,
             $no_reposts,
@@ -195,6 +199,7 @@ class BlueSky_Render_Front
                 "noreposts" => $no_reposts,
                 "nocounters" => $no_counters,
                 "displayembeds" => $display_embeds,
+                "account_id" => $account_id,
             ]);
             return $this->render_posts_skeleton($theme, $layout, $params);
         } else {
@@ -831,6 +836,7 @@ class BlueSky_Render_Front
                 "displayavatar" => true,
                 "displaycounters" => true,
                 "displaybio" => true,
+                "account_id" => "",
             ],
             $atts,
         );
@@ -859,9 +865,12 @@ class BlueSky_Render_Front
      */
     public function render_bluesky_profile_card($attributes = [])
     {
+        // Extract account_id for cache scoping
+        $account_id = $attributes["account_id"] ?? "";
+
         // Cache-first: check transient before making any API call
         $helpers = new BlueSky_Helpers();
-        $profile_cache_key = $helpers->get_profile_transient_key();
+        $profile_cache_key = $helpers->get_profile_transient_key($account_id);
         $cached_profile = get_transient($profile_cache_key);
 
         if ($cached_profile !== false) {
@@ -883,6 +892,7 @@ class BlueSky_Render_Front
                 "displayavatar" => $attributes["displayavatar"] ?? true,
                 "displaycounters" => $attributes["displaycounters"] ?? true,
                 "displaybio" => $attributes["displaybio"] ?? true,
+                "account_id" => $account_id,
             ]);
             return $this->render_profile_skeleton(implode(" ", $classes_arr), $params);
         } else {
