@@ -31,8 +31,13 @@ define("BLUESKY_PLUGIN_TRANSIENT", "bluesky_cache_" . BLUESKY_PLUGIN_VERSION);
 require_once "classes/BlueSky_Helpers.php"; // V.1
 require_once "classes/BlueSky_Account_Manager.php"; // V.1.5.0
 require_once "classes/BlueSky_API_Handler.php"; // V.1
-require_once "classes/BlueSky_Plugin_Setup.php"; // V.1
 require_once "classes/BlueSky_Render_Front.php"; // V.1
+require_once "classes/BlueSky_Settings_Service.php"; // V.1.5.0
+require_once "classes/BlueSky_Syndication_Service.php"; // V.1.5.0
+require_once "classes/BlueSky_AJAX_Service.php"; // V.1.5.0
+require_once "classes/BlueSky_Assets_Service.php"; // V.1.5.0
+require_once "classes/BlueSky_Blocks_Service.php"; // V.1.5.0
+require_once "classes/BlueSky_Plugin_Setup.php"; // V.1
 require_once "classes/BlueSky_Post_Metabox.php"; // V.1.1
 require_once "classes/BlueSky_Admin_Actions.php"; // V.1.4.0
 require_once "classes/BlueSky_Discussion_Display.php"; // V.1.5.0
