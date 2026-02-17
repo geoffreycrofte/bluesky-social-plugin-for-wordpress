@@ -43,6 +43,14 @@ if ( ! defined( 'BLUESKY_PLUGIN_TRANSIENT' ) ) {
     define( 'BLUESKY_PLUGIN_TRANSIENT', 'bluesky_cache_' . BLUESKY_PLUGIN_VERSION );
 }
 
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+    define( 'HOUR_IN_SECONDS', 3600 );
+}
+
+if ( ! defined( 'WEEK_IN_SECONDS' ) ) {
+    define( 'WEEK_IN_SECONDS', 604800 );
+}
+
 // Load Brain Monkey via autoloader
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -50,3 +58,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_Helpers.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_Account_Manager.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_API_Handler.php';
+require_once dirname( __DIR__ ) . '/classes/BlueSky_AJAX_Service.php';
+require_once dirname( __DIR__ ) . '/classes/BlueSky_Syndication_Service.php';
+require_once dirname( __DIR__ ) . '/classes/BlueSky_Settings_Service.php';
