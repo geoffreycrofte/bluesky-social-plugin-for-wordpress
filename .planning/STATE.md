@@ -5,32 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 1 complete, ready for Phase 2 (Codebase Refactoring)
+**Current focus:** Phase 2 (Codebase Refactoring) — Plan 01 complete, Plan 02 next
 
 ## Current Position
 
-Phase: 1 of 7 (Multi-Account Foundation) — COMPLETE
-Next: Phase 2 of 7 (Codebase Refactoring) — Not started
-Last activity: 2026-02-17 — Phase 1 approved after human verification
+Phase: 2 of 7 (Codebase Refactoring) — In progress (Plan 01/N complete)
+Next: Phase 2, Plan 02 — Extract API handler service layer
+Last activity: 2026-02-17 — 02-01 complete (test infra + normalize_handle)
 
-Progress: [██████████] 100% (Phase 1)
+Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~4 minutes (automated plans)
-- Total execution time: ~0.3 hours + 3 iterative testing sessions
+- Total plans completed: 6
+- Average duration: ~5 minutes (automated plans)
+- Total execution time: ~0.4 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
+| 02 | 1 (so far) | ~11 min | ~11 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
 - Plan 01-05: Human verification with 3 rounds of bug fixes + 6 UX improvements
+- Plan 02-01: Automated execution (11 min) — infrastructure + refactor
 
 *Updated after each plan completion*
 
@@ -63,6 +65,9 @@ Recent decisions affecting current work:
 - Auth testing uses direct createSession API call — 01-05
 - Per-account transient scoping via account_id property on API handler — 01-05
 - Handle normalization: email passthrough, bare username gets .bsky.social suffix — 01-05
+- PHPUnit in tests/ with brain/monkey — tests run without WordPress core (02-01)
+- Static utility methods on BlueSky_Helpers for cross-cutting concerns (02-01)
+- Local by Flywheel PHP 8.3 is the usable PHP binary on this machine (MAMP PHP curl SSL broken) — 02-01
 
 ### Pending Todos
 
@@ -71,12 +76,13 @@ None yet.
 ### Blockers/Concerns
 
 - Plugin_Setup.php has grown larger with multi-account additions (Phase 2 refactoring will address)
+- PHP binary path must be specified explicitly: `/Users/CRG/Library/Application Support/Local/lightning-services/php-8.3.8+0/bin/darwin/bin/php`
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 1 complete and approved. Ready for Phase 2.
-Resume file: None
+Stopped at: Completed 02-01-PLAN.md
+Resume file: .planning/phases/02-codebase-refactoring/02-02-PLAN.md
 
 ---
 *State initialized: 2026-02-14*
