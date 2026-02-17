@@ -47,16 +47,22 @@ Plans:
 **Depends on**: Phase 1
 **Requirements**: CODE-01, CODE-02, CODE-03, CODE-04, CODE-05, CODE-06
 **Success Criteria** (what must be TRUE):
-  1. Plugin_Setup class (2537 lines) replaced by focused service classes with dependency injection
-  2. Render_Front class (1085 lines) split into template-based renderers
-  3. Discussion_Display class (1337 lines) decomposed into focused components
-  4. Security vulnerabilities fixed (godmode removed, nonce protection on AJAX, sanitized POST data)
+  1. Plugin_Setup class replaced by focused service classes with dependency injection
+  2. Render_Front class split into template-based renderers
+  3. Discussion_Display class decomposed into focused components
+  4. Security vulnerabilities fixed (godmode auth-gated, nonce protection on AJAX, sanitized POST data)
   5. PHPUnit tests cover API handler, syndication, AJAX endpoints, and settings sanitization
-  6. All user-facing strings wrapped in translation functions with regenerated .pot file
-**Plans**: TBD
+  6. All user-facing strings wrapped in translation functions (no .pot regeneration needed)
+**Plans:** 7 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md -- Test infrastructure (PHPUnit + Brain Monkey) and normalize_handle to Helpers
+- [ ] 02-02-PLAN.md -- Plugin_Setup decomposition into 5 service classes + thin coordinator
+- [ ] 02-03-PLAN.md -- Discussion_Display decomposition into Metabox, Renderer, Frontend
+- [ ] 02-04-PLAN.md -- Template extraction for settings page, posts list, profile card
+- [ ] 02-05-PLAN.md -- Security fixes (AJAX nonce, godmode, POST sanitization) + i18n (PHP + JS)
+- [ ] 02-06-PLAN.md -- PHPUnit tests for AJAX, Syndication, Settings, Helpers
+- [ ] 02-07-PLAN.md -- End-to-end verification checkpoint (automated + human verify)
 
 ### Phase 3: Performance & Resilience
 **Goal**: Plugin handles API failures gracefully with async syndication and intelligent rate limiting
@@ -140,7 +146,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Multi-Account Foundation | 5/5 | Complete | 2026-02-17 |
-| 2. Codebase Refactoring | 0/TBD | Not started | - |
+| 2. Codebase Refactoring | 0/7 | Not started | - |
 | 3. Performance & Resilience | 0/TBD | Not started | - |
 | 4. Error Handling & UX | 0/TBD | Not started | - |
 | 5. Profile & Content Display | 0/TBD | Not started | - |
@@ -149,4 +155,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 ---
 *Roadmap created: 2026-02-14*
-*Last updated: 2026-02-16*
+*Last updated: 2026-02-17*
