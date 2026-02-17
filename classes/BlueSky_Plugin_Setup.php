@@ -494,20 +494,7 @@ class BlueSky_Plugin_Setup
      */
     private function normalize_bluesky_handle($handle)
     {
-        $handle = trim($handle);
-        if (empty($handle)) {
-            return '';
-        }
-        // Email address — return as-is
-        if (filter_var($handle, FILTER_VALIDATE_EMAIL)) {
-            return $handle;
-        }
-        // Already a full handle (contains a dot) — return as-is
-        if (strpos($handle, '.') !== false) {
-            return $handle;
-        }
-        // Bare username — append .bsky.social
-        return $handle . '.bsky.social';
+        return BlueSky_Helpers::normalize_handle($handle);
     }
 
     /**

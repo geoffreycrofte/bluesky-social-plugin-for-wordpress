@@ -302,6 +302,32 @@ class BlueSky_Helpers {
     }
 
     /**
+     * Normalize a Bluesky handle input.
+     * If the value is an email address, return it as-is (Bluesky accepts email login).
+     * If it contains a dot, assume it's a full handle.
+     * Otherwise, append .bsky.social (user likely typed just the username part).
+     *
+     * @param string $handle Raw handle input
+     * @return string Normalized handle
+     */
+    public static function normalize_handle( $handle ) {
+        $handle = trim( $handle );
+        if ( empty( $handle ) ) {
+            return '';
+        }
+        // Email address — return as-is
+        if ( filter_var( $handle, FILTER_VALIDATE_EMAIL ) ) {
+            return $handle;
+        }
+        // Already a full handle (contains a dot) — return as-is
+        if ( strpos( $handle, '.' ) !== false ) {
+            return $handle;
+        }
+        // Bare username — append .bsky.social
+        return $handle . '.bsky.social';
+    }
+
+    /**
      * Clear all cached data for a specific account
      *
      * @param string $account_id Account UUID to clear cache for
