@@ -5,34 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 2 (Codebase Refactoring) — Plan 01 complete, Plan 02 next
+**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-02 complete
 
 ## Current Position
 
-Phase: 2 of 7 (Codebase Refactoring) — In progress (Plan 01/N complete)
-Next: Phase 2, Plan 02 — Extract API handler service layer
-Last activity: 2026-02-17 — 02-01 complete (test infra + normalize_handle)
+Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-02/N complete)
+Next: Phase 2, Plan 03 — Continue refactoring efforts
+Last activity: 2026-02-17 — 02-02 complete (service layer extraction)
 
 Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~5 minutes (automated plans)
-- Total execution time: ~0.4 hours + 3 iterative testing sessions
+- Total plans completed: 7
+- Average duration: ~4 minutes (automated plans)
+- Total execution time: ~0.5 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
-| 02 | 1 (so far) | ~11 min | ~11 min |
+| 02 | 2 (so far) | ~12 min | ~6 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
 - Plan 01-05: Human verification with 3 rounds of bug fixes + 6 UX improvements
 - Plan 02-01: Automated execution (11 min) — infrastructure + refactor
+- Plan 02-02: Automated execution (<1 min) — service layer extraction (work pre-completed)
 
 *Updated after each plan completion*
 
@@ -68,6 +69,10 @@ Recent decisions affecting current work:
 - PHPUnit in tests/ with brain/monkey — tests run without WordPress core (02-01)
 - Static utility methods on BlueSky_Helpers for cross-cutting concerns (02-01)
 - Local by Flywheel PHP 8.3 is the usable PHP binary on this machine (MAMP PHP curl SSL broken) — 02-01
+- Constructor DI pattern with optional account_manager parameter for service classes (02-02)
+- Render_Front instantiated by Plugin_Setup and passed to Blocks_Service (02-02)
+- Assets_Service standalone (no API/account dependencies) (02-02)
+- All services instantiate BlueSky_Helpers locally (stateless utilities, no DI needed) (02-02)
 
 ### Pending Todos
 
@@ -75,14 +80,14 @@ None yet.
 
 ### Blockers/Concerns
 
-- Plugin_Setup.php has grown larger with multi-account additions (Phase 2 refactoring will address)
+- ~~Plugin_Setup.php has grown larger with multi-account additions (Phase 2 refactoring will address)~~ — RESOLVED by 02-02 (now 148 lines)
 - PHP binary path must be specified explicitly: `/Users/CRG/Library/Application Support/Local/lightning-services/php-8.3.8+0/bin/darwin/bin/php`
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 02-01-PLAN.md
-Resume file: .planning/phases/02-codebase-refactoring/02-02-PLAN.md
+Stopped at: Completed 02-02-PLAN.md
+Resume file: .planning/phases/02-codebase-refactoring/02-03-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
