@@ -352,12 +352,12 @@ class BlueSky_Post_Metabox
                 "bluesky_meta_box_nonce",
             )
         ) {
-            wp_send_json_error("Invalid nonce");
+            wp_send_json_error(__("Invalid nonce", "social-integration-for-bluesky"));
         }
 
         // Check user permissions
         if (!current_user_can("edit_post", $_POST["post_id"])) {
-            wp_send_json_error("Insufficient permissions");
+            wp_send_json_error(__("Insufficient permissions", "social-integration-for-bluesky"));
         }
 
         // Save or delete the meta value
@@ -383,14 +383,14 @@ class BlueSky_Post_Metabox
             !isset($_POST["nonce"]) ||
             !wp_verify_nonce($_POST["nonce"], "bluesky_meta_box_nonce")
         ) {
-            wp_send_json_error("Invalid nonce");
+            wp_send_json_error(__("Invalid nonce", "social-integration-for-bluesky"));
         }
 
         $post_id = isset($_POST["post_id"]) ? intval($_POST["post_id"]) : 0;
 
         // Check user permissions
         if (!current_user_can("edit_post", $post_id)) {
-            wp_send_json_error("Insufficient permissions");
+            wp_send_json_error(__("Insufficient permissions", "social-integration-for-bluesky"));
         }
 
         // Get post data from AJAX or from saved post

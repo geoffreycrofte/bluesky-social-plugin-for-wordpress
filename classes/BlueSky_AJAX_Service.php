@@ -48,13 +48,15 @@ class BlueSky_AJAX_Service
      */
     public function ajax_fetch_bluesky_posts()
     {
+        check_ajax_referer('bluesky_async_nonce', 'nonce');
+
         $limit = $this->options["posts_limit"] ?? 5;
         $posts = $this->api_handler->fetch_bluesky_posts($limit);
 
         if ($posts !== false) {
             wp_send_json_success($posts);
         } else {
-            wp_send_json_error("Could not fetch posts");
+            wp_send_json_error(__("Could not fetch posts", "social-integration-for-bluesky"));
         }
         wp_die();
     }
@@ -64,12 +66,14 @@ class BlueSky_AJAX_Service
      */
     public function ajax_get_bluesky_profile()
     {
+        check_ajax_referer('bluesky_async_nonce', 'nonce');
+
         $profile = $this->api_handler->get_bluesky_profile();
 
         if ($profile) {
             wp_send_json_success($profile);
         } else {
-            wp_send_json_error("Could not fetch profile");
+            wp_send_json_error(__("Could not fetch profile", "social-integration-for-bluesky"));
         }
         wp_die();
     }
@@ -158,7 +162,7 @@ class BlueSky_AJAX_Service
         check_ajax_referer("bluesky_async_nonce", "nonce");
 
         if (!current_user_can("manage_options")) {
-            wp_send_json_error("Unauthorized");
+            wp_send_json_error(__("Unauthorized", "social-integration-for-bluesky"));
             return;
         }
 

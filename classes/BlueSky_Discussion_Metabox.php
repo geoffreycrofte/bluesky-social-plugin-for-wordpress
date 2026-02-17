@@ -271,13 +271,13 @@ class BlueSky_Discussion_Metabox
         $post_id = isset($_POST["post_id"]) ? intval($_POST["post_id"]) : 0;
 
         if (!$post_id || !current_user_can("edit_post", $post_id)) {
-            wp_send_json_error("Invalid permissions");
+            wp_send_json_error(__("Invalid permissions", "social-integration-for-bluesky"));
         }
 
         $post_info = $this->get_syndication_info_for_discussion($post_id);
 
         if (!$post_info) {
-            wp_send_json_error("No Bluesky post information found");
+            wp_send_json_error(__("No Bluesky post information found", "social-integration-for-bluesky"));
         }
 
         // Clear cache
@@ -303,7 +303,7 @@ class BlueSky_Discussion_Metabox
         $post_id = isset($_POST["post_id"]) ? intval($_POST["post_id"]) : 0;
 
         if (!$post_id || !current_user_can("edit_post", $post_id)) {
-            wp_send_json_error("Invalid permissions");
+            wp_send_json_error(__("Invalid permissions", "social-integration-for-bluesky"));
         }
 
         // Clear discussion cache first

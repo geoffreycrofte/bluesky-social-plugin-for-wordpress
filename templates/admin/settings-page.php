@@ -815,7 +815,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
     </div>
 
     <?php if (
-        isset($_GET["godmode"]) ||
+        (isset($_GET["godmode"]) && current_user_can("manage_options")) ||
         defined("WP_DEBUG") ||
         defined("WP_DEBUG_DISPLAY")
     ) { ?>

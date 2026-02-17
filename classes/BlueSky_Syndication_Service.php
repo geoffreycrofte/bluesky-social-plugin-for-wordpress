@@ -70,6 +70,11 @@ class BlueSky_Syndication_Service
         ) {
             $post_id = $post->ID;
 
+            // Check capability
+            if (!current_user_can('edit_post', $post_id)) {
+                return;
+            }
+
             // Multi-account branching
             $account_manager = new BlueSky_Account_Manager();
 
@@ -90,10 +95,12 @@ class BlueSky_Syndication_Service
                 "_bluesky_dont_syndicate",
                 true,
             );
+            $dont_syndicate_post = isset($_POST["bluesky_dont_syndicate"])
+                ? sanitize_text_field(wp_unslash($_POST["bluesky_dont_syndicate"]))
+                : "0";
             if (
                 $dont_syndicate ||
-                (isset($_POST["bluesky_dont_syndicate"]) &&
-                    $_POST["bluesky_dont_syndicate"] === "1")
+                ($dont_syndicate_post === "1")
             ) {
                 return;
             }
@@ -179,6 +186,11 @@ class BlueSky_Syndication_Service
      */
     private function syndicate_post_multi_account($post_id, $post)
     {
+        // Check capability
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
         do_action("bluesky_before_syndicating_post", $post_id);
 
         // Check if the post should be syndicated (metabox option)
@@ -187,10 +199,12 @@ class BlueSky_Syndication_Service
             "_bluesky_dont_syndicate",
             true
         );
+        $dont_syndicate_post = isset($_POST["bluesky_dont_syndicate"])
+            ? sanitize_text_field(wp_unslash($_POST["bluesky_dont_syndicate"]))
+            : "0";
         if (
             $dont_syndicate ||
-            (isset($_POST["bluesky_dont_syndicate"]) &&
-                $_POST["bluesky_dont_syndicate"] === "1")
+            ($dont_syndicate_post === "1")
         ) {
             return;
         }
