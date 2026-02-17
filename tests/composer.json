@@ -1,0 +1,8 @@
+{
+    "require-dev": {
+        "brain/monkey": "^2"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
