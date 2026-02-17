@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-04 complete
+**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-05 complete
 
 ## Current Position
 
-Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-04/N complete)
-Next: Phase 2, Plan 05 — Continue refactoring efforts (if exists)
-Last activity: 2026-02-18 — 02-04 complete (template extraction)
+Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-05/N complete)
+Next: Phase 2, Plan 06 — Continue refactoring efforts (if exists)
+Last activity: 2026-02-18 — 02-05 complete (security and i18n)
 
-Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in progress
+Progress: [██████████] 100% (Phase 1) | [███] Phase 2 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: ~5 minutes (automated plans)
-- Total execution time: ~1 hour + 3 iterative testing sessions
+- Total execution time: ~1.25 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
-| 02 | 4 (so far) | ~29 min | ~7.25 min |
+| 02 | 5 (so far) | ~32 min | ~6.4 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -36,6 +36,7 @@ Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in 
 - Plan 02-02: Automated execution (<1 min) — service layer extraction (work pre-completed)
 - Plan 02-03: Automated execution (4 min) — discussion display decomposition
 - Plan 02-04: Automated execution (12.5 min) — template extraction
+- Plan 02-05: Automated execution (3 min) — security fixes + i18n
 
 *Updated after each plan completion*
 
@@ -81,6 +82,11 @@ Recent decisions affecting current work:
 - Use plugin_dir_path(BLUESKY_PLUGIN_FILE) for template path resolution (02-04)
 - Templates receive $this context from including methods via PHP scoping (02-04)
 - CSS class names bluesky-social-integration-* preserved during refactoring (02-04)
+- Legacy AJAX endpoints verify nonce via check_ajax_referer for public access (02-05)
+- ?godmode parameter requires manage_options capability (admin-only debug access) (02-05)
+- POST data sanitized with sanitize_text_field(wp_unslash()) in syndication (02-05)
+- Text domain 'social-integration-for-bluesky' used consistently for i18n (02-05)
+- JS i18n strings externalized via wp_localize_script i18n sub-object (02-05)
 
 ### Pending Todos
 
@@ -94,8 +100,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 02-04-PLAN.md
-Resume file: .planning/phases/02-codebase-refactoring/02-05-PLAN.md (if exists)
+Stopped at: Completed 02-05-PLAN.md
+Resume file: .planning/phases/02-codebase-refactoring/02-06-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
