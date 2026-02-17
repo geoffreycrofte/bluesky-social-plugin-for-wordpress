@@ -73,6 +73,21 @@ class BlueSky_Assets_Service
         wp_localize_script("bluesky-async-loader", "blueskyAsync", [
             "ajaxUrl" => admin_url("admin-ajax.php"),
             "nonce" => wp_create_nonce("bluesky_async_nonce"),
+            "i18n" => [
+                "connectionFailed" => __("Connection to BlueSky failed. Please check your credentials.", "social-integration-for-bluesky"),
+                "missingCredentials" => __("Handle or app password is not configured.", "social-integration-for-bluesky"),
+                "networkError" => __("Could not reach BlueSky servers:", "social-integration-for-bluesky"),
+                "rateLimitExceeded" => __("BlueSky rate limit exceeded. Please wait a few minutes before trying again.", "social-integration-for-bluesky"),
+                "rateLimitResetsAt" => __("Resets at", "social-integration-for-bluesky"),
+                "authFactorRequired" => __("BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA.", "social-integration-for-bluesky"),
+                "accountTakedown" => __("This BlueSky account has been taken down.", "social-integration-for-bluesky"),
+                "invalidCredentials" => __("Invalid handle or password. Please check your credentials.", "social-integration-for-bluesky"),
+                "connectionSuccess" => __("Connection to BlueSky successful!", "social-integration-for-bluesky"),
+                "logoutLink" => __("Log out from this account", "social-integration-for-bluesky"),
+                "connectionCheckFailed" => __("Could not check connection status.", "social-integration-for-bluesky"),
+                "contentLoadFailed" => __("Unable to load Bluesky content.", "social-integration-for-bluesky"),
+                "connectionFallback" => __("Connection failed:", "social-integration-for-bluesky"),
+            ],
         ]);
     }
 
@@ -104,6 +119,21 @@ class BlueSky_Assets_Service
             wp_localize_script("bluesky-async-loader", "blueskyAsync", [
                 "ajaxUrl" => admin_url("admin-ajax.php"),
                 "nonce" => wp_create_nonce("bluesky_async_nonce"),
+                "i18n" => [
+                    "connectionFailed" => __("Connection to BlueSky failed. Please check your credentials.", "social-integration-for-bluesky"),
+                    "missingCredentials" => __("Handle or app password is not configured.", "social-integration-for-bluesky"),
+                    "networkError" => __("Could not reach BlueSky servers:", "social-integration-for-bluesky"),
+                    "rateLimitExceeded" => __("BlueSky rate limit exceeded. Please wait a few minutes before trying again.", "social-integration-for-bluesky"),
+                    "rateLimitResetsAt" => __("Resets at", "social-integration-for-bluesky"),
+                    "authFactorRequired" => __("BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA.", "social-integration-for-bluesky"),
+                    "accountTakedown" => __("This BlueSky account has been taken down.", "social-integration-for-bluesky"),
+                    "invalidCredentials" => __("Invalid handle or password. Please check your credentials.", "social-integration-for-bluesky"),
+                    "connectionSuccess" => __("Connection to BlueSky successful!", "social-integration-for-bluesky"),
+                    "logoutLink" => __("Log out from this account", "social-integration-for-bluesky"),
+                    "connectionCheckFailed" => __("Could not check connection status.", "social-integration-for-bluesky"),
+                    "contentLoadFailed" => __("Unable to load Bluesky content.", "social-integration-for-bluesky"),
+                    "connectionFallback" => __("Connection failed:", "social-integration-for-bluesky"),
+                ],
             ]);
         }
     }

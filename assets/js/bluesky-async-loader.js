@@ -86,37 +86,36 @@
 
     function getAuthErrorMessage(error) {
         if (!error || !error.code) {
-            return "Connection to BlueSky failed. Please check your credentials.";
+            return blueskyAsync.i18n.connectionFailed;
         }
 
         switch (error.code) {
             case "MissingCredentials":
-                return "Handle or app password is not configured.";
+                return blueskyAsync.i18n.missingCredentials;
             case "NetworkError":
                 return (
-                    "Could not reach BlueSky servers: " +
+                    blueskyAsync.i18n.networkError + " " +
                     (error.message || "network error") +
                     "."
                 );
             case "RateLimitExceeded":
-                var msg =
-                    "BlueSky rate limit exceeded. Please wait a few minutes before trying again.";
+                var msg = blueskyAsync.i18n.rateLimitExceeded;
                 if (error.ratelimit_reset) {
                     var resetDate = new Date(
                         parseInt(error.ratelimit_reset, 10) * 1000
                     );
                     msg +=
-                        " Resets at " +
+                        " " + blueskyAsync.i18n.rateLimitResetsAt + " " +
                         resetDate.toLocaleTimeString() +
                         ".";
                 }
                 return msg;
             case "AuthFactorTokenRequired":
-                return "BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA.";
+                return blueskyAsync.i18n.authFactorRequired;
             case "AccountTakedown":
-                return "This BlueSky account has been taken down.";
+                return blueskyAsync.i18n.accountTakedown;
             case "AuthenticationRequired":
-                return "Invalid handle or password. Please check your credentials.";
+                return blueskyAsync.i18n.invalidCredentials;
             default:
                 // Show the API error code and message for any other error
                 var detail = error.code;
@@ -126,7 +125,7 @@
                 if (error.status) {
                     detail += " (HTTP " + error.status + ")";
                 }
-                return "Connection failed: " + detail;
+                return blueskyAsync.i18n.connectionFallback + " " + detail;
         }
     }
 
@@ -144,7 +143,7 @@
             el.className =
                 "description bluesky-connection-check notice-success";
 
-            p.textContent = "Connection to BlueSky successful!";
+            p.textContent = blueskyAsync.i18n.connectionSuccess;
             p.appendChild(document.createElement("br"));
 
             var logoutUrl =
@@ -152,7 +151,7 @@
             var a = document.createElement("a");
             a.className = "bluesky-logout-link";
             a.href = logoutUrl;
-            a.textContent = "Log out from this account";
+            a.textContent = blueskyAsync.i18n.logoutLink;
             p.appendChild(a);
         } else {
             el.className = "description bluesky-connection-check notice-error";
@@ -170,10 +169,10 @@
                 el.removeChild(el.firstChild);
             }
             var p = document.createElement("p");
-            p.textContent = "Could not check connection status.";
+            p.textContent = blueskyAsync.i18n.connectionCheckFailed;
             el.appendChild(p);
         } else {
-            el.textContent = "Unable to load Bluesky content.";
+            el.textContent = blueskyAsync.i18n.contentLoadFailed;
         }
     }
 
