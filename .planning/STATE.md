@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-05 complete
+**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-06 complete
 
 ## Current Position
 
-Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-05/N complete)
-Next: Phase 2, Plan 06 — Continue refactoring efforts (if exists)
-Last activity: 2026-02-18 — 02-05 complete (security and i18n)
+Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-06/N complete)
+Next: Phase 2, Plan 07 — Continue refactoring efforts (if exists)
+Last activity: 2026-02-17 — 02-06 complete (test coverage)
 
 Progress: [██████████] 100% (Phase 1) | [███] Phase 2 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: ~5 minutes (automated plans)
-- Total execution time: ~1.25 hours + 3 iterative testing sessions
+- Total plans completed: 11
+- Average duration: ~5.5 minutes (automated plans)
+- Total execution time: ~1.5 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
-| 02 | 5 (so far) | ~32 min | ~6.4 min |
+| 02 | 6 (so far) | ~40 min | ~6.7 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -37,6 +37,7 @@ Progress: [██████████] 100% (Phase 1) | [███] Phase 2 
 - Plan 02-03: Automated execution (4 min) — discussion display decomposition
 - Plan 02-04: Automated execution (12.5 min) — template extraction
 - Plan 02-05: Automated execution (3 min) — security fixes + i18n
+- Plan 02-06: Automated execution (8 min) — test coverage for critical paths
 
 *Updated after each plan completion*
 
@@ -87,6 +88,11 @@ Recent decisions affecting current work:
 - POST data sanitized with sanitize_text_field(wp_unslash()) in syndication (02-05)
 - Text domain 'social-integration-for-bluesky' used consistently for i18n (02-05)
 - JS i18n strings externalized via wp_localize_script i18n sub-object (02-05)
+- PHPUnit 9.6 phar downloaded for test execution (no composer install needed) (02-06)
+- WordPress time constants defined in bootstrap for API Handler tests (02-06)
+- wpdb mocked with getMockBuilder(stdClass)->addMethods() pattern (02-06)
+- Brain Monkey Functions\expect() for strict expectations, andReturn() for flexible mocks (02-06)
+- Test organization: one test file per class with descriptive test method names (02-06)
 
 ### Pending Todos
 
@@ -99,10 +105,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-18
-Stopped at: Completed 02-05-PLAN.md
-Resume file: .planning/phases/02-codebase-refactoring/02-06-PLAN.md (if exists)
+Last session: 2026-02-17
+Stopped at: Completed 02-06-PLAN.md
+Resume file: .planning/phases/02-codebase-refactoring/02-07-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-18*
+*Last updated: 2026-02-17*
