@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-03 complete
+**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-04 complete
 
 ## Current Position
 
-Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-03/N complete)
-Next: Phase 2, Plan 04 — Continue refactoring efforts (if exists)
-Last activity: 2026-02-17 — 02-03 complete (discussion display decomposition)
+Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-04/N complete)
+Next: Phase 2, Plan 05 — Continue refactoring efforts (if exists)
+Last activity: 2026-02-18 — 02-04 complete (template extraction)
 
 Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: ~4 minutes (automated plans)
-- Total execution time: ~0.75 hours + 3 iterative testing sessions
+- Total plans completed: 9
+- Average duration: ~5 minutes (automated plans)
+- Total execution time: ~1 hour + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
-| 02 | 3 (so far) | ~16 min | ~5.3 min |
+| 02 | 4 (so far) | ~29 min | ~7.25 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -35,6 +35,7 @@ Progress: [██████████] 100% (Phase 1) | [██] Phase 2 in 
 - Plan 02-01: Automated execution (11 min) — infrastructure + refactor
 - Plan 02-02: Automated execution (<1 min) — service layer extraction (work pre-completed)
 - Plan 02-03: Automated execution (4 min) — discussion display decomposition
+- Plan 02-04: Automated execution (12.5 min) — template extraction
 
 *Updated after each plan completion*
 
@@ -77,6 +78,9 @@ Recent decisions affecting current work:
 - Renderer receives both API handler and Account Manager (02-03)
 - Hook registration stays in class constructors (02-03)
 - Discussion_Display.php kept as deprecation stub (02-03)
+- Use plugin_dir_path(BLUESKY_PLUGIN_FILE) for template path resolution (02-04)
+- Templates receive $this context from including methods via PHP scoping (02-04)
+- CSS class names bluesky-social-integration-* preserved during refactoring (02-04)
 
 ### Pending Todos
 
@@ -89,10 +93,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 02-03-PLAN.md
-Resume file: .planning/phases/02-codebase-refactoring/02-04-PLAN.md (if exists)
+Last session: 2026-02-18
+Stopped at: Completed 02-04-PLAN.md
+Resume file: .planning/phases/02-codebase-refactoring/02-05-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-17*
+*Last updated: 2026-02-18*
