@@ -40,7 +40,9 @@ require_once "classes/BlueSky_Blocks_Service.php"; // V.1.5.0
 require_once "classes/BlueSky_Plugin_Setup.php"; // V.1
 require_once "classes/BlueSky_Post_Metabox.php"; // V.1.1
 require_once "classes/BlueSky_Admin_Actions.php"; // V.1.4.0
-require_once "classes/BlueSky_Discussion_Display.php"; // V.1.5.0
+require_once "classes/BlueSky_Discussion_Renderer.php"; // V.1.5.0
+require_once "classes/BlueSky_Discussion_Metabox.php"; // V.1.5.0
+require_once "classes/BlueSky_Discussion_Frontend.php"; // V.1.5.0
 
 // Widgets
 require_once "classes/widgets/BlueSky_Posts_Widget.php";
@@ -55,4 +57,8 @@ $bluesky_social_integration = new BlueSky_Plugin_Setup($bluesky_api_handler, $bl
 $bluesky_render_front = new BlueSky_Render_Front($bluesky_api_handler); // V.1
 new BlueSky_Admin_Actions(); // V.1.4.0
 new BlueSky_Post_Metabox(); // V.1.1.0
-new BlueSky_Discussion_Display($bluesky_api_handler); // V.1.5.0
+
+// Initialize Discussion components (V.1.5.0)
+$bluesky_discussion_renderer = new BlueSky_Discussion_Renderer($bluesky_api_handler, $bluesky_account_manager);
+$bluesky_discussion_metabox = new BlueSky_Discussion_Metabox($bluesky_api_handler, $bluesky_account_manager, $bluesky_discussion_renderer);
+$bluesky_discussion_frontend = new BlueSky_Discussion_Frontend($bluesky_api_handler, $bluesky_account_manager, $bluesky_discussion_renderer);
