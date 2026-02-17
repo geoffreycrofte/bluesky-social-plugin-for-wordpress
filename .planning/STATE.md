@@ -5,33 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Multi-Account Foundation
+**Current focus:** Phase 1 complete, ready for Phase 2 (Codebase Refactoring)
 
 ## Current Position
 
-Phase: 1 of 7 (Multi-Account Foundation)
-Plan: 4 of 5 completed (01-04)
-Status: In progress
-Last activity: 2026-02-16 — Completed 01-04-PLAN.md (Async Pipeline & Discussion Account Threading)
+Phase: 1 of 7 (Multi-Account Foundation) — COMPLETE
+Next: Phase 2 of 7 (Codebase Refactoring) — Not started
+Last activity: 2026-02-17 — Phase 1 approved after human verification
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100% (Phase 1)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 3.8 minutes
-- Total execution time: 0.25 hours
+- Total plans completed: 5
+- Average duration: ~4 minutes (automated plans)
+- Total execution time: ~0.3 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 4 | 15 min | 3.8 min |
+| 01 | 5 | ~20 min + testing | ~4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 01-03 (3 min), 01-04 (7 min)
-- Trend: Plan 04 took longer due to 9 file modifications across async, discussion, and UI layers
+- Plans 01-01 through 01-04: Automated execution (2-7 min each)
+- Plan 01-05: Human verification with 3 rounds of bug fixes + 6 UX improvements
 
 *Updated after each plan completion*
 
@@ -60,6 +59,10 @@ Recent decisions affecting current work:
 - Cache keys include account_id when provided for multi-account scoping — 01-04
 - Discussion display uses centralized helper for syndication info extraction (supports old/new formats) — 01-04
 - Account selector uses progressive disclosure (only shown when 2+ accounts exist) — 01-04
+- Nested forms replaced with div + JS standalone form submission — 01-05
+- Auth testing uses direct createSession API call — 01-05
+- Per-account transient scoping via account_id property on API handler — 01-05
+- Handle normalization: email passthrough, bare username gets .bsky.social suffix — 01-05
 
 ### Pending Todos
 
@@ -67,14 +70,14 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- Plugin_Setup.php has grown larger with multi-account additions (Phase 2 refactoring will address)
 
 ## Session Continuity
 
-Last session: 2026-02-16
-Stopped at: Completed 01-04-PLAN.md (Async Pipeline & Discussion Account Threading)
+Last session: 2026-02-17
+Stopped at: Phase 1 complete and approved. Ready for Phase 2.
 Resume file: None
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-16*
+*Last updated: 2026-02-17*

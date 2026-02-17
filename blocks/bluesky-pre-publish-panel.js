@@ -46,6 +46,14 @@
                     this.setState({ preview: null, loading: false, error: null });
                 }
             }
+
+            // Auto-refresh when pre-publish panel opens
+            if (this.props.isPublishSidebarOpened && !prevProps.isPublishSidebarOpened) {
+                if (currentDontSyndicate !== '1') {
+                    this.setState({ loading: true, error: null });
+                    this.loadPreview();
+                }
+            }
         }
 
         loadPreview() {
@@ -277,18 +285,21 @@
     const BlueSkyPrePublishPanelWithData = compose([
         withSelect((select) => {
             const editor = select('core/editor');
+            const editPost = select('core/edit-post');
             const postId = editor.getCurrentPostId();
             const title = editor.getEditedPostAttribute('title');
             const content = editor.getEditedPostAttribute('content');
             const excerpt = editor.getEditedPostAttribute('excerpt');
             const meta = editor.getEditedPostAttribute('meta') || {};
+            const isPublishSidebarOpened = editPost ? editPost.isPublishSidebarOpened() : false;
 
             return {
                 postId,
                 title,
                 content,
                 excerpt,
-                meta
+                meta,
+                isPublishSidebarOpened
             };
         }),
         withDispatch((dispatch) => {

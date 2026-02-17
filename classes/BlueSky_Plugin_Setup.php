@@ -288,7 +288,7 @@ class BlueSky_Plugin_Setup
 
         // Sanitize other fields
         $sanitized["handle"] = isset($input["handle"])
-            ? sanitize_text_field($input["handle"])
+            ? $this->normalize_bluesky_handle(sanitize_text_field($input["handle"]))
             : "";
         $sanitized["enable_multi_account"] = !empty($input["enable_multi_account"]);
         $sanitized["auto_syndicate"] = isset($input["auto_syndicate"]) ? 1 : 0;
@@ -406,12 +406,108 @@ class BlueSky_Plugin_Setup
             $sanitized["no_counters"] = 0;
         }
 
+        // Process new accounts added via the repeater
+        if (!empty($input['new_accounts']) && is_array($input['new_accounts']) && $this->account_manager) {
+            foreach ($input['new_accounts'] as $new_account) {
+                $handle = $this->normalize_bluesky_handle(sanitize_text_field($new_account['handle'] ?? ''));
+                $app_password = $new_account['app_password'] ?? '';
+                $name = sanitize_text_field($new_account['name'] ?? '');
+
+                if (empty($handle) || empty($app_password)) {
+                    continue; // Skip incomplete entries
+                }
+
+                $account_data = [
+                    'name' => !empty($name) ? $name : $handle,
+                    'handle' => $handle,
+                    'app_password' => $app_password, // add_account() encrypts
+                    'auto_syndicate' => true,
+                    'owner_id' => get_current_user_id()
+                ];
+
+                $account_id = $this->account_manager->add_account($account_data);
+
+                if (is_wp_error($account_id)) {
+                    add_settings_error(
+                        'bluesky_messages',
+                        'bluesky_account_error',
+                        $account_id->get_error_message(),
+                        'error'
+                    );
+                    continue;
+                }
+
+                // Test authentication with a direct API call (avoid transient interference)
+                $auth_response = wp_remote_post(
+                    'https://bsky.social/xrpc/com.atproto.server.createSession',
+                    [
+                        'timeout' => 15,
+                        'body' => wp_json_encode([
+                            'identifier' => $handle,
+                            'password' => $app_password,
+                        ]),
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ]
+                );
+
+                $auth_body = !is_wp_error($auth_response)
+                    ? json_decode(wp_remote_retrieve_body($auth_response), true)
+                    : null;
+
+                if ($auth_body && isset($auth_body['did'])) {
+                    $this->account_manager->update_account($account_id, ['did' => $auth_body['did']]);
+                    add_settings_error(
+                        'bluesky_messages',
+                        'bluesky_account_success_' . $account_id,
+                        sprintf(__('Account "%s" added and authenticated.', 'social-integration-for-bluesky'), $handle),
+                        'success'
+                    );
+                } else {
+                    add_settings_error(
+                        'bluesky_messages',
+                        'bluesky_account_warning_' . $account_id,
+                        sprintf(__('Account "%s" added but could not authenticate. Check credentials.', 'social-integration-for-bluesky'), $handle),
+                        'warning'
+                    );
+                }
+            }
+        }
+
         // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)
         if (!get_option(BLUESKY_PLUGIN_OPTIONS . "_activation_date")) {
             add_option(BLUESKY_PLUGIN_OPTIONS . "_activation_date", time());
         }
 
         return $sanitized;
+    }
+
+    /**
+     * Normalize a Bluesky handle input.
+     * If the value is an email address, return it as-is (Bluesky accepts email login).
+     * If it contains a dot, assume it's a full handle.
+     * Otherwise, append .bsky.social (user likely typed just the username part).
+     *
+     * @param string $handle Raw handle input
+     * @return string Normalized handle
+     */
+    private function normalize_bluesky_handle($handle)
+    {
+        $handle = trim($handle);
+        if (empty($handle)) {
+            return '';
+        }
+        // Email address — return as-is
+        if (filter_var($handle, FILTER_VALIDATE_EMAIL)) {
+            return $handle;
+        }
+        // Already a full handle (contains a dot) — return as-is
+        if (strpos($handle, '.') !== false) {
+            return $handle;
+        }
+        // Bare username — append .bsky.social
+        return $handle . '.bsky.social';
     }
 
     /**
@@ -641,7 +737,7 @@ class BlueSky_Plugin_Setup
         echo '<p class="description" id="bluesky-handle-description">' .
             esc_html(
                 __(
-                    "This is your e-mail address used on BlueSky.",
+                    "Your e-mail address or Bluesky handle (e.g. user.bsky.social).",
                     "social-integration-for-bluesky",
                 ),
             ) .
@@ -735,6 +831,9 @@ class BlueSky_Plugin_Setup
         echo '<div id="bluesky-multi-account-section" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">';
 
         echo '<h3>' . esc_html__('Connected Accounts', 'social-integration-for-bluesky') . '</h3>';
+        echo '<p class="description">' .
+             esc_html__('Active account is the default account used for widgets, shortcodes & blocks if no other account is specified.', 'social-integration-for-bluesky') .
+             '</p>';
 
         // Get accounts
         $accounts = $this->account_manager->get_accounts();
@@ -754,22 +853,24 @@ class BlueSky_Plugin_Setup
             echo '</thead>';
             echo '<tbody>';
 
-            foreach ($accounts as $account) {
-                $is_active = ($account['id'] === $active_account_id);
+            foreach ($accounts as $account_key => $account) {
+                // Defensive: use array key as fallback if 'id' is missing
+                $account_id = $account['id'] ?? $account_key;
+                $is_active = ($account_id === $active_account_id);
                 $row_class = $is_active ? 'bluesky-account-active' : '';
 
                 echo '<tr class="' . esc_attr($row_class) . '">';
 
                 // Name
                 echo '<td>';
-                echo esc_html($account['name']);
+                echo esc_html($account['name'] ?? __('Unknown', 'social-integration-for-bluesky'));
                 if ($is_active) {
                     echo ' <span class="bluesky-active-indicator">' . esc_html__('Active', 'social-integration-for-bluesky') . '</span>';
                 }
                 echo '</td>';
 
                 // Handle
-                echo '<td>' . esc_html($account['handle']) . '</td>';
+                echo '<td>' . esc_html($account['handle'] ?? '') . '</td>';
 
                 // Status - check if authenticated
                 echo '<td>';
@@ -777,6 +878,12 @@ class BlueSky_Plugin_Setup
                     echo '<span class="bluesky-status-badge bluesky-status-authenticated">';
                     echo '<span class="dashicons dashicons-yes-alt"></span> ';
                     echo esc_html__('Authenticated', 'social-integration-for-bluesky');
+                    echo '</span>';
+                } elseif (!empty($account['app_password'])) {
+                    // Has credentials but no DID yet (e.g., just migrated) — not an error
+                    echo '<span class="bluesky-status-badge bluesky-status-pending">';
+                    echo '<span class="dashicons dashicons-clock"></span> ';
+                    echo esc_html__('Credentials Configured', 'social-integration-for-bluesky');
                     echo '</span>';
                 } else {
                     echo '<span class="bluesky-status-badge bluesky-status-error">';
@@ -788,14 +895,14 @@ class BlueSky_Plugin_Setup
 
                 // Auto-syndicate toggle
                 echo '<td style="text-align: center;">';
-                echo '<form method="post" style="display: inline;">';
-                wp_nonce_field('bluesky_toggle_auto_syndicate_' . $account['id']);
-                echo '<input type="hidden" name="account_id" value="' . esc_attr($account['id']) . '" />';
+                echo '<div class="bluesky-account-action" style="display: inline;">';
+                wp_nonce_field('bluesky_toggle_auto_syndicate_' . $account_id, '_bluesky_toggle_nonce_' . esc_attr($account_id), true, true);
+                echo '<input type="hidden" name="account_id" value="' . esc_attr($account_id) . '" />';
                 echo '<input type="checkbox" name="auto_syndicate" value="1" class="bluesky-auto-syndicate-toggle" ' .
                      checked(true, $account['auto_syndicate'] ?? false, false) .
-                     ' onchange="this.form.submit()" />';
+                     ' />';
                 echo '<input type="hidden" name="bluesky_toggle_auto_syndicate" value="1" />';
-                echo '</form>';
+                echo '</div>';
                 echo '</td>';
 
                 // Actions
@@ -803,23 +910,23 @@ class BlueSky_Plugin_Setup
 
                 // Make Active button
                 if (!$is_active) {
-                    echo '<form method="post" style="display: inline; margin-right: 8px;">';
-                    wp_nonce_field('bluesky_switch_account_' . $account['id']);
-                    echo '<input type="hidden" name="account_id" value="' . esc_attr($account['id']) . '" />';
-                    echo '<button type="submit" name="bluesky_switch_account" class="button button-small">' .
+                    echo '<div class="bluesky-account-action" style="display: inline; margin-right: 8px;">';
+                    wp_nonce_field('bluesky_switch_account_' . $account_id, '_bluesky_switch_nonce_' . esc_attr($account_id), true, true);
+                    echo '<input type="hidden" name="account_id" value="' . esc_attr($account_id) . '" />';
+                    echo '<button type="button" name="bluesky_switch_account" class="button button-small bluesky-action-btn">' .
                          esc_html__('Make Active', 'social-integration-for-bluesky') .
                          '</button>';
-                    echo '</form>';
+                    echo '</div>';
                 }
 
                 // Remove button
-                echo '<form method="post" style="display: inline;">';
-                wp_nonce_field('bluesky_remove_account_' . $account['id']);
-                echo '<input type="hidden" name="account_id" value="' . esc_attr($account['id']) . '" />';
-                echo '<button type="submit" name="bluesky_remove_account" class="button button-small bluesky-remove-account-btn">' .
+                echo '<div class="bluesky-account-action" style="display: inline;">';
+                wp_nonce_field('bluesky_remove_account_' . $account_id, '_bluesky_remove_nonce_' . esc_attr($account_id), true, true);
+                echo '<input type="hidden" name="account_id" value="' . esc_attr($account_id) . '" />';
+                echo '<button type="button" name="bluesky_remove_account" class="button button-small bluesky-remove-account-btn bluesky-action-btn">' .
                      esc_html__('Remove', 'social-integration-for-bluesky') .
                      '</button>';
-                echo '</form>';
+                echo '</div>';
 
                 echo '</td>';
                 echo '</tr>';
@@ -831,24 +938,30 @@ class BlueSky_Plugin_Setup
             echo '<p>' . esc_html__('No accounts connected yet.', 'social-integration-for-bluesky') . '</p>';
         }
 
-        // Add New Account Form
+        // Add New Account — JS repeater (saved with "Save Changes")
         echo '<h3>' . esc_html__('Add New Account', 'social-integration-for-bluesky') . '</h3>';
-        echo '<form method="post">';
-        wp_nonce_field('bluesky_add_account');
-        echo '<table class="form-table" style="margin-top: 0;">';
+        echo '<div id="bluesky-new-accounts-list"></div>';
+
+        // Hidden template for JS cloning
+        echo '<template id="bluesky-new-account-template">';
+        echo '<div class="bluesky-new-account-row" style="background: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 4px;">';
+        echo '<table class="form-table" style="margin: 0;">';
         echo '<tr>';
-        echo '<th scope="row"><label for="bluesky_account_name">' . esc_html__('Account Name', 'social-integration-for-bluesky') . '</label></th>';
-        echo '<td><input type="text" id="bluesky_account_name" name="bluesky_account_name" class="regular-text" placeholder="' .
+        echo '<th scope="row"><label for="bluesky_settings_new_accounts-__INDEX__-name">' . esc_html__('Account Name', 'social-integration-for-bluesky') . '</label></th>';
+        echo '<td><input type="text" id="bluesky_settings_new_accounts-__INDEX__-name" name="bluesky_settings[new_accounts][__INDEX__][name]" class="regular-text" placeholder="' .
              esc_attr__('e.g., Personal Account', 'social-integration-for-bluesky') . '" /></td>';
         echo '</tr>';
         echo '<tr>';
-        echo '<th scope="row"><label for="bluesky_account_handle">' . esc_html__('Bluesky Handle', 'social-integration-for-bluesky') . ' *</label></th>';
-        echo '<td><input type="text" id="bluesky_account_handle" name="bluesky_account_handle" class="regular-text" placeholder="user.bsky.social" required /></td>';
+        echo '<th scope="row"><label for="bluesky_settings_new_accounts-__INDEX__-handle">' . esc_html__('Bluesky Handle', 'social-integration-for-bluesky') . ' *</label></th>';
+        echo '<td><input type="text" id="bluesky_settings_new_accounts-__INDEX__-handle" name="bluesky_settings[new_accounts][__INDEX__][handle]" class="regular-text" placeholder="user.bsky.social" aria-describedby="bluesky-new-handle-desc-__INDEX__" />';
+        echo '<p class="description" id="bluesky-new-handle-desc-__INDEX__">' .
+             esc_html__('Your e-mail address or Bluesky handle (e.g. user.bsky.social).', 'social-integration-for-bluesky') .
+             '</p></td>';
         echo '</tr>';
         echo '<tr>';
-        echo '<th scope="row"><label for="bluesky_account_app_password">' . esc_html__('App Password', 'social-integration-for-bluesky') . ' *</label></th>';
+        echo '<th scope="row"><label for="bluesky_settings_new_accounts-__INDEX__-app_password">' . esc_html__('App Password', 'social-integration-for-bluesky') . ' *</label></th>';
         echo '<td>';
-        echo '<input type="password" id="bluesky_account_app_password" name="bluesky_account_app_password" class="regular-text" required />';
+        echo '<input type="password" id="bluesky_settings_new_accounts-__INDEX__-app_password" name="bluesky_settings[new_accounts][__INDEX__][app_password]" class="regular-text" />';
         echo '<p class="description">' .
              wp_kses_post(sprintf(
                  __('Create an %1$sApp Password%2$s on Bluesky.', 'social-integration-for-bluesky'),
@@ -859,10 +972,18 @@ class BlueSky_Plugin_Setup
         echo '</td>';
         echo '</tr>';
         echo '</table>';
-        echo '<button type="submit" name="bluesky_add_account" class="button button-primary">' .
+        echo '<button type="button" class="button bluesky-remove-new-account" style="margin-top: 8px;">' .
+             esc_html__('Cancel', 'social-integration-for-bluesky') .
+             '</button>';
+        echo '</div>';
+        echo '</template>';
+
+        echo '<button type="button" id="bluesky-add-account-btn" class="button button-primary">' .
              esc_html__('Add Account', 'social-integration-for-bluesky') .
              '</button>';
-        echo '</form>';
+        echo '<p class="description" id="bluesky-add-account-hint" style="display:none; margin-top: 8px;">' .
+             esc_html__('Click "Save Changes" to save the new account.', 'social-integration-for-bluesky') .
+             '</p>';
 
         echo '</div>'; // End multi-account section
     }
@@ -1131,9 +1252,9 @@ class BlueSky_Plugin_Setup
             return;
         }
 
-        echo '<form method="post" style="display: inline-block;">';
-        wp_nonce_field('bluesky_discussion_account');
-        echo '<select name="bluesky_discussion_account" onchange="this.form.submit()">';
+        echo '<div class="bluesky-account-action" style="display: inline-block;">';
+        wp_nonce_field('bluesky_discussion_account', '_bluesky_discussion_nonce', true, true);
+        echo '<select name="bluesky_discussion_account" class="bluesky-discussion-account-select">';
 
         foreach ($accounts as $account) {
             echo '<option value="' . esc_attr($account['id']) . '" ' .
@@ -1144,7 +1265,7 @@ class BlueSky_Plugin_Setup
 
         echo '</select>';
         echo '<input type="hidden" name="bluesky_set_discussion_account" value="1" />';
-        echo '</form>';
+        echo '</div>';
         echo '<p class="description">' .
              esc_html__('Choose which account\'s Bluesky thread to display for discussions.', 'social-integration-for-bluesky') .
              '</p>';
@@ -1526,76 +1647,12 @@ class BlueSky_Plugin_Setup
             return;
         }
 
-        // Add account
-        if (isset($_POST['bluesky_add_account'])) {
-            check_admin_referer('bluesky_add_account');
-
-            $handle = sanitize_text_field($_POST['bluesky_account_handle'] ?? '');
-            $app_password = $_POST['bluesky_account_app_password'] ?? '';
-            $name = sanitize_text_field($_POST['bluesky_account_name'] ?? '');
-
-            if (empty($handle) || empty($app_password)) {
-                add_settings_error(
-                    'bluesky_messages',
-                    'bluesky_account_error',
-                    __('Handle and App Password are required.', 'social-integration-for-bluesky'),
-                    'error'
-                );
-                return;
-            }
-
-            // Encrypt the password
-            $encrypted_password = $this->helpers->bluesky_encrypt($app_password);
-
-            // Add account
-            $account_data = [
-                'name' => !empty($name) ? $name : $handle,
-                'handle' => $handle,
-                'app_password' => $encrypted_password,
-                'auto_syndicate' => true,
-                'owner_id' => get_current_user_id()
-            ];
-
-            $account_id = $this->account_manager->add_account($account_data);
-
-            if (is_wp_error($account_id)) {
-                add_settings_error(
-                    'bluesky_messages',
-                    'bluesky_account_error',
-                    $account_id->get_error_message(),
-                    'error'
-                );
-                return;
-            }
-
-            // Test authentication
-            $temp_api = new BlueSky_API_Handler(['handle' => $handle, 'app_password' => $encrypted_password]);
-            $auth_result = $temp_api->authenticate();
-
-            if ($auth_result && isset($auth_result['did'])) {
-                // Update account with DID
-                $this->account_manager->update_account($account_id, ['did' => $auth_result['did']]);
-
-                add_settings_error(
-                    'bluesky_messages',
-                    'bluesky_account_success',
-                    sprintf(__('Account "%s" added successfully and authenticated.', 'social-integration-for-bluesky'), $handle),
-                    'success'
-                );
-            } else {
-                add_settings_error(
-                    'bluesky_messages',
-                    'bluesky_account_warning',
-                    sprintf(__('Account "%s" added but could not authenticate. Please check credentials.', 'social-integration-for-bluesky'), $handle),
-                    'warning'
-                );
-            }
-        }
+        // Note: Add account is handled in sanitize_settings() (submitted with Save Changes)
 
         // Remove account
         if (isset($_POST['bluesky_remove_account'])) {
             $account_id = sanitize_text_field($_POST['account_id'] ?? '');
-            check_admin_referer('bluesky_remove_account_' . $account_id);
+            check_admin_referer('bluesky_remove_account_' . $account_id, '_bluesky_remove_nonce_' . $account_id);
 
             $orphaned_count = $this->account_manager->remove_account($account_id);
 
@@ -1632,7 +1689,7 @@ class BlueSky_Plugin_Setup
         // Switch active account
         if (isset($_POST['bluesky_switch_account'])) {
             $account_id = sanitize_text_field($_POST['account_id'] ?? '');
-            check_admin_referer('bluesky_switch_account_' . $account_id);
+            check_admin_referer('bluesky_switch_account_' . $account_id, '_bluesky_switch_nonce_' . $account_id);
 
             $result = $this->account_manager->set_active_account($account_id);
 
@@ -1659,7 +1716,7 @@ class BlueSky_Plugin_Setup
         // Toggle auto-syndication
         if (isset($_POST['bluesky_toggle_auto_syndicate'])) {
             $account_id = sanitize_text_field($_POST['account_id'] ?? '');
-            check_admin_referer('bluesky_toggle_auto_syndicate_' . $account_id);
+            check_admin_referer('bluesky_toggle_auto_syndicate_' . $account_id, '_bluesky_toggle_nonce_' . $account_id);
 
             $auto_syndicate = !empty($_POST['auto_syndicate']);
             $result = $this->account_manager->update_account($account_id, ['auto_syndicate' => $auto_syndicate]);
@@ -1676,7 +1733,7 @@ class BlueSky_Plugin_Setup
 
         // Set discussion account
         if (isset($_POST['bluesky_set_discussion_account'])) {
-            check_admin_referer('bluesky_discussion_account');
+            check_admin_referer('bluesky_discussion_account', '_bluesky_discussion_nonce');
 
             $account_id = sanitize_text_field($_POST['bluesky_discussion_account'] ?? '');
             $result = $this->account_manager->set_discussion_account($account_id);
@@ -2533,10 +2590,38 @@ class BlueSky_Plugin_Setup
                     ); ?></h2>
                     <details>
                         <summary><?php esc_html_e(
-                            "Plugin’s options",
+                            "Former plugin's options (kept for retro-compatibility)",
                             "social-integration-for-bluesky",
                         ); ?></summary>
                         <?php echo $this->helpers->war_dump($this->options); ?>
+                    </details>
+                    <details>
+                        <summary><?php esc_html_e(
+                            "Multi-Account: Accounts",
+                            "social-integration-for-bluesky",
+                        ); ?></summary>
+                        <?php echo $this->helpers->war_dump(get_option('bluesky_accounts', [])); ?>
+                    </details>
+                    <details>
+                        <summary><?php esc_html_e(
+                            "Multi-Account: Active Account",
+                            "social-integration-for-bluesky",
+                        ); ?></summary>
+                        <?php echo $this->helpers->war_dump(get_option('bluesky_active_account', '')); ?>
+                    </details>
+                    <details>
+                        <summary><?php esc_html_e(
+                            "Multi-Account: Global Settings",
+                            "social-integration-for-bluesky",
+                        ); ?></summary>
+                        <?php echo $this->helpers->war_dump(get_option('bluesky_global_settings', [])); ?>
+                    </details>
+                    <details>
+                        <summary><?php esc_html_e(
+                            "Multi-Account: Schema Version",
+                            "social-integration-for-bluesky",
+                        ); ?></summary>
+                        <?php echo $this->helpers->war_dump(get_option('bluesky_schema_version', 1)); ?>
                     </details>
                 </div>
             </aside>
@@ -2955,9 +3040,9 @@ class BlueSky_Plugin_Setup
         if (empty($selected_account_ids)) {
             $all_accounts = $account_manager->get_accounts();
             $selected_account_ids = [];
-            foreach ($all_accounts as $account) {
+            foreach ($all_accounts as $acct_key => $account) {
                 if (!empty($account['auto_syndicate'])) {
-                    $selected_account_ids[] = $account['id'];
+                    $selected_account_ids[] = $account['id'] ?? $acct_key;
                 }
             }
         }
@@ -3116,15 +3201,15 @@ class BlueSky_Plugin_Setup
             ["value" => "", "label" => __("Active Account (default)", "social-integration-for-bluesky")]
         ];
 
-        if ($this->account_manager->is_multi_account_enabled()) {
+        if ($this->account_manager && $this->account_manager->is_multi_account_enabled()) {
             $accounts = $this->account_manager->get_accounts();
-            foreach ($accounts as $account) {
+            foreach ($accounts as $account_key => $account) {
                 $account_options[] = [
-                    "value" => $account["id"],
+                    "value" => $account["id"] ?? $account_key,
                     "label" => sprintf(
                         "%s (@%s)",
-                        $account["name"] ?? $account["handle"],
-                        $account["handle"]
+                        $account["name"] ?? $account["handle"] ?? '',
+                        $account["handle"] ?? ''
                     )
                 ];
             }

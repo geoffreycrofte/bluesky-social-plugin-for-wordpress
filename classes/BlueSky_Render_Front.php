@@ -190,8 +190,8 @@ class BlueSky_Render_Front
         if ($cached_posts !== false) {
             // Fast path: render from cache (no API call)
             $posts = $cached_posts;
-        } elseif (!defined('DOING_AJAX') || !DOING_AJAX) {
-            // No cache and not an AJAX request: return skeleton placeholder
+        } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
+            // No cache and not an AJAX/REST request: return skeleton placeholder
             $params = wp_json_encode([
                 "theme" => $theme,
                 "numberofposts" => $number_of_posts,
@@ -242,7 +242,7 @@ class BlueSky_Render_Front
                     $profile_helpers = new BlueSky_Helpers();
                     $profile_cache_key = $profile_helpers->get_profile_transient_key();
                     $profile = get_transient($profile_cache_key);
-                    if ($profile === false && (!defined('DOING_AJAX') || !DOING_AJAX)) {
+                    if ($profile === false && (!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
                         // No cached profile: render a small profile skeleton
                         ?>
                         <div class="bluesky-social-integration-profile-card-embedded bluesky-async-placeholder">
@@ -876,8 +876,8 @@ class BlueSky_Render_Front
         if ($cached_profile !== false) {
             // Fast path: use cached profile
             $profile = $cached_profile;
-        } elseif (!defined('DOING_AJAX') || !DOING_AJAX) {
-            // No cache and not AJAX: return skeleton placeholder
+        } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
+            // No cache and not AJAX/REST: return skeleton placeholder
             $classes_arr = [
                 "bluesky-social-integration-profile-card",
                 $attributes["styleClass"] ?? "",

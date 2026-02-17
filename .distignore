@@ -1,6 +1,7 @@
 # Ignore Git folder
 .git/
 .github/
+.planning/
 .gitignore
 
 # Ignore the specific screenshot file

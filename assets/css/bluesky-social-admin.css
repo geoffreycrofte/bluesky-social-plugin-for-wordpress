@@ -356,12 +356,21 @@ input.bluesky-custom-unit.bluesky-custom-unit {
     margin-top: 1em;
 }
 
+.bluesky-social-integration-admin .bluesky-account-list th,
+.bluesky-social-integration-admin .bluesky-account-list td {
+    padding: 8px;
+}
+
 .bluesky-account-list .bluesky-account-active {
     font-weight: bold;
 }
 
 .bluesky-account-list .column-status {
     width: 140px;
+}
+
+.bluesky-status-pending {
+    font-weight: 400;
 }
 
 .bluesky-account-list .column-auto-syndicate {

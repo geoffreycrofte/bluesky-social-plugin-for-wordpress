@@ -12,7 +12,7 @@ This roadmap transforms an existing single-account Bluesky WordPress plugin into
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Multi-Account Foundation** - Establish multi-account architecture and migrate existing data
+- [x] **Phase 1: Multi-Account Foundation** - Establish multi-account architecture and migrate existing data
 - [ ] **Phase 2: Codebase Refactoring** - Decompose monolithic classes into testable services
 - [ ] **Phase 3: Performance & Resilience** - Async syndication with rate limit handling
 - [ ] **Phase 4: Error Handling & UX** - Actionable errors and health monitoring
@@ -36,11 +36,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Account Manager class with CRUD, migration, feature toggle, UUID generation
-- [ ] 01-02-PLAN.md -- Settings page multi-account UI with progressive disclosure
-- [ ] 01-03-PLAN.md -- Multi-account syndication execution and editor account selection
-- [ ] 01-04-PLAN.md -- Async pipeline account threading, cache scoping, discussion display
-- [ ] 01-05-PLAN.md -- End-to-end verification checkpoint (human verify)
+- [x] 01-01-PLAN.md -- Account Manager class with CRUD, migration, feature toggle, UUID generation
+- [x] 01-02-PLAN.md -- Settings page multi-account UI with progressive disclosure
+- [x] 01-03-PLAN.md -- Multi-account syndication execution and editor account selection
+- [x] 01-04-PLAN.md -- Async pipeline account threading, cache scoping, discussion display
+- [x] 01-05-PLAN.md -- End-to-end verification checkpoint (human verify)
 
 ### Phase 2: Codebase Refactoring
 **Goal**: Codebase is decomposed into maintainable services with test coverage and security fixes
@@ -139,7 +139,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Multi-Account Foundation | 0/5 | Planned | - |
+| 1. Multi-Account Foundation | 5/5 | Complete | 2026-02-17 |
 | 2. Codebase Refactoring | 0/TBD | Not started | - |
 | 3. Performance & Resilience | 0/TBD | Not started | - |
 | 4. Error Handling & UX | 0/TBD | Not started | - |

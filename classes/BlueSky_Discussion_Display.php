@@ -51,6 +51,10 @@ class BlueSky_Discussion_Display
             $this,
             "ajax_refresh_discussion",
         ]);
+        add_action("wp_ajax_unlink_bluesky_discussion", [
+            $this,
+            "ajax_unlink_discussion",
+        ]);
 
         // Frontend hooks
         add_filter("the_content", [$this, "add_discussion_to_content"]);
@@ -228,13 +232,22 @@ class BlueSky_Discussion_Display
                         ); ?>
                     </a>
                 </div>
-                <button type="button" class="button button-secondary bluesky-refresh-discussion" id="bluesky-refresh-discussion">
-                    <span class="dashicons dashicons-update"></span>
-                    <?php esc_html_e(
-                        "Refresh",
-                        "social-integration-for-bluesky",
-                    ); ?>
-                </button>
+                <div class="bluesky-discussion-actions">
+                    <button type="button" class="button button-secondary bluesky-refresh-discussion" id="bluesky-refresh-discussion">
+                        <span class="dashicons dashicons-update"></span>
+                        <?php esc_html_e(
+                            "Refresh",
+                            "social-integration-for-bluesky",
+                        ); ?>
+                    </button>
+                    <button type="button" class="button button-link-delete bluesky-unlink-discussion" id="bluesky-unlink-discussion">
+                        <span class="dashicons dashicons-editor-unlink"></span>
+                        <?php esc_html_e(
+                            "Unlink",
+                            "social-integration-for-bluesky",
+                        ); ?>
+                    </button>
+                </div>
             </div>
 
             <div class="bluesky-discussion-content" id="bluesky-discussion-content">
@@ -657,6 +670,33 @@ class BlueSky_Discussion_Display
         set_transient($cache_key, $html, 5 * MINUTE_IN_SECONDS);
 
         wp_send_json_success(["html" => $html]);
+    }
+
+    /**
+     * AJAX handler to unlink discussion (remove syndication post meta)
+     */
+    public function ajax_unlink_discussion()
+    {
+        check_ajax_referer("bluesky_discussion_nonce", "nonce");
+
+        $post_id = isset($_POST["post_id"]) ? intval($_POST["post_id"]) : 0;
+
+        if (!$post_id || !current_user_can("edit_post", $post_id)) {
+            wp_send_json_error("Invalid permissions");
+        }
+
+        // Clear discussion cache first
+        $post_info = $this->get_syndication_info_for_discussion($post_id);
+        if ($post_info && isset($post_info["uri"])) {
+            $cache_key = "bluesky_discussion_" . md5($post_info["uri"]);
+            delete_transient($cache_key);
+        }
+
+        // Remove syndication meta
+        delete_post_meta($post_id, "_bluesky_syndication_bs_post_info");
+        delete_post_meta($post_id, "_bluesky_syndicated");
+
+        wp_send_json_success();
     }
 
     /**

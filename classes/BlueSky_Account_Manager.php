@@ -99,13 +99,17 @@ class BlueSky_Account_Manager {
         // Generate UUID for primary account
         $uuid = BlueSky_Helpers::bluesky_generate_secure_uuid();
 
+        // Try to get DID from settings first, then from transient (where authenticate() stores it)
+        $helpers = new BlueSky_Helpers();
+        $did = !empty($old_settings['did']) ? $old_settings['did'] : get_transient($helpers->get_did_transient_key());
+
         // Create primary account entry
         $primary_account = [
             'id' => $uuid,
             'name' => 'Primary Account',
             'handle' => $old_settings['handle'],
             'app_password' => $old_settings['app_password'], // Already encrypted, copy as-is
-            'did' => isset($old_settings['did']) ? $old_settings['did'] : '',
+            'did' => $did ?: '',
             'is_active' => true,
             'auto_syndicate' => true,
             'owner_id' => 0,
@@ -251,6 +255,21 @@ class BlueSky_Account_Manager {
         }
         if (empty($data['app_password'])) {
             return new WP_Error('missing_password', __('App password is required.', 'social-integration-for-bluesky'));
+        }
+
+        // Check for duplicate handle
+        $existing_accounts = get_option('bluesky_accounts', []);
+        $normalized_handle = strtolower(sanitize_text_field($data['handle']));
+        foreach ($existing_accounts as $existing) {
+            if (strtolower($existing['handle'] ?? '') === $normalized_handle) {
+                return new WP_Error(
+                    'duplicate_handle',
+                    sprintf(
+                        __('An account with handle "%s" already exists.', 'social-integration-for-bluesky'),
+                        $data['handle']
+                    )
+                );
+            }
         }
 
         // Generate UUID
@@ -415,7 +434,7 @@ class BlueSky_Account_Manager {
 
         // Fall back to active account
         $active = $this->get_active_account();
-        return $active ? $active['id'] : null;
+        return $active ? ($active['id'] ?? null) : null;
     }
 
     /**

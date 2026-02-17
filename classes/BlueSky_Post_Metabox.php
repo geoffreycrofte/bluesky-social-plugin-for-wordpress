@@ -224,16 +224,17 @@ class BlueSky_Post_Metabox
                     ) .
                     "</strong></p>";
 
-                foreach ($accounts as $account) {
-                    $checked = in_array($account["id"], $selected)
+                foreach ($accounts as $account_key => $account) {
+                    $acct_id = $account["id"] ?? $account_key;
+                    $checked = in_array($acct_id, $selected)
                         ? "checked"
                         : "";
                     printf(
                         '<label style="display:block;margin:4px 0;"><input type="checkbox" name="bluesky_syndication_accounts[]" value="%s" %s class="bluesky-account-checkbox"> %s (@%s)</label>',
-                        esc_attr($account["id"]),
+                        esc_attr($acct_id),
                         $checked,
-                        esc_html($account["name"]),
-                        esc_html($account["handle"])
+                        esc_html($account["name"] ?? ''),
+                        esc_html($account["handle"] ?? '')
                     );
                 }
 

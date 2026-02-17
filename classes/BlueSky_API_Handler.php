@@ -37,6 +37,12 @@ class BlueSky_API_Handler
     private $last_auth_error = null;
 
     /**
+     * Account ID for multi-account transient scoping
+     * @var string|null
+     */
+    private $account_id = null;
+
+    /**
      * Constructor
      * @param array $options Plugin settings
      */
@@ -59,7 +65,10 @@ class BlueSky_API_Handler
             'app_password' => $account['app_password'] // Already encrypted in storage
         ];
 
-        return new self($options);
+        $instance = new self($options);
+        // Set account_id so transient keys are scoped per-account
+        $instance->account_id = $account['id'] ?? null;
+        return $instance;
     }
 
     /**
@@ -86,9 +95,9 @@ class BlueSky_API_Handler
         }
 
         $helpers = new BlueSky_Helpers();
-        $access_tkey = $helpers->get_access_token_transient_key();
-        $refresh_tkey = $helpers->get_refresh_token_transient_key();
-        $did_tkey = $helpers->get_did_transient_key();
+        $access_tkey = $helpers->get_access_token_transient_key($this->account_id);
+        $refresh_tkey = $helpers->get_refresh_token_transient_key($this->account_id);
+        $did_tkey = $helpers->get_did_transient_key($this->account_id);
 
         // Retrieve saved tokens from transients
         $access_token = get_transient($access_tkey);

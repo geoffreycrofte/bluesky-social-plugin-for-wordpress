@@ -90,9 +90,15 @@
 
 .bluesky-social-integration-last-post-item,
 .bluesky-social-integration-embedded-record {
+    --gap: 8px;
+    --padding-block: 16px;
+    --padding-inline: 8px;
+    --avatar-size: 42px;
+
     display: flex;
-    gap: 8px;
-    padding: 16px 8px;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    padding: var(--padding-block) var(--padding-inline);
 }
 
 .bluesky-social-integration-embedded-record.has-image {
@@ -208,6 +214,7 @@
 }
 
 .bluesky-social-integration-last-post-content {
+    flex: calc(100% - (var(--gap) + var(--avatar-size)));
     word-wrap: break-word !important;
     word-break: break-word !important;
     font-size: var(--bluesky-posts-custom-post-content-fs, 15px) !important;
@@ -426,13 +433,12 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
  */
 .bluesky-social-integration-post-counters {
     display: flex;
-    gap: 16px;
-    padding: 12px 16px;
-    margin-top: 8px;
-    border-top: 1px solid
-        color-mix(in srgb, var(--bluesky-card-border) 50%, transparent);
     flex-wrap: wrap;
     align-items: center;
+    flex-shrink: 0;
+    gap: 16px;
+    padding-inline-start: calc(var(--avatar-size) + var(--gap));
+    margin-top: var(--gap);
 }
 
 .bluesky-counter {
@@ -452,27 +458,6 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
 
 .bluesky-counter-value {
     font-variant-numeric: tabular-nums;
-}
-
-.bluesky-counter:hover {
-    color: var(--bluesky-primary-color);
-}
-
-/* Specific counter colors on hover */
-.bluesky-counter-likes:hover {
-    color: #e0245e;
-}
-
-.bluesky-counter-reposts:hover {
-    color: #17bf63;
-}
-
-.bluesky-counter-replies:hover {
-    color: var(--bluesky-primary-color);
-}
-
-.bluesky-counter-quotes:hover {
-    color: var(--bluesky-primary-color);
 }
 
 /* Container query for smaller widths */
@@ -495,11 +480,13 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
 .bluesky-social-integration-last-post.bluesky-async-placeholder {
     animation: bluesky-pulse 1.5s ease-in-out infinite;
 }
+
 .bluesky-skeleton-box {
     background: currentColor;
     opacity: 0.12;
     border-radius: 4px;
 }
+
 @keyframes bluesky-pulse {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.7; }
