@@ -61,3 +61,11 @@ require_once dirname( __DIR__ ) . '/classes/BlueSky_API_Handler.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_AJAX_Service.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_Syndication_Service.php';
 require_once dirname( __DIR__ ) . '/classes/BlueSky_Settings_Service.php';
+
+// Load resilience classes
+if ( file_exists( dirname( __DIR__ ) . '/classes/BlueSky_Circuit_Breaker.php' ) ) {
+    require_once dirname( __DIR__ ) . '/classes/BlueSky_Circuit_Breaker.php';
+}
+if ( file_exists( dirname( __DIR__ ) . '/classes/BlueSky_Rate_Limiter.php' ) ) {
+    require_once dirname( __DIR__ ) . '/classes/BlueSky_Rate_Limiter.php';
+}
