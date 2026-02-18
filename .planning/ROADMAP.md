@@ -73,10 +73,15 @@ Plans:
   2. Multiple Bluesky blocks on same page make only one API call per account
   3. Plugin detects HTTP 429 rate limit responses and backs off exponentially
   4. After 3 consecutive API failures, plugin stops requests for 15 minutes (circuit breaker)
-**Plans**: TBD
+**Plans:** 6 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md -- Circuit breaker + rate limiter (TDD)
+- [ ] 03-02-PLAN.md -- Request-level cache deduplication (TDD)
+- [ ] 03-03-PLAN.md -- Async syndication handler with Action Scheduler
+- [ ] 03-04-PLAN.md -- Admin notices with Heartbeat + retry UI
+- [ ] 03-05-PLAN.md -- Integration wiring into API handler + stale-while-revalidate
+- [ ] 03-06-PLAN.md -- End-to-end verification (automated + human)
 
 ### Phase 4: Error Handling & UX
 **Goal**: Users receive clear, actionable error messages with visible plugin health status
