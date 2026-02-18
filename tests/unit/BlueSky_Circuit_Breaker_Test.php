@@ -79,11 +79,12 @@ class BlueSky_Circuit_Breaker_Test extends TestCase
         $account_id = 'account-3';
         $now = time();
 
-        // First check: closed circuit
+        // Circuit state checks (each record_failure calls get_state)
+        // First two return closed, third returns closed before opening
         Functions\expect('get_transient')
-            ->once()
+            ->times(3)
             ->with('bluesky_circuit_account-3')
-            ->andReturn(false);
+            ->andReturn(false); // Closed state
 
         // Failure count checks for record_failure calls
         Functions\expect('get_transient')
