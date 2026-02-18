@@ -340,6 +340,7 @@ class BlueSky_API_Handler
         $no_replies = $no_replies ?? ($this->options["no_replies"] ?? true);
         $no_reposts = $no_reposts ?? ($this->options["no_reposts"] ?? true);
         $cache_key = $helpers->get_posts_transient_key(
+            $this->account_id,
             $limit,
             $no_replies,
             $no_reposts,
@@ -447,7 +448,7 @@ class BlueSky_API_Handler
     public function get_bluesky_profile()
     {
         $helpers = new BlueSky_Helpers();
-        $cache_key = $helpers->get_profile_transient_key();
+        $cache_key = $helpers->get_profile_transient_key($this->account_id);
         $cache_duration =
             $this->options["cache_duration"]["total_seconds"] ?? 3600; // Default 1 hour
 

@@ -49,7 +49,7 @@ class BlueSky_Plugin_Setup
      */
     public function __construct(
         BlueSky_API_Handler $api_handler,
-        BlueSky_Account_Manager $account_manager = null
+        ?BlueSky_Account_Manager $account_manager = null
     ) {
         $this->render_front  = new BlueSky_Render_Front($api_handler);
         $this->settings      = new BlueSky_Settings_Service($api_handler, $account_manager);
@@ -128,6 +128,10 @@ class BlueSky_Plugin_Setup
         add_action("wp_ajax_bluesky_async_auth", [
             $this->ajax,
             "ajax_async_auth",
+        ]);
+        add_action("wp_ajax_bluesky_set_discussion_account", [
+            $this->ajax,
+            "ajax_set_discussion_account",
         ]);
 
         // Widgets and Gutenberg blocks

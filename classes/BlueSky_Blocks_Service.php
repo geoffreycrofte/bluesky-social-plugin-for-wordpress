@@ -247,6 +247,11 @@ class BlueSky_Blocks_Service
      */
     public function bluesky_profile_block_render($attributes = [])
     {
+        // Convert camelCase block attributes to snake_case for PHP rendering
+        if (isset($attributes['accountId'])) {
+            $attributes['account_id'] = $attributes['accountId'];
+        }
+
         // Get the style class
         $style_class = !empty($attributes["classname"])
             ? $attributes["classname"]
@@ -255,7 +260,8 @@ class BlueSky_Blocks_Service
         // Add the style class to the attributes for the render function
         $attributes["styleClass"] = $style_class;
 
-        $render_front = $this->render_front ?? new BlueSky_Render_Front($this->api_handler);
+        $api_handler = $this->resolve_api_handler($attributes['account_id'] ?? '');
+        $render_front = new BlueSky_Render_Front($api_handler);
         return $render_front->render_bluesky_profile_card($attributes);
     }
 
@@ -273,7 +279,41 @@ class BlueSky_Blocks_Service
      */
     public function bluesky_posts_block_render($attributes = [])
     {
-        $render_front = $this->render_front ?? new BlueSky_Render_Front($this->api_handler);
+        // Convert camelCase block attributes to snake_case for PHP rendering
+        if (isset($attributes['accountId'])) {
+            $attributes['account_id'] = $attributes['accountId'];
+        }
+
+        $api_handler = $this->resolve_api_handler($attributes['account_id'] ?? '');
+        $render_front = new BlueSky_Render_Front($api_handler);
         return $render_front->render_bluesky_posts_list($attributes);
+    }
+
+    /**
+     * Resolve the correct API handler for a given account_id.
+     * Returns a per-account handler if account_id is provided and multi-account is enabled,
+     * otherwise returns the default handler.
+     *
+     * @param string $account_id Account UUID or empty string
+     * @return BlueSky_API_Handler
+     */
+    private function resolve_api_handler($account_id)
+    {
+        if ($this->account_manager && $this->account_manager->is_multi_account_enabled()) {
+            // Specific account selected
+            if (!empty($account_id)) {
+                $account = $this->account_manager->get_account($account_id);
+                if ($account) {
+                    return BlueSky_API_Handler::create_for_account($account);
+                }
+            }
+
+            // "Active Account (default)" — use the account marked is_active
+            $active = $this->account_manager->get_active_account();
+            if ($active) {
+                return BlueSky_API_Handler::create_for_account($active);
+            }
+        }
+        return $this->api_handler;
     }
 }

@@ -42,8 +42,8 @@ class BlueSky_Account_Manager {
      * Only runs when multi-account is enabled and schema version is outdated.
      */
     public function maybe_run_migration() {
-        // Emergency bypass for migration issues
-        if (defined('BLUESKY_SKIP_MIGRATION') && BLUESKY_SKIP_MIGRATION) {
+        // Emergency bypass for migration issues — use: add_filter('bluesky_skip_migration', '__return_true');
+        if (apply_filters('bluesky_skip_migration', false)) {
             return;
         }
 

@@ -365,6 +365,12 @@ class BlueSky_Settings_Service
             }
         }
 
+        // Save discussion account if submitted with the form
+        if (isset($_POST['bluesky_set_discussion_account']) && $this->account_manager) {
+            $discussion_id = sanitize_text_field(wp_unslash($_POST['bluesky_discussion_account'] ?? ''));
+            $this->account_manager->set_discussion_account($discussion_id);
+        }
+
         // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)
         if (!get_option(BLUESKY_PLUGIN_OPTIONS . "_activation_date")) {
             add_option(BLUESKY_PLUGIN_OPTIONS . "_activation_date", time());
@@ -1105,8 +1111,7 @@ class BlueSky_Settings_Service
         }
 
         $accounts = $this->account_manager->get_accounts();
-        $discussion_account = $this->account_manager->get_discussion_account();
-        $discussion_account_id = $discussion_account['id'] ?? '';
+        $discussion_account_id = $this->account_manager->get_discussion_account() ?? '';
 
         if (empty($accounts)) {
             echo '<p class="description">' .

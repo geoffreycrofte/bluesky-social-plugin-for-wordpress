@@ -100,15 +100,8 @@ class BlueSky_AJAX_Service
             "account_id" => sanitize_text_field($params["account_id"] ?? ""),
         ];
 
-        // Create per-account API handler if account_id provided and multi-account enabled
-        $api_handler = $this->api_handler;
-        $account_id = $attributes["account_id"];
-        if (!empty($account_id) && $this->account_manager && $this->account_manager->is_multi_account_enabled()) {
-            $account = $this->account_manager->get_account($account_id);
-            if ($account) {
-                $api_handler = BlueSky_API_Handler::create_for_account($account);
-            }
-        }
+        // Create per-account API handler
+        $api_handler = $this->resolve_api_handler($attributes["account_id"]);
 
         $render = new BlueSky_Render_Front($api_handler);
         $html = $render->render_bluesky_posts_list($attributes);
@@ -138,15 +131,8 @@ class BlueSky_AJAX_Service
             "account_id" => sanitize_text_field($params["account_id"] ?? ""),
         ];
 
-        // Create per-account API handler if account_id provided and multi-account enabled
-        $api_handler = $this->api_handler;
-        $account_id = $attributes["account_id"];
-        if (!empty($account_id) && $this->account_manager && $this->account_manager->is_multi_account_enabled()) {
-            $account = $this->account_manager->get_account($account_id);
-            if ($account) {
-                $api_handler = BlueSky_API_Handler::create_for_account($account);
-            }
-        }
+        // Create per-account API handler
+        $api_handler = $this->resolve_api_handler($attributes["account_id"]);
 
         $render = new BlueSky_Render_Front($api_handler);
         $html = $render->render_bluesky_profile_card($attributes);
@@ -188,6 +174,58 @@ class BlueSky_AJAX_Service
         }
 
         wp_send_json_success($result);
+    }
+
+    /**
+     * AJAX handler for setting the discussion account
+     */
+    public function ajax_set_discussion_account()
+    {
+        check_ajax_referer('bluesky_discussion_account', '_bluesky_discussion_nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Unauthorized', 'social-integration-for-bluesky'));
+            return;
+        }
+
+        if (!$this->account_manager) {
+            wp_send_json_error(__('Account manager not available', 'social-integration-for-bluesky'));
+            return;
+        }
+
+        $account_id = sanitize_text_field(wp_unslash($_POST['bluesky_discussion_account'] ?? ''));
+        $result = $this->account_manager->set_discussion_account($account_id);
+
+        if (is_wp_error($result)) {
+            wp_send_json_error($result->get_error_message());
+        } else {
+            wp_send_json_success(__('Discussion account updated.', 'social-integration-for-bluesky'));
+        }
+    }
+
+    /**
+     * Resolve the correct API handler for a given account_id.
+     * When account_id is empty and multi-account is enabled, uses the active account.
+     *
+     * @param string $account_id Account UUID or empty string
+     * @return BlueSky_API_Handler
+     */
+    private function resolve_api_handler($account_id)
+    {
+        if ($this->account_manager && $this->account_manager->is_multi_account_enabled()) {
+            if (!empty($account_id)) {
+                $account = $this->account_manager->get_account($account_id);
+                if ($account) {
+                    return BlueSky_API_Handler::create_for_account($account);
+                }
+            }
+
+            $active = $this->account_manager->get_active_account();
+            if ($active) {
+                return BlueSky_API_Handler::create_for_account($active);
+            }
+        }
+        return $this->api_handler;
     }
 
     /**

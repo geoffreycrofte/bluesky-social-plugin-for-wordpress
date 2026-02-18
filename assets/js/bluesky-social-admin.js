@@ -352,6 +352,7 @@
 
     /**
      * Handle discussion account dropdown changes
+     * Saves via AJAX without page reload
      */
     let discussionSelect = document.querySelector(
       ".bluesky-discussion-account-select",
@@ -360,7 +361,36 @@
       discussionSelect.addEventListener("change", function () {
         let container = this.closest(".bluesky-account-action");
         if (!container) return;
-        submitAccountAction(container, {});
+        let nonceField = container.querySelector(
+          '[name="_bluesky_discussion_nonce"]',
+        );
+        if (!nonceField) return;
+
+        let formData = new FormData();
+        formData.append("action", "bluesky_set_discussion_account");
+        formData.append("bluesky_discussion_account", this.value);
+        formData.append("_bluesky_discussion_nonce", nonceField.value);
+
+        this.disabled = true;
+        fetch(ajaxurl, { method: "POST", body: formData })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            discussionSelect.disabled = false;
+            if (data.success) {
+              let notice = document.createElement("div");
+              notice.className = "notice notice-success is-dismissible";
+              let p = document.createElement("p");
+              p.textContent = data.data || "Discussion account updated.";
+              notice.appendChild(p);
+              let wrap = document.querySelector(".wrap");
+              if (wrap) wrap.insertBefore(notice, wrap.children[1]);
+            }
+          })
+          .catch(function () {
+            discussionSelect.disabled = false;
+          });
       });
     }
 
