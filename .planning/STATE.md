@@ -5,29 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 2 (Codebase Refactoring) — Plans 01-06 complete
+**Current focus:** Phase 3 (Performance & Resilience) — Plan 01 complete
 
 ## Current Position
 
-Phase: 2 of 7 (Codebase Refactoring) — In progress (Plans 01-06/N complete)
-Next: Phase 2, Plan 07 — Continue refactoring efforts (if exists)
-Last activity: 2026-02-17 — 02-06 complete (test coverage)
+Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 01/N complete)
+Next: Phase 3, Plan 02 — Integrate circuit breaker and rate limiter into API Handler
+Last activity: 2026-02-18 — 03-01 complete (circuit breaker & rate limiter primitives)
 
-Progress: [██████████] 100% (Phase 1) | [███] Phase 2 in progress
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [█] Phase 3 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: ~5.5 minutes (automated plans)
-- Total execution time: ~1.5 hours + 3 iterative testing sessions
+- Total plans completed: 12
+- Average duration: ~5.3 minutes (automated plans)
+- Total execution time: ~1.6 hours + 3 iterative testing sessions
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
-| 02 | 6 (so far) | ~40 min | ~6.7 min |
+| 02 | 6 | ~40 min | ~6.7 min |
+| 03 | 1 (so far) | ~4 min | ~4 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -38,6 +39,7 @@ Progress: [██████████] 100% (Phase 1) | [███] Phase 2 
 - Plan 02-04: Automated execution (12.5 min) — template extraction
 - Plan 02-05: Automated execution (3 min) — security fixes + i18n
 - Plan 02-06: Automated execution (8 min) — test coverage for critical paths
+- Plan 03-01: Automated execution (4 min) — circuit breaker & rate limiter with TDD
 
 *Updated after each plan completion*
 
@@ -93,6 +95,10 @@ Recent decisions affecting current work:
 - wpdb mocked with getMockBuilder(stdClass)->addMethods() pattern (02-06)
 - Brain Monkey Functions\expect() for strict expectations, andReturn() for flexible mocks (02-06)
 - Test organization: one test file per class with descriptive test method names (02-06)
+- Circuit breaker uses 3-failure threshold with 15-minute cooldown (03-01)
+- Rate limiter supports both numeric seconds and HTTP date Retry-After formats (03-01)
+- Exponential backoff applies ±20% jitter to prevent thundering herd (03-01)
+- Per-account resilience state isolation prevents one failing account from blocking others (03-01)
 
 ### Pending Todos
 
@@ -105,10 +111,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 02-06-PLAN.md
-Resume file: .planning/phases/02-codebase-refactoring/02-07-PLAN.md (if exists)
+Last session: 2026-02-18
+Stopped at: Completed 03-01-PLAN.md
+Resume file: .planning/phases/03-performance-resilience/03-02-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-17*
+*Last updated: 2026-02-18*
