@@ -69,3 +69,6 @@ if ( file_exists( dirname( __DIR__ ) . '/classes/BlueSky_Circuit_Breaker.php' ) 
 if ( file_exists( dirname( __DIR__ ) . '/classes/BlueSky_Rate_Limiter.php' ) ) {
     require_once dirname( __DIR__ ) . '/classes/BlueSky_Rate_Limiter.php';
 }
+if ( file_exists( dirname( __DIR__ ) . '/classes/BlueSky_Request_Cache.php' ) ) {
+    require_once dirname( __DIR__ ) . '/classes/BlueSky_Request_Cache.php';
+}
