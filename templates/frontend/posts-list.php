@@ -24,7 +24,7 @@ if (!defined("ABSPATH")) {
 
     <?php if ($layout === "layout_2") {
         $profile_helpers = new BlueSky_Helpers();
-        $profile_cache_key = $profile_helpers->get_profile_transient_key();
+        $profile_cache_key = $profile_helpers->get_profile_transient_key($account_id ?? null);
         $profile = get_transient($profile_cache_key);
         if ($profile === false && (!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
             // No cached profile: render a small profile skeleton

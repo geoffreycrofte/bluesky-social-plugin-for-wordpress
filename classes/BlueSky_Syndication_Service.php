@@ -355,13 +355,24 @@ class BlueSky_Syndication_Service
             wp_json_encode($syndication_results)
         );
 
-        // Mark as syndicated if at least one account succeeded
+        // Determine overall syndication status
         $has_any_success = false;
+        $all_success = true;
         foreach ($syndication_results as $result) {
             if (!empty($result['success'])) {
                 $has_any_success = true;
-                break;
+            } else {
+                $all_success = false;
             }
+        }
+
+        // Set syndication status for admin column display
+        if ($all_success) {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'completed');
+        } elseif ($has_any_success) {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'partial');
+        } else {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'failed');
         }
 
         if ($has_any_success) {

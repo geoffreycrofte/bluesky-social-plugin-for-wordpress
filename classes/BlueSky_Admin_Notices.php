@@ -245,6 +245,11 @@ class BlueSky_Admin_Notices
 
         $status = get_post_meta($post_id, '_bluesky_syndication_status', true);
 
+        // Fallback: check legacy meta for posts syndicated before async handler
+        if (empty($status) && get_post_meta($post_id, '_bluesky_syndicated', true)) {
+            $status = 'completed';
+        }
+
         switch ($status) {
             case 'pending':
             case 'retrying':

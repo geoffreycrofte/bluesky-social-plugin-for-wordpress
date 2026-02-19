@@ -472,13 +472,24 @@ class BlueSky_Async_Handler {
         // Save results
         update_post_meta($post_id, '_bluesky_syndication_bs_post_info', wp_json_encode($syndication_results));
 
-        // Check if any succeeded
+        // Determine overall syndication status
         $has_success = false;
+        $all_success = true;
         foreach ($syndication_results as $result) {
             if (!empty($result['success'])) {
                 $has_success = true;
-                break;
+            } else {
+                $all_success = false;
             }
+        }
+
+        // Set syndication status for admin column display
+        if ($all_success) {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'completed');
+        } elseif ($has_success) {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'partial');
+        } else {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'failed');
         }
 
         if ($has_success) {
