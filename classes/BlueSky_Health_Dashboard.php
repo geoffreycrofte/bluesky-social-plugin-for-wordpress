@@ -71,65 +71,63 @@ class BlueSky_Health_Dashboard
         // Render widget HTML
         echo '<div class="bluesky-health-widget">';
 
-        // Account Status Section
-        echo '<div class="bluesky-health-section">';
-        echo '<h4>' . esc_html__('Account Status', 'social-integration-for-bluesky') . '</h4>';
+        // Account Status Section (open by default)
+        echo '<details open class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('Account Status', 'social-integration-for-bluesky') . '</summary>';
         if (!empty($health_data['accounts'])) {
-            echo '<ul style="margin: 0; padding-left: 20px;">';
+            echo '<ul class="bluesky-health-accounts">';
             foreach ($health_data['accounts'] as $account) {
-                $icon_class = $account['icon'];
-                $status_text = $account['status'];
-                echo '<li style="margin: 4px 0;">';
-                echo '<span class="dashicons ' . esc_attr($icon_class) . '" style="font-size: 16px; width: 16px; height: 16px; margin-right: 4px; vertical-align: text-bottom;"></span>';
-                echo '<strong>' . esc_html($account['handle']) . '</strong>: ' . esc_html($status_text);
+                echo '<li>';
+                echo '<span class="dashicons ' . esc_attr($account['icon']) . '"></span>';
+                echo '<strong>' . esc_html($account['handle']) . '</strong>: ' . esc_html($account['status']);
                 echo '</li>';
             }
             echo '</ul>';
         } else {
-            echo '<p style="margin: 8px 0;">' . esc_html__('No accounts configured.', 'social-integration-for-bluesky') . '</p>';
+            echo '<p>' . esc_html__('No accounts configured.', 'social-integration-for-bluesky') . '</p>';
         }
-        echo '</div>';
+        echo '</details>';
 
         // Last Syndication Section
-        echo '<div class="bluesky-health-section" style="margin-top: 15px;">';
-        echo '<h4>' . esc_html__('Last Syndication', 'social-integration-for-bluesky') . '</h4>';
-        echo '<p style="margin: 8px 0;">' . esc_html($health_data['last_syndication']) . '</p>';
-        echo '</div>';
+        echo '<details class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('Last Syndication', 'social-integration-for-bluesky') . '</summary>';
+        echo '<p>' . esc_html($health_data['last_syndication']) . '</p>';
+        echo '</details>';
 
         // API Health Section
-        echo '<div class="bluesky-health-section" style="margin-top: 15px;">';
-        echo '<h4>' . esc_html__('API Health', 'social-integration-for-bluesky') . '</h4>';
-        echo '<p style="margin: 8px 0;">' . esc_html($health_data['api_health']) . '</p>';
-        echo '</div>';
+        echo '<details class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('API Health', 'social-integration-for-bluesky') . '</summary>';
+        echo '<p>' . esc_html($health_data['api_health']) . '</p>';
+        echo '</details>';
 
         // Cache Status Section
-        echo '<div class="bluesky-health-section" style="margin-top: 15px;">';
-        echo '<h4>' . esc_html__('Cache Status', 'social-integration-for-bluesky') . '</h4>';
-        echo '<p style="margin: 8px 0;">' . esc_html($health_data['cache_status']) . '</p>';
-        echo '</div>';
+        echo '<details class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('Cache Status', 'social-integration-for-bluesky') . '</summary>';
+        echo '<p>' . esc_html($health_data['cache_status']) . '</p>';
+        echo '</details>';
 
         // Pending Retries Section
-        echo '<div class="bluesky-health-section" style="margin-top: 15px;">';
-        echo '<h4>' . esc_html__('Pending Retries', 'social-integration-for-bluesky') . '</h4>';
-        echo '<p style="margin: 8px 0;">' . esc_html($health_data['pending_retries']) . '</p>';
-        echo '</div>';
+        echo '<details class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('Pending Retries', 'social-integration-for-bluesky') . '</summary>';
+        echo '<p>' . esc_html($health_data['pending_retries']) . '</p>';
+        echo '</details>';
 
         // Recent Activity Section
-        echo '<div class="bluesky-health-section" style="margin-top: 15px;">';
-        echo '<h4>' . esc_html__('Recent Activity', 'social-integration-for-bluesky') . '</h4>';
+        echo '<details class="bluesky-health-detail">';
+        echo '<summary>' . esc_html__('Recent Activity', 'social-integration-for-bluesky') . '</summary>';
         if (!empty($health_data['recent_activity'])) {
-            echo '<ul style="margin: 0; padding-left: 20px; font-size: 13px;">';
+            echo '<ul class="bluesky-health-activity">';
             foreach ($health_data['recent_activity'] as $event) {
-                echo '<li style="margin: 3px 0;">';
-                echo '<span style="color: #666; margin-right: 8px;">' . esc_html($event['time']) . '</span>';
+                echo '<li>';
+                echo '<span class="bluesky-activity-time">' . esc_html($event['time']) . '</span>';
                 echo esc_html($event['message']);
                 echo '</li>';
             }
             echo '</ul>';
         } else {
-            echo '<p style="margin: 8px 0; font-size: 13px;">' . esc_html__('No recent activity recorded.', 'social-integration-for-bluesky') . '</p>';
+            echo '<p class="description">' . esc_html__('No recent activity recorded.', 'social-integration-for-bluesky') . '</p>';
         }
-        echo '</div>';
+        echo '</details>';
 
         // Footer with refresh button and link to settings
         $settings_url = admin_url('options-general.php?page=' . BLUESKY_PLUGIN_SETTING_PAGENAME . '#health');

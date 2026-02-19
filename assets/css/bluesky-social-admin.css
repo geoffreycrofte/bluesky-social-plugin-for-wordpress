@@ -483,9 +483,29 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 }
 
 /* Dashboard Health Widget */
-#bluesky_health_widget .bluesky-health-block {
-    margin-bottom: 12px;
-    padding-bottom: 12px;
+#bluesky_health_widget .bluesky-health-detail {
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+}
+
+#bluesky_health_widget .bluesky-health-detail:last-of-type {
+    border-bottom: none;
+}
+
+#bluesky_health_widget .bluesky-health-detail summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 0;
+    list-style: revert;
+}
+
+#bluesky_health_widget .bluesky-health-detail summary:hover {
+    color: #2271b1;
+}
+
+#bluesky_health_widget .bluesky-health-detail > p,
+#bluesky_health_widget .bluesky-health-detail > ul {
+    margin: 8px 0 4px;
 }
 
 #bluesky_health_widget .bluesky-widget-footer {

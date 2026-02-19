@@ -68,7 +68,7 @@ class BlueSky_Health_Monitor
      */
     public function test_accounts_configured()
     {
-        $accounts = $this->account_manager->get_all_accounts();
+        $accounts = $this->account_manager->get_accounts();
         $account_count = count($accounts);
 
         if ($account_count === 0) {
@@ -188,12 +188,12 @@ class BlueSky_Health_Monitor
      */
     public function test_circuit_breaker()
     {
-        $accounts = $this->account_manager->get_all_accounts();
+        $accounts = $this->account_manager->get_accounts();
         $open_breakers = [];
 
         foreach ($accounts as $account) {
             $breaker = new BlueSky_Circuit_Breaker($account['id']);
-            if (!$breaker->is_request_allowed()) {
+            if (!$breaker->is_available()) {
                 $open_breakers[] = $account['handle'];
             }
         }
@@ -250,7 +250,7 @@ class BlueSky_Health_Monitor
     public function register_debug_info($info)
     {
         $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
-        $accounts = $this->account_manager->get_all_accounts();
+        $accounts = $this->account_manager->get_accounts();
 
         // Calculate cache duration in minutes
         $cache_seconds = isset($options['total_seconds']) ? (int) $options['total_seconds'] : 600;
@@ -289,7 +289,7 @@ class BlueSky_Health_Monitor
             $circuit_breaker = new BlueSky_Circuit_Breaker($account['id']);
             $rate_limiter = new BlueSky_Rate_Limiter();
 
-            $circuit_status = $circuit_breaker->is_request_allowed()
+            $circuit_status = $circuit_breaker->is_available()
                 ? __('Closed', 'social-integration-for-bluesky')
                 : __('Open', 'social-integration-for-bluesky');
 
