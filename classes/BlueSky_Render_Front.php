@@ -234,6 +234,16 @@ class BlueSky_Render_Front
         // Apply layout class
         $classes .= " display-" . esc_attr($layout);
 
+        // For layout_2, fetch profile data for the header
+        $profile = null;
+        if ($layout === 'layout_2') {
+            $profile_cache_key = $helpers->get_profile_transient_key($account_id ?: null);
+            $profile = get_transient($profile_cache_key);
+            if ($profile === false) {
+                $profile = $this->api_handler->get_bluesky_profile();
+            }
+        }
+
         // Render template
         ob_start();
         do_action("bluesky_before_post_list_markup", $posts);

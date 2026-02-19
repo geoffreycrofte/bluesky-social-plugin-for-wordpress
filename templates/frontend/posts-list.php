@@ -10,6 +10,7 @@ if (!defined("ABSPATH")) {
 // $layout - Layout type (default or layout_2)
 // $display_embeds - Boolean for displaying embeds
 // $no_counters - Boolean for hiding counters
+// $profile - Profile data array (layout_2 only, null otherwise)
 // $this - BlueSky_Render_Front instance for method calls
 ?>
 
@@ -22,27 +23,7 @@ if (!defined("ABSPATH")) {
    "social-integration-for-bluesky",
 ); ?>">
 
-    <?php if ($layout === "layout_2") {
-        $profile_helpers = new BlueSky_Helpers();
-        $profile_cache_key = $profile_helpers->get_profile_transient_key($account_id ?? null);
-        $profile = get_transient($profile_cache_key);
-        if ($profile === false && (!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
-            // No cached profile: render a small profile skeleton
-            ?>
-            <div class="bluesky-social-integration-profile-card-embedded bluesky-async-placeholder">
-                <div class="bluesky-social-integration-image">
-                    <span class="avatar bluesky-social-integration-avatar bluesky-skeleton-box" style="width:40px;height:40px;display:inline-block;"></span>
-                    <div class="bluesky-social-integration-content">
-                        <div class="bluesky-social-integration-content-names">
-                            <p class="bluesky-social-integration-name"><span class="bluesky-skeleton-box" style="width:100px;height:1em;display:inline-block;"></span></p>
-                            <p class="bluesky-social-integration-handle"><span class="bluesky-skeleton-box" style="width:80px;height:1em;display:inline-block;"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php } elseif ($profile) {
-            // Cached profile: render full embedded profile
-        ?>
+    <?php if ($layout === "layout_2" && !empty($profile)) { ?>
     <div class="bluesky-social-integration-profile-card-embedded">
         <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset(
             $profile["banner"],
@@ -76,8 +57,7 @@ if (!defined("ABSPATH")) {
             </div>
         </div>
     </div>
-        <?php }
-    } ?>
+    <?php } ?>
 
     <ul class="bluesky-social-integration-last-post-list">
 
