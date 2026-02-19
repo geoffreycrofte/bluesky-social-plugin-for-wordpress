@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 4 (Error Handling UX) — Plan 01 complete
+**Current focus:** Phase 4 (Error Handling UX) — Plan 02 complete
 
 ## Current Position
 
-Phase: 4 of 7 (Error Handling UX) — Plan 01 complete
-Next: Plan 02 (Health Dashboard Widget)
-Last activity: 2026-02-19 — 04-01 complete (Error Translation & Activity Logging)
+Phase: 4 of 7 (Error Handling UX) — Plan 02 complete
+Next: Plan 03 (Health Dashboard Widget)
+Last activity: 2026-02-19 — 04-02 complete (Persistent Admin Notices)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██░░░░░░░░] 20% (Phase 4)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [████░░░░░░] 40% (Phase 4)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: ~3.8 minutes (automated plans)
-- Total execution time: ~2.1 hours + 4 iterative testing sessions
+- Total plans completed: 19
+- Average duration: ~3.5 minutes (automated plans)
+- Total execution time: ~2.2 hours + 4 iterative testing sessions
 
 **By Phase:**
 
@@ -29,7 +29,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 01 | 5 | ~20 min + testing | ~4 min |
 | 02 | 6 | ~40 min | ~6.7 min |
 | 03 | 6 | ~24 min | ~4.0 min |
-| 04 | 1 | ~2.2 min | ~2.2 min |
+| 04 | 2 | ~5.1 min | ~2.6 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -47,6 +47,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 03-05: Automated execution (4 min) — resilience integration (3-layer cache + stale-while-revalidate)
 - Plan 03-06: Checkpoint (~8 min) — E2E verification, 2 bug fixes, human approved
 - Plan 04-01: Automated execution (2.2 min) — error translation & activity logging utility classes
+- Plan 04-02: Automated execution (2.9 min) — persistent admin notices with per-account status
 
 *Updated after each plan completion*
 
@@ -131,6 +132,10 @@ Recent decisions affecting current work:
 - Action links only for critical errors (auth/config), not transient errors (04-01)
 - Circular buffer max 10 events with FIFO rotation for activity log (04-01)
 - Static utility class pattern for Error Translator, instantiable for Activity Logger (04-01)
+- Persistent notices use user meta with 24-hour expiry (per-user dismissal) (04-02)
+- Multiple broken accounts grouped into single notice (max 5 shown explicitly) (04-02)
+- Retry button only shown after 3 auto-retries exhaust (retry_count >= 3) (04-02)
+- Per-account syndication detail shown inline with specific error messages (04-02)
 
 ### Pending Todos
 
@@ -144,8 +149,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 04-01-PLAN.md
-Resume file: .planning/phases/04-error-handling-ux/04-01-SUMMARY.md
+Stopped at: Completed 04-02-PLAN.md
+Resume file: .planning/phases/04-error-handling-ux/04-02-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
