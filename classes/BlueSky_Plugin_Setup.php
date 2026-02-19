@@ -55,6 +55,12 @@ class BlueSky_Plugin_Setup
     private $health_dashboard;
 
     /**
+     * Health monitor instance
+     * @var BlueSky_Health_Monitor
+     */
+    private $health_monitor;
+
+    /**
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      * @param BlueSky_Account_Manager $account_manager Account manager instance
@@ -72,6 +78,7 @@ class BlueSky_Plugin_Setup
         $this->blocks         = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
         $this->admin_notices  = new BlueSky_Admin_Notices($async_handler);
         $this->health_dashboard = new BlueSky_Health_Dashboard($account_manager);
+        $this->health_monitor = new BlueSky_Health_Monitor();
 
         // On activation
         register_activation_hook(BLUESKY_PLUGIN_FILE, [
