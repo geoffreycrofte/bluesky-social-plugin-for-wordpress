@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 4 (Error Handling UX) — Plan 04 complete
+**Current focus:** Phase 4 (Error Handling UX) — All plans complete, verifying
 
 ## Current Position
 
-Phase: 4 of 7 (Error Handling UX) — Plan 04 complete
-Next: Plan 05 (if exists) or Phase 05
-Last activity: 2026-02-19 — 04-04 complete (WordPress Site Health Integration)
+Phase: 4 of 7 (Error Handling UX) — All plans complete, verification pending
+Next: Phase verification
+Last activity: 2026-02-19 — 04-05 complete (Integration wiring + E2E human verification approved)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [████████░░] 80% (Phase 4)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] Phase 4 verifying
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: ~3.3 minutes (automated plans)
-- Total execution time: ~2.3 hours + 4 iterative testing sessions
+- Total plans completed: 22
+- Average duration: ~3.2 minutes (automated plans)
+- Total execution time: ~2.5 hours + 5 iterative testing sessions
 
 **By Phase:**
 
@@ -29,7 +29,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 01 | 5 | ~20 min + testing | ~4 min |
 | 02 | 6 | ~40 min | ~6.7 min |
 | 03 | 6 | ~24 min | ~4.0 min |
-| 04 | 3 | ~7.1 min | ~2.4 min |
+| 04 | 5 | ~20 min | ~4.0 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -48,7 +48,9 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 03-06: Checkpoint (~8 min) — E2E verification, 2 bug fixes, human approved
 - Plan 04-01: Automated execution (2.2 min) — error translation & activity logging utility classes
 - Plan 04-02: Automated execution (2.9 min) — persistent admin notices with per-account status
+- Plan 04-03: Mixed (~5 min, split session) — health dashboard widget + settings page health section
 - Plan 04-04: Automated execution (2.0 min) — WordPress Site Health integration with tests & debug info
+- Plan 04-05: Checkpoint (~8 min) — integration wiring, 4 bug fixes, UX tweaks, human approved
 
 *Updated after each plan completion*
 
@@ -137,6 +139,12 @@ Recent decisions affecting current work:
 - Multiple broken accounts grouped into single notice (max 5 shown explicitly) (04-02)
 - Retry button only shown after 3 auto-retries exhaust (retry_count >= 3) (04-02)
 - Per-account syndication detail shown inline with specific error messages (04-02)
+- Health data cached in 5-min transient with manual refresh button (04-03)
+- Dashboard widget uses details/summary for collapsible sections, first open (04-03)
+- Settings health section replaces cache-only display with full health view (04-03)
+- Site Health debug labels use plain language, not technical jargon (04-04/04-05)
+- Auth errors tracked via wp_options registry for persistence across requests (04-05)
+- Failed accounts store handle + translated error message (04-05)
 
 ### Pending Todos
 
@@ -150,8 +158,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 04-04-PLAN.md
-Resume file: .planning/phases/04-error-handling-ux/04-04-SUMMARY.md
+Stopped at: Phase 4 all plans complete, verification pending
+Resume file: .planning/phases/04-error-handling-ux/04-05-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
