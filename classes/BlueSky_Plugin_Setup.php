@@ -51,10 +51,11 @@ class BlueSky_Plugin_Setup
         BlueSky_API_Handler $api_handler,
         ?BlueSky_Account_Manager $account_manager = null
     ) {
+        $async_handler       = new BlueSky_Async_Handler($api_handler, $account_manager);
         $this->render_front  = new BlueSky_Render_Front($api_handler);
         $this->settings      = new BlueSky_Settings_Service($api_handler, $account_manager);
         $this->ajax          = new BlueSky_AJAX_Service($api_handler, $account_manager);
-        $this->syndication   = new BlueSky_Syndication_Service($api_handler, $account_manager);
+        $this->syndication   = new BlueSky_Syndication_Service($api_handler, $account_manager, $async_handler);
         $this->assets        = new BlueSky_Assets_Service();
         $this->blocks        = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
 

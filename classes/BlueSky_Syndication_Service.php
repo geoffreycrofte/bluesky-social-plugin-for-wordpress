@@ -25,6 +25,12 @@ class BlueSky_Syndication_Service
     private $account_manager;
 
     /**
+     * Async Handler instance
+     * @var BlueSky_Async_Handler|null
+     */
+    private $async_handler;
+
+    /**
      * Helpers instance
      * @var BlueSky_Helpers
      */
@@ -34,11 +40,13 @@ class BlueSky_Syndication_Service
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      * @param BlueSky_Account_Manager $account_manager Account manager instance
+     * @param BlueSky_Async_Handler $async_handler Async handler instance
      */
-    public function __construct(BlueSky_API_Handler $api_handler, BlueSky_Account_Manager $account_manager = null)
+    public function __construct(BlueSky_API_Handler $api_handler, BlueSky_Account_Manager $account_manager = null, BlueSky_Async_Handler $async_handler = null)
     {
         $this->api_handler = $api_handler;
         $this->account_manager = $account_manager;
+        $this->async_handler = $async_handler;
         $this->helpers = new BlueSky_Helpers();
         $this->options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
     }
@@ -236,6 +244,17 @@ class BlueSky_Syndication_Service
             return;
         }
 
+        // Delegate to async handler if available
+        if ($this->async_handler) {
+            $scheduled = $this->async_handler->schedule_syndication($post_id, $selected_account_ids);
+            if ($scheduled) {
+                // Successfully scheduled async job
+                return;
+            }
+            // If scheduling failed, fall through to synchronous path
+        }
+
+        // Synchronous fallback path
         // Prepare post data
         $permalink = get_permalink($post_id);
 
