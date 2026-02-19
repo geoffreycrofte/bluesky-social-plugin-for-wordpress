@@ -25,6 +25,9 @@ class BlueSky_Assets_Service
      */
     public function admin_enqueue_scripts()
     {
+        // Enqueue admin notices script (persistent dismissal handler)
+        $this->enqueue_admin_notices_script();
+
         // Enqueue syndication notice script on post edit screens
         $this->enqueue_syndication_notice_script();
 
@@ -139,6 +142,26 @@ class BlueSky_Assets_Service
                 ],
             ]);
         }
+    }
+
+    /**
+     * Enqueue admin notices script
+     * Handles AJAX dismissal of persistent notices (expired credentials, circuit breaker)
+     * Loads on all admin pages (lightweight script < 1KB)
+     */
+    private function enqueue_admin_notices_script()
+    {
+        wp_enqueue_script(
+            'bluesky-admin-notices',
+            BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-admin-notices.js',
+            ['jquery'],
+            BLUESKY_PLUGIN_VERSION,
+            ['in_footer' => true, 'strategy' => 'defer']
+        );
+
+        wp_localize_script('bluesky-admin-notices', 'blueskyAdminNotices', [
+            'dismissNonce' => wp_create_nonce('bluesky_dismiss_notice'),
+        ]);
     }
 
     /**
