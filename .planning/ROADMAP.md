@@ -92,10 +92,14 @@ Plans:
   2. Expired authentication tokens trigger re-authentication prompt, not silent failure
   3. Rate limit errors display "temporarily unavailable" with retry timing estimate
   4. Admin dashboard widget shows plugin health: last syndication time, API status, account health
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md -- Error Translator + Activity Logger foundation classes
+- [ ] 04-02-PLAN.md -- Enhanced Admin Notices with persistent dismissal + per-account status
+- [ ] 04-03-PLAN.md -- Health Dashboard widget + Settings page health section rework
+- [ ] 04-04-PLAN.md -- WordPress Site Health integration (tests + debug info)
+- [ ] 04-05-PLAN.md -- Integration wiring + E2E human verification
 
 ### Phase 5: Profile & Content Display
 **Goal**: Users can display Bluesky-style profile banners and choose grid/list layouts with advanced filtering
