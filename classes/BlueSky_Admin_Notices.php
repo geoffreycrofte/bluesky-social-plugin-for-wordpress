@@ -13,21 +13,157 @@ class BlueSky_Admin_Notices
     private $async_handler;
 
     /**
+     * Account manager instance for account lookups
+     * @var BlueSky_Account_Manager|null
+     */
+    private $account_manager;
+
+    /**
      * Constructor
      * @param BlueSky_Async_Handler $async_handler Async handler instance
+     * @param BlueSky_Account_Manager|null $account_manager Account manager instance
      */
-    public function __construct(BlueSky_Async_Handler $async_handler)
+    public function __construct(BlueSky_Async_Handler $async_handler, BlueSky_Account_Manager $account_manager = null)
     {
         $this->async_handler = $async_handler;
+        $this->account_manager = $account_manager ?: new BlueSky_Account_Manager();
 
         // Register hooks
+        add_action('admin_notices', [$this, 'expired_credentials_notice']);
+        add_action('admin_notices', [$this, 'circuit_breaker_notice']);
         add_action('admin_notices', [$this, 'syndication_status_notice']);
         add_filter('heartbeat_received', [$this, 'check_syndication_status'], 10, 2);
         add_action('wp_ajax_bluesky_retry_syndication', [$this, 'handle_retry']);
+        add_action('wp_ajax_bluesky_dismiss_notice', [$this, 'handle_notice_dismissal']);
 
         // Post list column
         add_filter('manage_posts_columns', [$this, 'add_syndication_column']);
         add_action('manage_posts_custom_column', [$this, 'render_syndication_column'], 10, 2);
+    }
+
+    /**
+     * Display persistent notice for expired credentials
+     * Shows across all admin pages until dismissed (returns after 24 hours)
+     */
+    public function expired_credentials_notice()
+    {
+        // Only show to users who can manage options
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Check for accounts with auth errors
+        $auth_errors = get_option('bluesky_account_auth_errors', []);
+
+        // Also check circuit breakers for auth-related failures
+        $accounts = $this->account_manager->get_accounts();
+        $broken_accounts = [];
+
+        foreach ($accounts as $account) {
+            $account_id = $account['id'];
+
+            // Check if account is in auth_errors registry
+            if (in_array($account_id, $auth_errors)) {
+                $broken_accounts[$account_id] = $account['handle'];
+                continue;
+            }
+
+            // Check if circuit breaker is open (could be auth failure)
+            $circuit_breaker = new BlueSky_Circuit_Breaker($account_id);
+            if (!$circuit_breaker->is_available()) {
+                // Check if failure is auth-related by checking transient
+                $state = get_transient('bluesky_circuit_' . $account_id);
+                if ($state && isset($state['status']) && $state['status'] === 'open') {
+                    // Assume auth failure if circuit is open (could be refined)
+                    $broken_accounts[$account_id] = $account['handle'];
+                }
+            }
+        }
+
+        if (empty($broken_accounts)) {
+            return;
+        }
+
+        // Check if notice is dismissed
+        $dismissed_until = get_user_meta(get_current_user_id(), 'bluesky_expired_creds_dismissed', true);
+        if ($dismissed_until && time() < $dismissed_until) {
+            return; // Still dismissed
+        }
+
+        // Build message
+        $settings_url = admin_url('options-general.php?page=social_integration_for_bluesky');
+
+        if (count($broken_accounts) === 1) {
+            $handle = reset($broken_accounts);
+            $message = sprintf(
+                __('The Bluesky account %s needs re-authentication. <a href="%s">Update credentials</a>', 'social-integration-for-bluesky'),
+                '<strong>@' . esc_html($handle) . '</strong>',
+                esc_url($settings_url)
+            );
+        } else {
+            // Show up to 5 accounts explicitly
+            $handles = array_values($broken_accounts);
+            $display_handles = array_slice($handles, 0, 5);
+            $remaining = count($handles) - count($display_handles);
+
+            $handles_text = implode(', ', array_map(function($h) {
+                return '@' . esc_html($h);
+            }, $display_handles));
+
+            if ($remaining > 0) {
+                $handles_text .= sprintf(__(' ...and %d more', 'social-integration-for-bluesky'), $remaining);
+            }
+
+            $message = sprintf(
+                __('Bluesky accounts %s need re-authentication. <a href="%s">Update credentials</a>', 'social-integration-for-bluesky'),
+                '<strong>' . $handles_text . '</strong>',
+                esc_url($settings_url)
+            );
+        }
+
+        echo '<div class="notice notice-error is-dismissible" data-dismissible="bluesky_expired_creds_dismissed">';
+        echo '<p>' . $message . '</p>';
+        echo '</div>';
+    }
+
+    /**
+     * Display persistent notice for circuit breaker open
+     * Shows across all admin pages until dismissed (returns after 24 hours)
+     */
+    public function circuit_breaker_notice()
+    {
+        // Only show to users who can manage options
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Check if any accounts have open circuit breakers
+        $accounts = $this->account_manager->get_accounts();
+        $open_breakers = [];
+
+        foreach ($accounts as $account) {
+            $circuit_breaker = new BlueSky_Circuit_Breaker($account['id']);
+            if (!$circuit_breaker->is_available()) {
+                $open_breakers[] = $account['handle'];
+            }
+        }
+
+        if (empty($open_breakers)) {
+            return;
+        }
+
+        // Check if notice is dismissed
+        $dismissed_until = get_user_meta(get_current_user_id(), 'bluesky_circuit_breaker_dismissed', true);
+        if ($dismissed_until && time() < $dismissed_until) {
+            return; // Still dismissed
+        }
+
+        // Friendly explanation
+        $message = __('Bluesky requests paused due to repeated errors. Will resume automatically.', 'social-integration-for-bluesky');
+
+        echo '<div class="notice notice-warning is-dismissible" data-dismissible="bluesky_circuit_breaker_dismissed">';
+        echo '<p>' . esc_html($message) . '</p>';
+        echo '</div>';
     }
 
     /**
@@ -77,14 +213,32 @@ class BlueSky_Admin_Notices
 
             case 'failed':
                 $failed_accounts = get_post_meta($post->ID, '_bluesky_syndication_failed_accounts', true);
-                $account_names = is_array($failed_accounts) ? implode(', ', array_keys($failed_accounts)) : __('unknown', 'social-integration-for-bluesky');
+                $retry_count = (int) get_post_meta($post->ID, '_bluesky_syndication_retry_count', true);
+
                 echo '<div class="notice notice-error bluesky-syndication-notice" data-post-id="' . esc_attr($post->ID) . '">';
                 echo '<p>';
-                /* translators: %s: list of failed account names */
-                echo esc_html(sprintf(__('Failed to syndicate to Bluesky accounts: %s', 'social-integration-for-bluesky'), $account_names));
-                echo ' <a href="#" class="bluesky-retry-syndication" data-post-id="' . esc_attr($post->ID) . '" data-nonce="' . esc_attr($retry_nonce) . '">';
-                echo esc_html__('Retry now', 'social-integration-for-bluesky');
-                echo '</a></p></div>';
+
+                // Show per-account detail
+                if (is_array($failed_accounts) && !empty($failed_accounts)) {
+                    echo '<strong>' . esc_html__('Syndication failed:', 'social-integration-for-bluesky') . '</strong><br>';
+                    foreach ($failed_accounts as $handle => $error_info) {
+                        $error_msg = is_array($error_info) && isset($error_info['error']) ? $error_info['error'] : __('Unknown error', 'social-integration-for-bluesky');
+                        echo '<span style="margin-left:10px;">• @' . esc_html($handle) . ': ' . esc_html($error_msg) . '</span><br>';
+                    }
+                } else {
+                    echo esc_html__('Failed to syndicate to Bluesky.', 'social-integration-for-bluesky') . '<br>';
+                }
+
+                // Show retry button only after auto-retries exhaust (max 3 retries)
+                if ($retry_count >= 3) {
+                    echo '<a href="#" class="bluesky-retry-syndication" data-post-id="' . esc_attr($post->ID) . '" data-nonce="' . esc_attr($retry_nonce) . '">';
+                    echo esc_html__('Retry now', 'social-integration-for-bluesky');
+                    echo '</a>';
+                } else {
+                    echo '<em>' . esc_html__('Will retry automatically.', 'social-integration-for-bluesky') . '</em>';
+                }
+
+                echo '</p></div>';
                 break;
 
             case 'retrying':
@@ -99,15 +253,37 @@ class BlueSky_Admin_Notices
             case 'partial':
                 $completed = get_post_meta($post->ID, '_bluesky_syndication_accounts_completed', true);
                 $failed = get_post_meta($post->ID, '_bluesky_syndication_failed_accounts', true);
-                $completed_count = is_array($completed) ? count($completed) : 0;
-                $failed_count = is_array($failed) ? count($failed) : 0;
+                $retry_count = (int) get_post_meta($post->ID, '_bluesky_syndication_retry_count', true);
+
                 echo '<div class="notice notice-warning bluesky-syndication-notice" data-post-id="' . esc_attr($post->ID) . '">';
                 echo '<p>';
-                /* translators: %1$d: successful accounts, %2$d: failed accounts */
-                echo esc_html(sprintf(__('Partially syndicated: %1$d succeeded, %2$d failed.', 'social-integration-for-bluesky'), $completed_count, $failed_count));
-                echo ' <a href="#" class="bluesky-retry-syndication" data-post-id="' . esc_attr($post->ID) . '" data-nonce="' . esc_attr($retry_nonce) . '">';
-                echo esc_html__('Retry failed', 'social-integration-for-bluesky');
-                echo '</a></p></div>';
+                echo '<strong>' . esc_html__('Partial syndication:', 'social-integration-for-bluesky') . '</strong><br>';
+
+                // Show completed accounts
+                if (is_array($completed) && !empty($completed)) {
+                    foreach ($completed as $handle) {
+                        echo '<span style="margin-left:10px;color:#46b450;">• @' . esc_html($handle) . ': ' . esc_html__('Posted successfully', 'social-integration-for-bluesky') . '</span><br>';
+                    }
+                }
+
+                // Show failed accounts with errors
+                if (is_array($failed) && !empty($failed)) {
+                    foreach ($failed as $handle => $error_info) {
+                        $error_msg = is_array($error_info) && isset($error_info['error']) ? $error_info['error'] : __('Unknown error', 'social-integration-for-bluesky');
+                        echo '<span style="margin-left:10px;color:#dc3232;">• @' . esc_html($handle) . ': ' . esc_html($error_msg) . '</span><br>';
+                    }
+                }
+
+                // Show retry button only after auto-retries exhaust
+                if ($retry_count >= 3) {
+                    echo '<a href="#" class="bluesky-retry-syndication" data-post-id="' . esc_attr($post->ID) . '" data-nonce="' . esc_attr($retry_nonce) . '">';
+                    echo esc_html__('Retry failed accounts', 'social-integration-for-bluesky');
+                    echo '</a>';
+                } else {
+                    echo '<em>' . esc_html__('Will retry failed accounts automatically.', 'social-integration-for-bluesky') . '</em>';
+                }
+
+                echo '</p></div>';
                 break;
 
             case 'circuit_open':
@@ -283,5 +459,29 @@ class BlueSky_Admin_Notices
                 echo '<span style="color:#888;">—</span>';
                 break;
         }
+    }
+
+    /**
+     * Handle AJAX notice dismissal
+     * Stores dismissal with 24-hour expiry in user meta
+     */
+    public function handle_notice_dismissal()
+    {
+        // Verify nonce
+        check_ajax_referer('bluesky_dismiss_notice', 'nonce');
+
+        // Get and validate notice key
+        $notice_key = isset($_POST['notice_key']) ? sanitize_key($_POST['notice_key']) : '';
+
+        // Validate notice_key is one of the allowed keys
+        $allowed_keys = ['bluesky_expired_creds_dismissed', 'bluesky_circuit_breaker_dismissed'];
+        if (!in_array($notice_key, $allowed_keys)) {
+            wp_send_json_error(['message' => __('Invalid notice key.', 'social-integration-for-bluesky')]);
+        }
+
+        // Store dismissal with 24-hour expiry
+        update_user_meta(get_current_user_id(), $notice_key, time() + DAY_IN_SECONDS);
+
+        wp_send_json_success();
     }
 }
