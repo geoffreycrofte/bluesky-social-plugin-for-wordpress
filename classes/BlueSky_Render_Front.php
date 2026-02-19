@@ -186,10 +186,28 @@ class BlueSky_Render_Front
             $no_reposts,
         );
         $cached_posts = get_transient($cache_key);
+        $is_fresh = BlueSky_Helpers::is_cache_fresh($cache_key);
+        $cache_timestamp = null;
 
         if ($cached_posts !== false) {
             // Fast path: render from cache (no API call)
             $posts = $cached_posts;
+
+            // If cache is stale, schedule background refresh
+            if (!$is_fresh) {
+                BlueSky_Helpers::schedule_cache_refresh($cache_key, $account_id, [
+                    'limit' => intval($number_of_posts),
+                    'no_replies' => (bool) $no_replies,
+                    'no_reposts' => $no_reposts,
+                ]);
+                // Get cache timestamp from freshness marker (it stores the time)
+                $freshness_key = $cache_key . '_fresh';
+                $cache_timestamp = get_transient($freshness_key);
+                if (false === $cache_timestamp) {
+                    // Freshness marker expired - estimate from transient expiry
+                    $cache_timestamp = time() - 600; // Assume 10 minutes old
+                }
+            }
         } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
             // No cache and not an AJAX/REST request: return skeleton placeholder
             $params = wp_json_encode([
@@ -230,6 +248,13 @@ class BlueSky_Render_Front
         }
 
         include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/posts-list.php';
+
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
         do_action("bluesky_after_post_list_markup", $posts);
         return ob_get_clean();
     }
@@ -349,10 +374,24 @@ class BlueSky_Render_Front
         $helpers = new BlueSky_Helpers();
         $profile_cache_key = $helpers->get_profile_transient_key($account_id);
         $cached_profile = get_transient($profile_cache_key);
+        $is_fresh = BlueSky_Helpers::is_cache_fresh($profile_cache_key);
+        $cache_timestamp = null;
 
         if ($cached_profile !== false) {
             // Fast path: use cached profile
             $profile = $cached_profile;
+
+            // If cache is stale, schedule background refresh
+            if (!$is_fresh) {
+                BlueSky_Helpers::schedule_cache_refresh($profile_cache_key, $account_id, []);
+                // Get cache timestamp from freshness marker
+                $freshness_key = $profile_cache_key . '_fresh';
+                $cache_timestamp = get_transient($freshness_key);
+                if (false === $cache_timestamp) {
+                    // Freshness marker expired - estimate from transient expiry
+                    $cache_timestamp = time() - 600; // Assume 10 minutes old
+                }
+            }
         } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
             // No cache and not AJAX/REST: return skeleton placeholder
             $classes_arr = [
@@ -431,6 +470,13 @@ class BlueSky_Render_Front
         do_action("bluesky_before_profile_card_markup", $profile);
         add_action("wp_head", [$this, "render_inline_custom_styles_profile"]);
         include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/profile-card.php';
+
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
         do_action("bluesky_after_profile_card_markup", $profile);
         return ob_get_clean();
     }

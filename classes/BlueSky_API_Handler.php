@@ -62,6 +62,13 @@ class BlueSky_API_Handler
     {
         $this->options = $options;
         $this->rate_limiter = new BlueSky_Rate_Limiter();
+
+        // Register background refresh hook (only once)
+        static $hooks_registered = false;
+        if (!$hooks_registered) {
+            add_action('bluesky_refresh_cache', [__CLASS__, 'background_refresh_cache'], 10, 1);
+            $hooks_registered = true;
+        }
     }
 
     /**
@@ -1245,5 +1252,120 @@ class BlueSky_API_Handler
         }
 
         return $embedded_media;
+    }
+
+    /**
+     * Background cache refresh callback (Action Scheduler hook)
+     *
+     * @param array $args Job arguments with 'cache_key', 'account_id', and 'params'
+     * @return void
+     */
+    public static function background_refresh_cache($args)
+    {
+        $cache_key = $args['cache_key'] ?? '';
+        $account_id = $args['account_id'] ?? '';
+        $params = $args['params'] ?? [];
+
+        if (empty($cache_key)) {
+            return;
+        }
+
+        // Determine cache type from key
+        if (strpos($cache_key, '-profile') !== false) {
+            // Profile refresh
+            self::refresh_profile_cache($cache_key, $account_id);
+        } elseif (strpos($cache_key, '-posts-') !== false) {
+            // Posts refresh
+            self::refresh_posts_cache($cache_key, $account_id, $params);
+        }
+
+        // Clear refreshing lock
+        $refreshing_key = $cache_key . '_refreshing';
+        delete_transient($refreshing_key);
+    }
+
+    /**
+     * Refresh profile cache in background
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @return void
+     */
+    private static function refresh_profile_cache($cache_key, $account_id)
+    {
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        $cache_duration = $options['cache_duration']['total_seconds'] ?? 600;
+
+        // Create API handler for the account
+        $api_handler = null;
+        if (!empty($account_id)) {
+            // Multi-account case
+            $account_manager = new BlueSky_Account_Manager();
+            $account = $account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = self::create_for_account($account);
+            }
+        }
+
+        if (!$api_handler) {
+            // Single account fallback
+            $api_handler = new self($options);
+        }
+
+        // Fetch fresh data (bypasses request cache, uses transient)
+        $profile = $api_handler->get_bluesky_profile();
+
+        if ($profile !== false) {
+            // Update transient with fresh data (2x TTL for stale fallback)
+            set_transient($cache_key, $profile, $cache_duration * 2);
+            // Set freshness marker transient (normal TTL)
+            $freshness_key = $cache_key . '_fresh';
+            set_transient($freshness_key, time(), $cache_duration);
+        }
+    }
+
+    /**
+     * Refresh posts cache in background
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @param array $params Fetch parameters
+     * @return void
+     */
+    private static function refresh_posts_cache($cache_key, $account_id, $params)
+    {
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        $cache_duration = $options['cache_duration']['total_seconds'] ?? 600;
+
+        // Create API handler for the account
+        $api_handler = null;
+        if (!empty($account_id)) {
+            // Multi-account case
+            $account_manager = new BlueSky_Account_Manager();
+            $account = $account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = self::create_for_account($account);
+            }
+        }
+
+        if (!$api_handler) {
+            // Single account fallback
+            $api_handler = new self($options);
+        }
+
+        // Fetch fresh data
+        $limit = $params['limit'] ?? 5;
+        $no_replies = $params['no_replies'] ?? true;
+        $no_reposts = $params['no_reposts'] ?? true;
+
+        $posts = $api_handler->fetch_bluesky_posts($limit, $no_replies, $no_reposts);
+
+        if ($posts !== false) {
+            // Update transient with fresh data (2x TTL for stale fallback)
+            set_transient($cache_key, $posts, $cache_duration * 2);
+            // Set freshness marker transient (normal TTL)
+            $freshness_key = $cache_key . '_fresh';
+            set_transient($freshness_key, time(), $cache_duration);
+        }
     }
 }

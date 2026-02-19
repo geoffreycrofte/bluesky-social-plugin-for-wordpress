@@ -342,4 +342,62 @@ class BlueSky_Helpers {
             '%' . $wpdb->esc_like($prefix . '%' . $account_id) . '%'
         ));
     }
+
+    /**
+     * Convert Unix timestamp to human-readable "X ago" format
+     *
+     * @param int $timestamp Unix timestamp
+     * @return string Human-readable time difference
+     */
+    public static function time_ago($timestamp) {
+        if (empty($timestamp) || !is_numeric($timestamp)) {
+            return '';
+        }
+        return human_time_diff($timestamp, time());
+    }
+
+    /**
+     * Check if cache is fresh (freshness marker exists)
+     *
+     * @param string $cache_key Cache transient key
+     * @return bool True if cache is fresh, false if stale
+     */
+    public static function is_cache_fresh($cache_key) {
+        $freshness_key = $cache_key . '_fresh';
+        $fresh_marker = get_transient($freshness_key);
+        return false !== $fresh_marker;
+    }
+
+    /**
+     * Schedule cache refresh via Action Scheduler if not already scheduled
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @param array $params Fetch parameters
+     * @return void
+     */
+    public static function schedule_cache_refresh($cache_key, $account_id, $params) {
+        // Check if already refreshing
+        $refreshing_key = $cache_key . '_refreshing';
+        if (false !== get_transient($refreshing_key)) {
+            return; // Already scheduled
+        }
+
+        // Set refreshing lock (5 minutes)
+        set_transient($refreshing_key, time(), 300);
+
+        // Schedule refresh job if Action Scheduler is available
+        if (function_exists('as_schedule_single_action')) {
+            as_schedule_single_action(
+                time(),
+                'bluesky_refresh_cache',
+                [
+                    'cache_key' => $cache_key,
+                    'account_id' => $account_id,
+                    'params' => $params,
+                ],
+                'bluesky-cache-refresh'
+            );
+        }
+    }
 }
