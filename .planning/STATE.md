@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 3 (Performance & Resilience) — Plan 05 complete
+**Current focus:** Phase 3 (Performance & Resilience) — Plan 06 complete, verifying
 
 ## Current Position
 
-Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 05/N complete)
-Next: Phase 3, Plan 06 (if exists) — TBD
-Last activity: 2026-02-19 — 03-05 complete (resilience integration)
+Phase: 3 of 7 (Performance & Resilience) — All plans complete, verification pending
+Next: Phase verification
+Last activity: 2026-02-19 — 03-06 complete (E2E verification + human approval)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [█] Phase 3 in progress
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] Phase 3 verifying
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: ~4.0 minutes (automated plans)
-- Total execution time: ~1.90 hours + 3 iterative testing sessions
+- Total execution time: ~2.0 hours + 4 iterative testing sessions
 
 **By Phase:**
 
@@ -28,7 +28,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
 | 02 | 6 | ~40 min | ~6.7 min |
-| 03 | 5 (so far) | ~15.6 min | ~3.1 min |
+| 03 | 6 | ~24 min | ~4.0 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -44,6 +44,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 03-03: Automated execution (3 min) — async syndication handler with Action Scheduler
 - Plan 03-04: Automated execution (2.6 min) — admin notification system with Heartbeat API
 - Plan 03-05: Automated execution (4 min) — resilience integration (3-layer cache + stale-while-revalidate)
+- Plan 03-06: Checkpoint (~8 min) — E2E verification, 2 bug fixes, human approved
 
 *Updated after each plan completion*
 
@@ -123,6 +124,8 @@ Recent decisions affecting current work:
 - Serve stale cache when circuit is open or rate limited (never empty/error if cache exists) (03-05)
 - Background refresh via Action Scheduler with 5-min refreshing lock to prevent duplicates (03-05)
 - Freshness marker transient ({cache_key}_fresh) with normal TTL to detect staleness (03-05)
+- Sync paths set _bluesky_syndication_status for column display + legacy _bluesky_syndicated fallback (03-06)
+- Layout_2 profile header fetched by renderer, not template-level transient lookup (03-06)
 
 ### Pending Todos
 
