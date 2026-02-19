@@ -199,11 +199,11 @@ class BlueSky_Health_Dashboard
 
             // Check circuit breaker status
             $circuit_breaker = new BlueSky_Circuit_Breaker($account_id);
-            $is_open = $circuit_breaker->is_open();
+            $is_open = ! $circuit_breaker->is_available();
 
             // Check rate limiter status
-            $rate_limiter = new BlueSky_Rate_Limiter($account_id);
-            $is_rate_limited = $rate_limiter->is_rate_limited();
+            $rate_limiter = new BlueSky_Rate_Limiter();
+            $is_rate_limited = $rate_limiter->is_rate_limited($account_id);
 
             // Determine status
             if ($is_open) {
@@ -241,7 +241,7 @@ class BlueSky_Health_Dashboard
         foreach ($accounts as $account) {
             $account_id = $account['id'] ?? '';
             $circuit_breaker = new BlueSky_Circuit_Breaker($account_id);
-            if ($circuit_breaker->is_open()) {
+            if (! $circuit_breaker->is_available()) {
                 $broken_accounts[] = $account['handle'] ?? $account_id;
             }
         }

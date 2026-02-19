@@ -1263,7 +1263,200 @@ class BlueSky_Settings_Service
     }
 
     /**
-     * Display cache status
+     * Display health section (replaces cache-only view)
+     */
+    public function display_health_section()
+    {
+        // Create instances of needed services
+        $circuit_breaker_class_exists = class_exists('BlueSky_Circuit_Breaker');
+        $rate_limiter_class_exists = class_exists('BlueSky_Rate_Limiter');
+        $activity_logger_class_exists = class_exists('BlueSky_Activity_Logger');
+
+        $output = '<aside class="bluesky-health-section" id="health">';
+        $output .= '<h3 class="bluesky-health-title">' . esc_html__('Plugin Health', 'social-integration-for-bluesky') . '</h3>';
+
+        // Account Status Block
+        $output .= '<div class="bluesky-health-block">';
+        $output .= '<h4>' . esc_html__('Account Status', 'social-integration-for-bluesky') . '</h4>';
+
+        if ($this->account_manager) {
+            $accounts = $this->account_manager->get_accounts();
+            if (!empty($accounts)) {
+                $output .= '<ul class="bluesky-health-accounts">';
+                foreach ($accounts as $account) {
+                    $account_id = $account['id'] ?? '';
+                    $handle = $account['handle'] ?? '';
+
+                    // Check circuit breaker status
+                    $is_open = false;
+                    if ($circuit_breaker_class_exists) {
+                        $circuit_breaker = new BlueSky_Circuit_Breaker($account_id);
+                        $is_open = ! $circuit_breaker->is_available();
+                    }
+
+                    // Check rate limiter status
+                    $is_rate_limited = false;
+                    if ($rate_limiter_class_exists) {
+                        $rate_limiter = new BlueSky_Rate_Limiter();
+                        $is_rate_limited = $rate_limiter->is_rate_limited($account_id);
+                    }
+
+                    // Determine status and icon
+                    if ($is_open) {
+                        $icon = 'dashicons-warning';
+                        $status = __('Circuit open', 'social-integration-for-bluesky');
+                        $color = 'color: #d63638;';
+                    } elseif ($is_rate_limited) {
+                        $icon = 'dashicons-clock';
+                        $status = __('Rate limited', 'social-integration-for-bluesky');
+                        $color = 'color: #dba617;';
+                    } elseif (empty($account['did'])) {
+                        $icon = 'dashicons-warning';
+                        $status = __('Auth issue', 'social-integration-for-bluesky');
+                        $color = 'color: #d63638;';
+                    } else {
+                        $icon = 'dashicons-yes-alt';
+                        $status = __('Active', 'social-integration-for-bluesky');
+                        $color = 'color: #00a32a;';
+                    }
+
+                    $output .= '<li>';
+                    $output .= '<span class="dashicons ' . esc_attr($icon) . '" style="' . esc_attr($color) . '"></span> ';
+                    $output .= '<strong>' . esc_html($handle) . '</strong>: ' . esc_html($status);
+                    $output .= '</li>';
+                }
+                $output .= '</ul>';
+            } else {
+                $output .= '<p>' . esc_html__('No accounts configured.', 'social-integration-for-bluesky') . '</p>';
+            }
+        } else {
+            $output .= '<p>' . esc_html__('Account manager not available.', 'social-integration-for-bluesky') . '</p>';
+        }
+        $output .= '</div>';
+
+        // API Health Block
+        $output .= '<div class="bluesky-health-block">';
+        $output .= '<h4>' . esc_html__('API Health', 'social-integration-for-bluesky') . '</h4>';
+
+        $broken_accounts = [];
+        if ($this->account_manager && $circuit_breaker_class_exists) {
+            $accounts = $this->account_manager->get_accounts();
+            foreach ($accounts as $account) {
+                $account_id = $account['id'] ?? '';
+                $circuit_breaker = new BlueSky_Circuit_Breaker($account_id);
+                if (! $circuit_breaker->is_available()) {
+                    $broken_accounts[] = $account['handle'] ?? $account_id;
+                }
+            }
+        }
+
+        if (!empty($broken_accounts)) {
+            $output .= '<p>' . sprintf(
+                esc_html__('Circuit breaker open for: %s', 'social-integration-for-bluesky'),
+                esc_html(implode(', ', $broken_accounts))
+            ) . '</p>';
+        } else {
+            $output .= '<p>' . esc_html__('All systems operational', 'social-integration-for-bluesky') . '</p>';
+        }
+        $output .= '</div>';
+
+        // Cache Status Block (preserved from original display_cache_status)
+        $output .= '<div class="bluesky-health-block">';
+        $output .= '<h4>' . esc_html__('Cache Status', 'social-integration-for-bluesky') . '</h4>';
+
+        $helpers = $this->helpers;
+        $profile_transient = get_transient($helpers->get_profile_transient_key());
+        $posts_transient = get_transient($helpers->get_posts_transient_key());
+        $access_token_transient = get_transient($helpers->get_access_token_transient_key());
+        $refresh_token_transient = get_transient($helpers->get_refresh_token_transient_key());
+
+        // Profile cache status
+        $output .= '<p><strong>' . esc_html__('Profile Card Cache:', 'social-integration-for-bluesky') . '</strong> ';
+        if ($profile_transient !== false) {
+            $time_remaining = $this->get_transient_expiration_time($helpers->get_profile_transient_key());
+            $output .= sprintf(
+                esc_html__('Active (expires in %s)', 'social-integration-for-bluesky'),
+                '<code>' . esc_html($this->format_time_remaining($time_remaining)) . '</code>'
+            );
+        } else {
+            $output .= esc_html__('Not cached', 'social-integration-for-bluesky');
+        }
+        $output .= '</p>';
+
+        // Posts cache status
+        $output .= '<p><strong>' . esc_html__('Posts Feed Cache:', 'social-integration-for-bluesky') . '</strong> ';
+        if ($posts_transient !== false) {
+            $time_remaining = $this->get_transient_expiration_time($helpers->get_posts_transient_key());
+            $output .= sprintf(
+                esc_html__('Active (expires in %s)', 'social-integration-for-bluesky'),
+                '<code>' . esc_html($this->format_time_remaining($time_remaining)) . '</code>'
+            );
+        } else {
+            $output .= esc_html__('Not cached', 'social-integration-for-bluesky');
+        }
+        $output .= '</p>';
+
+        // Access Token cache status
+        $output .= '<p><strong>' . esc_html__('Access Token Cache:', 'social-integration-for-bluesky') . '</strong> ';
+        if ($access_token_transient !== false) {
+            $time_remaining = $this->get_transient_expiration_time($helpers->get_access_token_transient_key());
+            $output .= sprintf(
+                esc_html__('Active (expires in %s)', 'social-integration-for-bluesky'),
+                '<code>' . esc_html($this->format_time_remaining($time_remaining)) . '</code>'
+            );
+        } else {
+            $output .= esc_html__('Not cached', 'social-integration-for-bluesky');
+        }
+        $output .= '</p>';
+
+        // Refresh Token cache status
+        $output .= '<p><strong>' . esc_html__('Refresh Token Cache:', 'social-integration-for-bluesky') . '</strong> ';
+        if ($refresh_token_transient !== false) {
+            $time_remaining = $this->get_transient_expiration_time($helpers->get_refresh_token_transient_key());
+            $output .= sprintf(
+                esc_html__('Active (expires in %s)', 'social-integration-for-bluesky'),
+                '<code>' . esc_html($this->format_time_remaining($time_remaining)) . '</code>'
+            );
+        } else {
+            $output .= esc_html__('Not cached', 'social-integration-for-bluesky');
+        }
+        $output .= '</p>';
+
+        $output .= '</div>';
+
+        // Recent Activity Block
+        $output .= '<div class="bluesky-health-block">';
+        $output .= '<h4>' . esc_html__('Recent Activity', 'social-integration-for-bluesky') . '</h4>';
+
+        if ($activity_logger_class_exists) {
+            $activity_logger = new BlueSky_Activity_Logger();
+            $recent_events = $activity_logger->get_recent_events(5);
+
+            if (!empty($recent_events)) {
+                $output .= '<ul class="bluesky-health-activity">';
+                foreach ($recent_events as $event) {
+                    $output .= '<li>';
+                    $output .= '<span class="bluesky-activity-time">' . esc_html(BlueSky_Activity_Logger::format_event_time($event['time'])) . '</span>';
+                    $output .= esc_html($event['message']);
+                    $output .= '</li>';
+                }
+                $output .= '</ul>';
+            } else {
+                $output .= '<p class="description">' . esc_html__('No recent activity recorded.', 'social-integration-for-bluesky') . '</p>';
+            }
+        } else {
+            $output .= '<p class="description">' . esc_html__('Activity logger not available.', 'social-integration-for-bluesky') . '</p>';
+        }
+
+        $output .= '</div>';
+
+        $output .= '</aside>';
+
+        return $output;
+    }
+
+    /**
+     * Display cache status (kept for backward compatibility)
      */
     private function display_cache_status()
     {
