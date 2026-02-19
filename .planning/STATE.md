@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 3 (Performance & Resilience) — Plan 04 complete
+**Current focus:** Phase 3 (Performance & Resilience) — Plan 05 complete
 
 ## Current Position
 
-Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 04/N complete)
-Next: Phase 3, Plan 05 (if exists) — TBD
-Last activity: 2026-02-19 — 03-04 complete (admin notification system with Heartbeat API)
+Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 05/N complete)
+Next: Phase 3, Plan 06 (if exists) — TBD
+Last activity: 2026-02-19 — 03-05 complete (resilience integration)
 
 Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [█] Phase 3 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: ~4.5 minutes (automated plans)
-- Total execution time: ~1.83 hours + 3 iterative testing sessions
+- Total plans completed: 16
+- Average duration: ~4.0 minutes (automated plans)
+- Total execution time: ~1.90 hours + 3 iterative testing sessions
 
 **By Phase:**
 
@@ -28,7 +28,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
 | 02 | 6 | ~40 min | ~6.7 min |
-| 03 | 4 (so far) | ~11.6 min | ~2.9 min |
+| 03 | 5 (so far) | ~15.6 min | ~3.1 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -43,6 +43,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 03-02: Automated execution (2 min) — request-level cache with TDD
 - Plan 03-03: Automated execution (3 min) — async syndication handler with Action Scheduler
 - Plan 03-04: Automated execution (2.6 min) — admin notification system with Heartbeat API
+- Plan 03-05: Automated execution (4 min) — resilience integration (3-layer cache + stale-while-revalidate)
 
 *Updated after each plan completion*
 
@@ -117,6 +118,11 @@ Recent decisions affecting current work:
 - Heartbeat stops polling on final states: completed, failed, partial (no unnecessary requests) (03-04)
 - Post list column shows icons with dashicons (no custom assets needed) (03-04)
 - Nonce created server-side via wp_create_nonce() and verified via check_ajax_referer() (03-04)
+- 3-layer cache strategy (request→transient→API) with stale-while-revalidate serving (03-05)
+- Cache duration default changed from 1 hour to 10 minutes (600s) for faster staleness detection (03-05)
+- Serve stale cache when circuit is open or rate limited (never empty/error if cache exists) (03-05)
+- Background refresh via Action Scheduler with 5-min refreshing lock to prevent duplicates (03-05)
+- Freshness marker transient ({cache_key}_fresh) with normal TTL to detect staleness (03-05)
 
 ### Pending Todos
 
@@ -130,8 +136,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 03-04-PLAN.md
-Resume file: .planning/phases/03-performance-resilience/03-05-PLAN.md (if exists)
+Stopped at: Completed 03-05-PLAN.md
+Resume file: .planning/phases/03-performance-resilience/03-06-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
