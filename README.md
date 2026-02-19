@@ -3,9 +3,9 @@
 - Donate link: https://paypal.me/crofte
 - Tags: BlueSky, Syndicate, Profile, Feed
 - Requires at least: 5.0
-- Tested up to: 6.9
+- Tested up to: 6.9.1
 - Requires PHP: 7.4
-- Stable tag: 1.5.0
+- Stable tag: 2.0.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -133,19 +133,32 @@ No it is not. But I'm always happy when core team developers suggest new feature
 
 ## Changelog
 
-### 1.5.0
+### 2.0.0
+* **NEW FEATURES**
+  * **Multiple accounts**
+    * Add multiple accounts (optional) to a single WordPress site.
+    * Check the one used for auto-syndication to send new WordPress posts to multiple BlueSky accounts
+    * Pick a primary account named "Active" that will served as default account for Last Posts & Profile blocks
+    * Gutenberg Last Posts & Profile blocks now have an "accounts" option to let you pick one of the registered BlueSky profiles.
+  * **BlueSky Discussions:**
+    * Display the BlueSky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
+    * Added the ability to display BlueSky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
+    * Check in the Post List if the syndication exists (BlueSky column)
 * **Improvements**
+  * **Core functions**
+    * Rework of the entire codebase for a more maintainable code.
+    * Asynchronous loading to improve performance in the admin and in the front-end.
+    * Better cache management for the front-end display.
+    * Better BlueSky limit rate management in the admin and front-end.
+    * Better error message and UX in the admin area.
   * **Auto-published new posts:**
-    * Added the "rich card" support for syndication: now posts in Bluesky look better with image, title, excerpt and link, with an embedded media/card.
+    * Added the "rich card" support for syndication: now posts in BlueSky look better with image, title, excerpt and link, with an embedded media/card.
     * Added a preview of the syndicated post into the pre-post checks panel of WordPress.
-  * **Bluesky Discussions:**
-    * Display the Bluesky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
-    * Added the ability to display Bluesky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
   * **Latest BlueSky Posts**
-    * Counters now have the option to be displayed (likes, comments, repost, bookmarks)  
-*  **Compatibility**
-   * Tested with WordPress 6.9.
-   * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
+    * Counters now have the option to be displayed (likes, comments, repost, bookmarks)
+* **Compatibility**
+  * Tested with WordPress 6.9.
+  * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
 
 ### 1.4.5
 * **Bug Fix**
