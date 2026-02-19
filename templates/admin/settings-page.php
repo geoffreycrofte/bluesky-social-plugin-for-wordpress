@@ -808,7 +808,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     "Some Plugin Engine Info",
                     "social-integration-for-bluesky",
                 ); ?></h2>
-                <?php echo $this->display_cache_status(); ?>
+                <?php echo $this->display_health_section(); ?>
             </div>
 
         </form>

@@ -417,3 +417,91 @@ input.bluesky-custom-unit.bluesky-custom-unit {
     font-size: 11px;
     margin-left: 8px;
 }
+
+/* Health Section */
+.bluesky-health-section {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: #f8f8f8;
+    border-left: 4px solid #646970;
+    border-radius: 8px;
+}
+
+.bluesky-health-section .bluesky-health-title {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.bluesky-health-block {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.bluesky-health-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.bluesky-health-block h4 {
+    margin: 0 0 8px;
+}
+
+.bluesky-health-accounts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bluesky-health-accounts li {
+    padding: 4px 0;
+}
+
+.bluesky-health-accounts .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: text-bottom;
+}
+
+.bluesky-health-activity {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bluesky-health-activity li {
+    padding: 3px 0;
+    font-size: 13px;
+}
+
+.bluesky-health-activity .bluesky-activity-time {
+    color: #666;
+    margin-right: 8px;
+}
+
+/* Dashboard Health Widget */
+#bluesky_health_widget .bluesky-health-block {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+#bluesky_health_widget .bluesky-widget-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+#bluesky_health_widget .bluesky-widget-footer .dashicons.spin {
+    animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
