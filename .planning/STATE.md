@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 3 (Performance & Resilience) — Plan 02 complete
+**Current focus:** Phase 3 (Performance & Resilience) — Plan 03 complete
 
 ## Current Position
 
-Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 02/N complete)
-Next: Phase 3, Plan 03 — Integrate circuit breaker, rate limiter, and request cache into API Handler
-Last activity: 2026-02-18 — 03-02 complete (request-level cache implementation)
+Phase: 3 of 7 (Performance & Resilience) — In progress (Plan 03/N complete)
+Next: Phase 3, Plan 04 (if exists) — TBD
+Last activity: 2026-02-19 — 03-03 complete (async syndication handler with Action Scheduler)
 
 Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [█] Phase 3 in progress
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: ~5.0 minutes (automated plans)
-- Total execution time: ~1.7 hours + 3 iterative testing sessions
+- Total plans completed: 14
+- Average duration: ~4.8 minutes (automated plans)
+- Total execution time: ~1.75 hours + 3 iterative testing sessions
 
 **By Phase:**
 
@@ -28,7 +28,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 |-------|-------|-------|----------|
 | 01 | 5 | ~20 min + testing | ~4 min |
 | 02 | 6 | ~40 min | ~6.7 min |
-| 03 | 2 (so far) | ~6 min | ~3 min |
+| 03 | 3 (so far) | ~9 min | ~3 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -41,6 +41,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 02-06: Automated execution (8 min) — test coverage for critical paths
 - Plan 03-01: Automated execution (4 min) — circuit breaker & rate limiter with TDD
 - Plan 03-02: Automated execution (2 min) — request-level cache with TDD
+- Plan 03-03: Automated execution (3 min) — async syndication handler with Action Scheduler
 
 *Updated after each plan completion*
 
@@ -103,6 +104,12 @@ Recent decisions affecting current work:
 - Static variable cache for request-level deduplication (zero database queries) (03-02)
 - MD5 serialized params for deterministic cache key generation (03-02)
 - PHPUnit XML config standardizes test execution across project (03-02)
+- Action Scheduler integration with function_exists guard for graceful degradation (03-03)
+- Retry delays hardcoded as class constants: 60s, 120s, 300s (03-03)
+- Validation stays in Syndication_Service, execution moves to Async_Handler (03-03)
+- Post meta _bluesky_syndication_status tracks: pending, retrying, circuit_open, rate_limited, completed, partial, failed (03-03)
+- Circuit breaker cooldown: 15 minutes (hardcoded in queue_for_cooldown) (03-03)
+- Rate limiter provides custom retry delay overriding exponential backoff (03-03)
 
 ### Pending Todos
 
@@ -115,10 +122,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-18
-Stopped at: Completed 03-02-PLAN.md
-Resume file: .planning/phases/03-performance-resilience/03-03-PLAN.md (if exists)
+Last session: 2026-02-19
+Stopped at: Completed 03-03-PLAN.md
+Resume file: .planning/phases/03-performance-resilience/03-04-PLAN.md (if exists)
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-18*
+*Last updated: 2026-02-19*
