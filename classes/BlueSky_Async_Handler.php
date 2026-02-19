@@ -143,7 +143,7 @@ class BlueSky_Async_Handler {
 
             // Get account data
             if (!isset($all_accounts[$account_id])) {
-                $this->mark_failed($post_id, $account_id, 'Account not found');
+                $this->mark_failed($post_id, $account_id, 'Account not found', []);
                 continue;
             }
             $account = $all_accounts[$account_id];
@@ -153,6 +153,10 @@ class BlueSky_Async_Handler {
             if (!$breaker->is_available()) {
                 // Queue for retry after cooldown
                 $this->queue_for_cooldown($post_id, [$account_id], $attempt);
+
+                // Log circuit breaker event
+                $logger = new BlueSky_Activity_Logger();
+                $logger->log_event('circuit_opened', sprintf('Circuit breaker opened for @%s', $account['handle'] ?? 'unknown'), null, $account_id);
                 continue;
             }
 
@@ -162,6 +166,10 @@ class BlueSky_Async_Handler {
                 // Schedule retry after rate limit expires
                 $retry_after = $limiter->get_retry_after($account_id);
                 $this->schedule_retry($post_id, [$account_id], $attempt, $retry_after);
+
+                // Log rate limit event
+                $logger = new BlueSky_Activity_Logger();
+                $logger->log_event('rate_limited', sprintf('Rate limited while syndicating to @%s', $account['handle'] ?? 'unknown'), $post_id, $account_id);
                 continue;
             }
 
@@ -183,17 +191,43 @@ class BlueSky_Async_Handler {
             if ($result !== false && is_array($result)) {
                 // Success
                 $breaker->record_success();
-                $this->mark_success($post_id, $account_id, $result);
+                $this->mark_success($post_id, $account_id, $result, $account);
+
+                // Log success event
+                $logger = new BlueSky_Activity_Logger();
+                $logger->log_event('syndication_success', sprintf('Post "%s" syndicated to @%s', get_the_title($post_id), $account['handle'] ?? 'unknown'), $post_id, $account_id);
+
+                // Clear auth errors for this account on success
+                $auth_errors = get_option('bluesky_account_auth_errors', []);
+                if (isset($auth_errors[$account_id])) {
+                    unset($auth_errors[$account_id]);
+                    update_option('bluesky_account_auth_errors', $auth_errors);
+                }
             } else {
                 // Failure
                 $breaker->record_failure();
+
+                // Determine error type and translate
+                $error_data = $this->detect_error_type($api, $account_id);
+                $translated = BlueSky_Error_Translator::translate_error($error_data, 'syndication');
+
+                // Track auth errors
+                if ($error_data['status'] === 401 || in_array($error_data['code'], ['AuthenticationRequired', 'InvalidToken', 'ExpiredToken'])) {
+                    $auth_errors = get_option('bluesky_account_auth_errors', []);
+                    $auth_errors[$account_id] = ['handle' => $account['handle'] ?? 'unknown', 'time' => time()];
+                    update_option('bluesky_account_auth_errors', $auth_errors);
+                }
 
                 if ($attempt < self::MAX_ATTEMPTS) {
                     // Schedule retry
                     $this->schedule_retry($post_id, [$account_id], $attempt + 1);
                 } else {
                     // Max attempts reached
-                    $this->mark_failed($post_id, $account_id, 'Max retry attempts reached');
+                    $this->mark_failed($post_id, $account_id, $translated['message'], $account);
+
+                    // Log failure event
+                    $logger = new BlueSky_Activity_Logger();
+                    $logger->log_event('syndication_failed', sprintf('Post "%s" failed for @%s: %s', get_the_title($post_id), $account['handle'] ?? 'unknown', $translated['message']), $post_id, $account_id);
                 }
             }
         }
@@ -268,14 +302,53 @@ class BlueSky_Async_Handler {
     }
 
     /**
+     * Detect error type from API handler state
+     *
+     * @param BlueSky_API_Handler $api API handler instance
+     * @param string $account_id Account ID
+     * @return array Error data array with 'code', 'message', 'status' keys
+     */
+    private function detect_error_type($api, $account_id)
+    {
+        // Check if rate limited
+        $limiter = new BlueSky_Rate_Limiter();
+        if ($limiter->is_rate_limited($account_id)) {
+            return [
+                'code' => 'RateLimitExceeded',
+                'message' => 'Rate limit exceeded',
+                'status' => 429
+            ];
+        }
+
+        // Check if circuit breaker is open (multiple failures)
+        $breaker = new BlueSky_Circuit_Breaker($account_id);
+        if (!$breaker->is_available()) {
+            return [
+                'code' => 'CircuitOpen',
+                'message' => 'Circuit breaker open',
+                'status' => 503
+            ];
+        }
+
+        // Generic failure (could be auth, network, or API error)
+        // Without detailed error info from API handler, we return a generic error
+        return [
+            'code' => 'Unknown',
+            'message' => 'Syndication failed',
+            'status' => 0
+        ];
+    }
+
+    /**
      * Mark account syndication as failed
      *
      * @param int $post_id WordPress post ID
      * @param string $account_id Account UUID
      * @param string $reason Failure reason
+     * @param array $account Account data (for handle lookup)
      * @return void
      */
-    private function mark_failed($post_id, $account_id, $reason = '') {
+    private function mark_failed($post_id, $account_id, $reason = '', $account = []) {
         // Get existing results
         $existing_info_json = get_post_meta($post_id, '_bluesky_syndication_bs_post_info', true);
         $syndication_results = !empty($existing_info_json) ? json_decode($existing_info_json, true) : [];
@@ -296,15 +369,19 @@ class BlueSky_Async_Handler {
         // Save results
         update_post_meta($post_id, '_bluesky_syndication_bs_post_info', wp_json_encode($syndication_results));
 
-        // Update failed accounts list
+        // Update failed accounts list with handle and error message
         $failed_accounts_json = get_post_meta($post_id, '_bluesky_syndication_failed_accounts', true);
         $failed_accounts = !empty($failed_accounts_json) ? json_decode($failed_accounts_json, true) : [];
         if (!is_array($failed_accounts)) {
             $failed_accounts = [];
         }
-        if (!in_array($account_id, $failed_accounts)) {
-            $failed_accounts[] = $account_id;
-        }
+
+        $handle = $account['handle'] ?? 'unknown';
+        $failed_accounts[$handle] = [
+            'account_id' => $account_id,
+            'error' => $reason
+        ];
+
         update_post_meta($post_id, '_bluesky_syndication_failed_accounts', wp_json_encode($failed_accounts));
     }
 
@@ -314,9 +391,10 @@ class BlueSky_Async_Handler {
      * @param int $post_id WordPress post ID
      * @param string $account_id Account UUID
      * @param array $result Syndication result from API
+     * @param array $account Account data (for handle lookup)
      * @return void
      */
-    private function mark_success($post_id, $account_id, $result) {
+    private function mark_success($post_id, $account_id, $result, $account = []) {
         // Get existing results
         $existing_info_json = get_post_meta($post_id, '_bluesky_syndication_bs_post_info', true);
         $syndication_results = !empty($existing_info_json) ? json_decode($existing_info_json, true) : [];
@@ -336,14 +414,16 @@ class BlueSky_Async_Handler {
         // Save results
         update_post_meta($post_id, '_bluesky_syndication_bs_post_info', wp_json_encode($syndication_results));
 
-        // Track completed accounts
+        // Track completed accounts (store handles for display)
         $completed_json = get_post_meta($post_id, '_bluesky_syndication_accounts_completed', true);
         $completed = !empty($completed_json) ? json_decode($completed_json, true) : [];
         if (!is_array($completed)) {
             $completed = [];
         }
-        if (!in_array($account_id, $completed)) {
-            $completed[] = $account_id;
+
+        $handle = $account['handle'] ?? 'unknown';
+        if (!in_array($handle, $completed)) {
+            $completed[] = $handle;
         }
         update_post_meta($post_id, '_bluesky_syndication_accounts_completed', wp_json_encode($completed));
     }

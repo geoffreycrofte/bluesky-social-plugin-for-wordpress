@@ -76,7 +76,7 @@ class BlueSky_Plugin_Setup
         $this->syndication    = new BlueSky_Syndication_Service($api_handler, $account_manager, $async_handler);
         $this->assets         = new BlueSky_Assets_Service();
         $this->blocks         = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
-        $this->admin_notices  = new BlueSky_Admin_Notices($async_handler);
+        $this->admin_notices  = new BlueSky_Admin_Notices($async_handler, $account_manager);
         $this->health_dashboard = new BlueSky_Health_Dashboard($account_manager);
         $this->health_monitor = new BlueSky_Health_Monitor();
 
