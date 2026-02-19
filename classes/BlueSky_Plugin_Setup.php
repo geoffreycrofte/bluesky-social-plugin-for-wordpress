@@ -49,6 +49,12 @@ class BlueSky_Plugin_Setup
     private $admin_notices;
 
     /**
+     * Health dashboard instance
+     * @var BlueSky_Health_Dashboard
+     */
+    private $health_dashboard;
+
+    /**
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      * @param BlueSky_Account_Manager $account_manager Account manager instance
@@ -57,14 +63,15 @@ class BlueSky_Plugin_Setup
         BlueSky_API_Handler $api_handler,
         ?BlueSky_Account_Manager $account_manager = null
     ) {
-        $async_handler       = new BlueSky_Async_Handler($api_handler, $account_manager);
-        $this->render_front  = new BlueSky_Render_Front($api_handler);
-        $this->settings      = new BlueSky_Settings_Service($api_handler, $account_manager);
-        $this->ajax          = new BlueSky_AJAX_Service($api_handler, $account_manager);
-        $this->syndication   = new BlueSky_Syndication_Service($api_handler, $account_manager, $async_handler);
-        $this->assets        = new BlueSky_Assets_Service();
-        $this->blocks        = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
-        $this->admin_notices = new BlueSky_Admin_Notices($async_handler);
+        $async_handler        = new BlueSky_Async_Handler($api_handler, $account_manager);
+        $this->render_front   = new BlueSky_Render_Front($api_handler);
+        $this->settings       = new BlueSky_Settings_Service($api_handler, $account_manager);
+        $this->ajax           = new BlueSky_AJAX_Service($api_handler, $account_manager);
+        $this->syndication    = new BlueSky_Syndication_Service($api_handler, $account_manager, $async_handler);
+        $this->assets         = new BlueSky_Assets_Service();
+        $this->blocks         = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
+        $this->admin_notices  = new BlueSky_Admin_Notices($async_handler);
+        $this->health_dashboard = new BlueSky_Health_Dashboard($account_manager);
 
         // On activation
         register_activation_hook(BLUESKY_PLUGIN_FILE, [
