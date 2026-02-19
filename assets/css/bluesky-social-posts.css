@@ -365,6 +365,10 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
     display: none;
 }
 
+.bluesky-social-integration-last-post.display-layout_2 .bluesky-social-integration-post-counters {
+    --avatar-size: 0;
+}
+
 /**
  * Styles for the profile card darkmode
  */
