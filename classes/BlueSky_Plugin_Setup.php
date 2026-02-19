@@ -43,6 +43,12 @@ class BlueSky_Plugin_Setup
     private $render_front;
 
     /**
+     * Admin notices instance
+     * @var BlueSky_Admin_Notices
+     */
+    private $admin_notices;
+
+    /**
      * Constructor
      * @param BlueSky_API_Handler $api_handler API handler instance
      * @param BlueSky_Account_Manager $account_manager Account manager instance
@@ -58,6 +64,7 @@ class BlueSky_Plugin_Setup
         $this->syndication   = new BlueSky_Syndication_Service($api_handler, $account_manager, $async_handler);
         $this->assets        = new BlueSky_Assets_Service();
         $this->blocks        = new BlueSky_Blocks_Service($api_handler, $account_manager, $this->render_front);
+        $this->admin_notices = new BlueSky_Admin_Notices($async_handler);
 
         // On activation
         register_activation_hook(BLUESKY_PLUGIN_FILE, [

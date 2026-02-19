@@ -37,6 +37,7 @@ require_once "classes/BlueSky_Circuit_Breaker.php"; // V.1.6.0
 require_once "classes/BlueSky_Rate_Limiter.php"; // V.1.6.0
 require_once "classes/BlueSky_Request_Cache.php"; // V.1.6.0
 require_once "classes/BlueSky_Async_Handler.php"; // V.1.6.0
+require_once "classes/BlueSky_Admin_Notices.php"; // V.1.6.0
 require_once "classes/BlueSky_Syndication_Service.php"; // V.1.5.0
 require_once "classes/BlueSky_AJAX_Service.php"; // V.1.5.0
 require_once "classes/BlueSky_Assets_Service.php"; // V.1.5.0
