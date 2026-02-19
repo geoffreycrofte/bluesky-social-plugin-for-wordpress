@@ -25,6 +25,9 @@ class BlueSky_Assets_Service
      */
     public function admin_enqueue_scripts()
     {
+        // Enqueue syndication notice script on post edit screens
+        $this->enqueue_syndication_notice_script();
+
         wp_enqueue_style(
             "bluesky-social-admin",
             BLUESKY_PLUGIN_FOLDER . "assets/css/bluesky-social-admin.css",
@@ -136,5 +139,53 @@ class BlueSky_Assets_Service
                 ],
             ]);
         }
+    }
+
+    /**
+     * Enqueue syndication notice script on post edit screens
+     * Only loads when post has syndication status (performance optimization)
+     */
+    private function enqueue_syndication_notice_script()
+    {
+        $screen = get_current_screen();
+        if (!$screen || $screen->base !== 'post') {
+            return;
+        }
+
+        global $post;
+        if (!$post || !isset($post->ID)) {
+            return;
+        }
+
+        // Only load script if post has syndication status
+        $status = get_post_meta($post->ID, '_bluesky_syndication_status', true);
+        if (empty($status)) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'bluesky-syndication-notice',
+            BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-syndication-notice.js',
+            ['jquery', 'heartbeat'],
+            BLUESKY_PLUGIN_VERSION,
+            ['in_footer' => true, 'strategy' => 'defer']
+        );
+
+        wp_localize_script('bluesky-syndication-notice', 'blueskyNotice', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'retryNonce' => wp_create_nonce('bluesky_retry_syndication'),
+            'i18n' => [
+                'syndicating' => __('Syndicating to Bluesky...', 'social-integration-for-bluesky'),
+                'completed_single' => __('Successfully syndicated to Bluesky.', 'social-integration-for-bluesky'),
+                'completed_multiple' => __('Successfully syndicated to %d Bluesky accounts.', 'social-integration-for-bluesky'),
+                'failed' => __('Failed to syndicate to Bluesky accounts: %s', 'social-integration-for-bluesky'),
+                'partial' => __('Partially syndicated: some accounts failed.', 'social-integration-for-bluesky'),
+                'retrying' => __('Retrying syndication to Bluesky...', 'social-integration-for-bluesky'),
+                'retry_now' => __('Retry now', 'social-integration-for-bluesky'),
+                'retry_failed' => __('Retry failed', 'social-integration-for-bluesky'),
+                'retry_error' => __('Failed to retry syndication. Please try again.', 'social-integration-for-bluesky'),
+                'unknown_account' => __('unknown', 'social-integration-for-bluesky'),
+            ],
+        ]);
     }
 }
