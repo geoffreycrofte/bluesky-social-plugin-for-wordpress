@@ -290,11 +290,11 @@ class BlueSky_Health_Monitor
             $rate_limiter = new BlueSky_Rate_Limiter();
 
             $circuit_status = $circuit_breaker->is_available()
-                ? __('Closed', 'social-integration-for-bluesky')
-                : __('Open', 'social-integration-for-bluesky');
+                ? __('Connected', 'social-integration-for-bluesky')
+                : __('Paused (too many errors)', 'social-integration-for-bluesky');
 
             $rate_limited = $rate_limiter->is_rate_limited($account['id'])
-                ? __('Yes', 'social-integration-for-bluesky')
+                ? __('Yes — waiting before retrying', 'social-integration-for-bluesky')
                 : __('No', 'social-integration-for-bluesky');
 
             $fields["account_{$account['id']}_status"] = [
@@ -303,7 +303,7 @@ class BlueSky_Health_Monitor
                     esc_html($account['handle'])
                 ),
                 'value'   => sprintf(
-                    __('Circuit: %s | Rate Limited: %s', 'social-integration-for-bluesky'),
+                    __('API Status: %s | Throttled: %s', 'social-integration-for-bluesky'),
                     $circuit_status,
                     $rate_limited
                 ),
