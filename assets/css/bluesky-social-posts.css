@@ -510,7 +510,10 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
 }
 
 /* Dark mode skeleton */
-.bluesky-social-integration-last-post.theme-dark .bluesky-skeleton,
+.bluesky-social-integration-last-post.theme-dark .bluesky-skeleton {
+    background: linear-gradient(90deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+}
+
 @media (prefers-color-scheme: dark) {
     .bluesky-social-integration-last-post.theme-system .bluesky-skeleton {
         background: linear-gradient(90deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
@@ -584,10 +587,4 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
     margin: 0;
 }
 
-/* Dark mode empty state */
-.bluesky-social-integration-last-post.theme-dark .bluesky-social-integration-empty-state,
-@media (prefers-color-scheme: dark) {
-    .bluesky-social-integration-last-post.theme-system .bluesky-social-integration-empty-state {
-        /* Inherits theme colors from parent */
-    }
-}
+/* Dark mode empty state inherits theme colors from parent — no overrides needed */
