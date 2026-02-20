@@ -155,10 +155,16 @@ if (!defined("ABSPATH")) {
                         <?php foreach (
                             $post["images"]
                             as $image
-                        ): ?>
+                        ):
+                            $is_gif = !empty($image["is_gif"]);
+                            $gallery_classes = "bluesky-gallery-image";
+                            if ($is_gif) {
+                                $gallery_classes .= " is-gif";
+                            }
+                        ?>
                         <a href="<?php echo esc_url(
                             $image["url"],
-                        ); ?>" class="bluesky-gallery-image"><?php
+                        ); ?>" class="<?php echo esc_attr($gallery_classes); ?>"<?php echo $is_gif ? ' data-no-lightbox="true"' : ''; ?>><?php
                             // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
                             ?><img src="<?php echo esc_url(
    $image["url"],
@@ -168,7 +174,7 @@ if (!defined("ABSPATH")) {
    ? ' width="' . esc_attr($image["width"]) . '"'
    : ""; ?> <?php echo !empty($image["height"]) && $image["height"] != "0"
     ? ' height="' . esc_attr($image["height"]) . '"'
-    : ""; ?> loading="lazy"></a>
+    : ""; ?><?php echo $is_gif ? '' : ' loading="lazy"'; ?>></a>
                         <?php endforeach; ?>
                     </div>
 
@@ -498,12 +504,12 @@ if (!defined("ABSPATH")) {
 
 <div class="bluesky-social-integration-last-post<?php echo esc_attr(
     $classes,
-); ?> has-no-posts">
-    <svg fill="none" width="64" viewBox="0 0 24 24" height="64">
+); ?> bluesky-social-integration-empty-state">
+    <svg fill="none" width="64" viewBox="0 0 24 24" height="64" class="bluesky-butterfly-icon">
         <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 4a1 1 0 0 1 1-1h1a8.003 8.003 0 0 1 7.75 6.006A7.985 7.985 0 0 1 19 6h1a1 1 0 0 1 1 1v1a8 8 0 0 1-8 8v4a1 1 0 1 1-2 0v-7a8 8 0 0 1-8-8V4Zm2 1a6 6 0 0 1 6 6 6 6 0 0 1-6-6Zm8 9a6 6 0 0 1 6-6 6 6 0 0 1-6 6Z"></path>
     </svg>
-    <p class="bluesky-posts-block no-posts"><?php esc_html_e(
-        "No posts available.",
+    <p class="bluesky-empty-state-message"><?php esc_html_e(
+        "No posts yet",
         "social-integration-for-bluesky",
     ); ?></p>
 </div>

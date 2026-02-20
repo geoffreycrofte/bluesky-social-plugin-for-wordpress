@@ -1004,11 +1004,16 @@ class BlueSky_API_Handler
             $images = [];
             if (isset($post["embed"]["images"])) {
                 foreach ($post["embed"]["images"] as $image) {
+                    // Detect GIF images via MIME type from Bluesky API
+                    $is_gif = isset($image["image"]["mimeType"]) &&
+                              $image["image"]["mimeType"] === "image/gif";
+
                     $images[] = [
                         "url" => $image["fullsize"] ?? ($image["thumb"] ?? ""),
                         "alt" => $image["alt"] ?? "",
                         "width" => $image["aspectRatio"]["width"] ?? 0,
                         "height" => $image["aspectRatio"]["height"] ?? 0,
+                        "is_gif" => $is_gif,
                     ];
                 }
             }
