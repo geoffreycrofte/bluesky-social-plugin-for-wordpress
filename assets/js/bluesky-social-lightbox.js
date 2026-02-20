@@ -31,6 +31,10 @@
         bindEvents() {
             this.images.forEach((image, index) => {
                 console.log(image);
+                // Skip lightbox for GIFs or elements marked as no-lightbox
+                if (image.classList.contains('is-gif') || image.dataset.noLightbox === 'true') {
+                    return;
+                }
                 image.addEventListener('click', (e) => this.openLightbox(e, index));
             });
 

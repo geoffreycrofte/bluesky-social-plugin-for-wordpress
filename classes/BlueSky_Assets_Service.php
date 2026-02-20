@@ -115,6 +115,12 @@ class BlueSky_Assets_Service
                 [],
                 BLUESKY_PLUGIN_VERSION,
             );
+            wp_enqueue_style(
+                "bluesky-profile-banner",
+                BLUESKY_PLUGIN_FOLDER . "assets/css/bluesky-profile-banner.css",
+                [],
+                BLUESKY_PLUGIN_VERSION,
+            );
             wp_enqueue_script(
                 "bluesky-async-loader",
                 BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-async-loader.js",
@@ -141,6 +147,24 @@ class BlueSky_Assets_Service
                     "connectionFallback" => __("Connection failed:", "social-integration-for-bluesky"),
                 ],
             ]);
+
+            // Enqueue Color Thief from CDN for gradient fallback
+            wp_enqueue_script(
+                "color-thief",
+                "https://cdn.jsdelivr.net/npm/colorthief@2.4.0/dist/color-thief.min.js",
+                [],
+                "2.4.0",
+                true,
+            );
+
+            // Enqueue profile banner gradient script
+            wp_enqueue_script(
+                "bluesky-profile-banner-gradient",
+                BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-profile-banner-gradient.js",
+                ["color-thief"],
+                BLUESKY_PLUGIN_VERSION,
+                ["in_footer" => true, "strategy" => "defer"],
+            );
         }
     }
 
