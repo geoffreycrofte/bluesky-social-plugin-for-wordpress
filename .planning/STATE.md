@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 4 (Error Handling UX) — All plans complete, verifying
+**Current focus:** Phase 5 (Profile & Content Display) — Plan 1 complete
 
 ## Current Position
 
-Phase: 4 of 7 (Error Handling UX) — All plans complete, verification pending
-Next: Phase verification
-Last activity: 2026-02-19 — 04-05 complete (Integration wiring + E2E human verification approved)
+Phase: 5 of 7 (Profile & Content Display) — Plan 1 of 4 complete
+Next: 05-02 (Gutenberg block registration)
+Last activity: 2026-02-20 — 05-01 complete (Profile banner renderer with full/compact variants)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] Phase 4 verifying
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██▌       ] 25% (Phase 5)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
-- Average duration: ~3.2 minutes (automated plans)
-- Total execution time: ~2.5 hours + 5 iterative testing sessions
+- Total plans completed: 23
+- Average duration: ~3.1 minutes (automated plans)
+- Total execution time: ~2.6 hours + 5 iterative testing sessions
 
 **By Phase:**
 
@@ -30,6 +30,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 02 | 6 | ~40 min | ~6.7 min |
 | 03 | 6 | ~24 min | ~4.0 min |
 | 04 | 5 | ~20 min | ~4.0 min |
+| 05 | 1 | ~2.7 min | ~2.7 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -51,6 +52,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 04-03: Mixed (~5 min, split session) — health dashboard widget + settings page health section
 - Plan 04-04: Automated execution (2.0 min) — WordPress Site Health integration with tests & debug info
 - Plan 04-05: Checkpoint (~8 min) — integration wiring, 4 bug fixes, UX tweaks, human approved
+- Plan 05-01: Automated execution (2.7 min) — profile banner renderer with full/compact variants, gradient fallback
 
 *Updated after each plan completion*
 
@@ -145,6 +147,10 @@ Recent decisions affecting current work:
 - Site Health debug labels use plain language, not technical jargon (04-04/04-05)
 - Auth errors tracked via wp_options registry for persistence across requests (04-05)
 - Failed accounts store handle + translated error message (04-05)
+- Profile banner has two layout variants: full (overlapping avatar) and compact (overlaid content) (05-01)
+- Gradient fallback via data-avatar-url attribute for JS color extraction (progressive enhancement) (05-01)
+- All three stats (followers/following/posts) visible on both banner variants (05-01)
+- Container queries for responsive banner layout (better than media queries for widgets) (05-01)
 
 ### Pending Todos
 
@@ -157,10 +163,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-19
-Stopped at: Phase 4 all plans complete, verification pending
-Resume file: .planning/phases/04-error-handling-ux/04-05-SUMMARY.md
+Last session: 2026-02-20
+Stopped at: Completed 05-01-PLAN.md
+Resume file: .planning/phases/05-profile-content-display/05-01-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-19*
+*Last updated: 2026-02-20*
