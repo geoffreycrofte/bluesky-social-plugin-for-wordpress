@@ -66,6 +66,7 @@ class BlueSky_Blocks_Service
     {
         register_widget("BlueSky_Posts_Widget");
         register_widget("BlueSky_Profile_Widget");
+        register_widget("BlueSky_Profile_Banner_Widget");
     }
 
     /**
@@ -231,6 +232,50 @@ class BlueSky_Blocks_Service
             "editor_script" => "bluesky-profile-block",
             "render_callback" => [$this, "bluesky_profile_block_render"],
         ]);
+
+        // Register Profile Banner
+        wp_register_script(
+            "bluesky-profile-banner-block",
+            BLUESKY_PLUGIN_FOLDER . "blocks/bluesky-profile-banner.js",
+            [
+                "wp-blocks",
+                "wp-element",
+                "wp-block-editor",
+                "wp-components",
+                "wp-server-side-render",
+            ],
+            BLUESKY_PLUGIN_VERSION,
+            [
+                "in_footer" => true,
+                "strategy" => "defer",
+            ],
+        );
+
+        wp_localize_script(
+            "bluesky-profile-banner-block",
+            "blueskyBlockData",
+            ["accounts" => $account_options]
+        );
+
+        register_block_type("bluesky-social/profile-banner", [
+            "api_version" => 2,
+            "editor_script" => "bluesky-profile-banner-block",
+            "render_callback" => [$this, "bluesky_profile_banner_block_render"],
+            "attributes" => [
+                "layout" => [
+                    "type" => "string",
+                    "default" => "full",
+                ],
+                "accountId" => [
+                    "type" => "string",
+                    "default" => "",
+                ],
+                "theme" => [
+                    "type" => "string",
+                    "default" => "system",
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -287,6 +332,27 @@ class BlueSky_Blocks_Service
         $api_handler = $this->resolve_api_handler($attributes['account_id'] ?? '');
         $render_front = new BlueSky_Render_Front($api_handler);
         return $render_front->render_bluesky_posts_list($attributes);
+    }
+
+    /**
+     * Renders the BlueSky profile banner block
+     *
+     * @param array $attributes Block attributes including:
+     *                         - layout (string) Layout variant - 'full' or 'compact'
+     *                         - accountId (string) Account UUID or empty for active account
+     *                         - theme (string) Color theme - 'light', 'dark' or 'system'
+     * @return string HTML markup for the profile banner
+     */
+    public function bluesky_profile_banner_block_render($attributes = [])
+    {
+        // Convert camelCase block attributes to snake_case for PHP rendering
+        if (isset($attributes['accountId'])) {
+            $attributes['account_id'] = $attributes['accountId'];
+        }
+
+        $api_handler = $this->resolve_api_handler($attributes['account_id'] ?? '');
+        $render_front = new BlueSky_Render_Front($api_handler);
+        return $render_front->render_profile_banner($attributes);
     }
 
     /**

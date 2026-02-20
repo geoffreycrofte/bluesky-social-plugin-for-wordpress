@@ -43,6 +43,10 @@ class BlueSky_Render_Front
             $this,
             "bluesky_last_posts_shortcode",
         ]);
+        add_shortcode("bluesky_profile_banner", [
+            $this,
+            "bluesky_profile_banner_shortcode",
+        ]);
 
         // Some extensions for wp_kses
         add_filter("wp_kses_allowed_html", [$this, "allow_svg_tags"], 10, 2);
@@ -368,6 +372,27 @@ class BlueSky_Render_Front
         }
 
         return $this->render_bluesky_profile_card($attributes);
+    }
+
+    /**
+     * Shortcode for BlueSky profile banner
+     * @param array $atts Shortcode attributes
+     * @return string HTML output
+     */
+    public function bluesky_profile_banner_shortcode($atts = [])
+    {
+        // Convert shortcode attributes to array and merge with defaults
+        $attributes = shortcode_atts(
+            [
+                "layout" => "full",
+                "account_id" => "",
+                "theme" => "system",
+            ],
+            $atts,
+            "bluesky_profile_banner",
+        );
+
+        return $this->render_profile_banner($attributes);
     }
 
     /**

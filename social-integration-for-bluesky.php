@@ -56,6 +56,7 @@ require_once "classes/BlueSky_Discussion_Frontend.php"; // V.1.5.0
 // Widgets
 require_once "classes/widgets/BlueSky_Posts_Widget.php";
 require_once "classes/widgets/BlueSky_Profile_Widget.php";
+require_once "classes/widgets/BlueSky_Profile_Banner_Widget.php";
 
 // Initialize the plugin
 $bluesky_account_manager = new BlueSky_Account_Manager(); // V.1.5.0
