@@ -304,3 +304,71 @@
         margin-top: -30px;
     }
 }
+
+/* ============================================
+   Skeleton Loader Styles
+   ============================================ */
+
+@keyframes bluesky-banner-shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%);
+    background-size: 1000px 100%;
+    animation: bluesky-banner-shimmer 2s infinite;
+    border-radius: 4px;
+}
+
+/* Dark mode skeleton */
+.bluesky-profile-banner.theme-dark .bluesky-skeleton,
+@media (prefers-color-scheme: dark) {
+    .bluesky-profile-banner.theme-system .bluesky-skeleton {
+        background: linear-gradient(90deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+    }
+}
+
+/* Skeleton layout structure */
+.bluesky-profile-banner-loading {
+    position: relative;
+    padding: 16px;
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton-banner {
+    width: 100%;
+    aspect-ratio: 3/1;
+    margin-bottom: 16px;
+    border-radius: 0;
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 16px;
+}
+
+.bluesky-profile-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton-text {
+    height: 16px;
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton-text-short {
+    width: 60%;
+}
+
+.bluesky-profile-banner-loading .bluesky-skeleton-text-long {
+    width: 100%;
+}
+
+.bluesky-profile-banner-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}

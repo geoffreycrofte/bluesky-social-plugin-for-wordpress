@@ -495,3 +495,99 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.7; }
 }
+
+/* Skeleton Shimmer Animation */
+@keyframes bluesky-shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.bluesky-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%);
+    background-size: 1000px 100%;
+    animation: bluesky-shimmer 2s infinite;
+    border-radius: 4px;
+}
+
+/* Dark mode skeleton */
+.bluesky-social-integration-last-post.theme-dark .bluesky-skeleton,
+@media (prefers-color-scheme: dark) {
+    .bluesky-social-integration-last-post.theme-system .bluesky-skeleton {
+        background: linear-gradient(90deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+    }
+}
+
+/* Skeleton element sizes */
+.bluesky-skeleton-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+}
+
+.bluesky-skeleton-text {
+    height: 16px;
+    margin-bottom: 8px;
+}
+
+.bluesky-skeleton-text-short {
+    width: 60%;
+}
+
+.bluesky-skeleton-text-long {
+    width: 100%;
+}
+
+.bluesky-skeleton-banner {
+    width: 100%;
+    aspect-ratio: 3/1;
+    border-radius: 0;
+}
+
+/* GIF-specific styles */
+.bluesky-gallery-image.is-gif {
+    cursor: default;
+    position: relative;
+}
+
+.bluesky-gallery-image.is-gif::after {
+    content: "GIF";
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+.bluesky-gallery-image.is-gif img {
+    image-rendering: auto;
+}
+
+/* Empty state styles */
+.bluesky-social-integration-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.bluesky-social-integration-empty-state .bluesky-butterfly-icon {
+    opacity: 0.5;
+    margin-bottom: 16px;
+}
+
+.bluesky-empty-state-message {
+    font-size: 16px !important;
+    color: inherit;
+    margin: 0;
+}
+
+/* Dark mode empty state */
+.bluesky-social-integration-last-post.theme-dark .bluesky-social-integration-empty-state,
+@media (prefers-color-scheme: dark) {
+    .bluesky-social-integration-last-post.theme-system .bluesky-social-integration-empty-state {
+        /* Inherits theme colors from parent */
+    }
+}
