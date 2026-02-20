@@ -1,0 +1,306 @@
+/**
+ * Bluesky Profile Banner Styles
+ * Two layout variants: full and compact
+ */
+
+/* ============================================
+   Base Banner Styles
+   ============================================ */
+
+.bluesky-profile-banner {
+    --bluesky-banner-bg: white;
+    --bluesky-banner-txt: #0b0f14;
+    --bluesky-banner-txt-alt: rgb(66, 87, 108);
+    --bluesky-banner-link: #1083fe;
+    --bluesky-banner-border: 1px solid rgb(212, 219, 226);
+    --bluesky-banner-br: 8px;
+    --bluesky-banner-spacing: 16px;
+
+    overflow: hidden;
+    border: var(--bluesky-banner-border);
+    background: var(--bluesky-banner-bg);
+    border-radius: var(--bluesky-banner-br);
+    font-size: 16px;
+    line-height: 1.5;
+    container-type: inline-size;
+}
+
+/* ============================================
+   Full Banner Variant
+   ============================================ */
+
+.bluesky-profile-banner-full .bluesky-profile-banner-header {
+    position: relative;
+    aspect-ratio: 3/1;
+    max-height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #e0e0e0;
+    transition: background 0.3s ease;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-header.bluesky-banner-gradient-pending {
+    background-image: linear-gradient(135deg, #e0e0e0, #c0c0c0);
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-avatar {
+    display: block;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid var(--bluesky-banner-bg);
+    margin-top: -60px;
+    margin-left: var(--bluesky-banner-spacing);
+    margin-bottom: var(--bluesky-banner-spacing);
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-content {
+    padding: 0 var(--bluesky-banner-spacing) var(--bluesky-banner-spacing) var(--bluesky-banner-spacing);
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-name {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--bluesky-banner-txt);
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-name a {
+    color: var(--bluesky-banner-link);
+    text-decoration: none;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-name a:hover {
+    text-decoration: underline;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-handle {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: var(--bluesky-banner-txt-alt);
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-handle a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-handle a:hover {
+    text-decoration: underline;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-bio {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: var(--bluesky-banner-txt);
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.bluesky-profile-banner-full .bluesky-profile-banner-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--bluesky-banner-txt-alt);
+}
+
+.bluesky-profile-banner-full .bluesky-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.bluesky-profile-banner-full .bluesky-stat strong {
+    font-weight: 700;
+    color: var(--bluesky-banner-txt);
+}
+
+/* ============================================
+   Compact Card Variant
+   ============================================ */
+
+.bluesky-profile-banner-compact {
+    background: var(--bluesky-banner-bg);
+}
+
+.bluesky-profile-banner-compact.bluesky-banner-gradient-pending {
+    background-image: linear-gradient(135deg, #e0e0e0, #c0c0c0);
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-compact-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
+    transition: background 0.3s ease;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 12px;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-compact-content {
+    width: 100%;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-name {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-name a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-name a:hover {
+    text-decoration: underline;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-handle {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-handle a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-handle a:hover {
+    text-decoration: underline;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-bio {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.bluesky-profile-banner-compact .bluesky-profile-banner-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.bluesky-profile-banner-compact .bluesky-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.bluesky-profile-banner-compact .bluesky-stat strong {
+    font-weight: 700;
+    color: #fff;
+}
+
+/* ============================================
+   Theme Support (Light/Dark/System)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .bluesky-profile-banner.theme-system {
+        --bluesky-banner-bg: #161e27;
+        --bluesky-banner-txt: white;
+        --bluesky-banner-txt-alt: #aebbc9;
+        --bluesky-banner-border: 1px solid #2e4052;
+        --bluesky-banner-link: #3491f4;
+    }
+
+    .bluesky-profile-banner-full.theme-system .bluesky-profile-banner-header.bluesky-banner-gradient-pending {
+        background-image: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+    }
+
+    .bluesky-profile-banner-compact.theme-system.bluesky-banner-gradient-pending {
+        background-image: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+    }
+}
+
+.bluesky-profile-banner.theme-dark {
+    --bluesky-banner-bg: #161e27;
+    --bluesky-banner-txt: white;
+    --bluesky-banner-txt-alt: #aebbc9;
+    --bluesky-banner-border: 1px solid #2e4052;
+    --bluesky-banner-link: #3491f4;
+}
+
+.bluesky-profile-banner-full.theme-dark .bluesky-profile-banner-header.bluesky-banner-gradient-pending {
+    background-image: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+}
+
+.bluesky-profile-banner-compact.theme-dark.bluesky-banner-gradient-pending {
+    background-image: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+}
+
+.bluesky-profile-banner.theme-light {
+    --bluesky-banner-bg: white;
+    --bluesky-banner-txt: #0b0f14;
+    --bluesky-banner-txt-alt: rgb(66, 87, 108);
+    --bluesky-banner-border: 1px solid rgb(212, 219, 226);
+    --bluesky-banner-link: #1083fe;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 480px) {
+    .bluesky-profile-banner {
+        --bluesky-banner-spacing: 12px;
+    }
+
+    .bluesky-profile-banner-full .bluesky-profile-banner-avatar {
+        width: 80px;
+        height: 80px;
+        margin-top: -40px;
+    }
+
+    .bluesky-profile-banner-full .bluesky-profile-banner-name {
+        font-size: 18px;
+    }
+
+    .bluesky-profile-banner-compact .bluesky-profile-banner-compact-overlay {
+        padding: 16px;
+    }
+
+    .bluesky-profile-banner-compact .bluesky-profile-banner-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+/* ============================================
+   Gradient Fallback Custom Property
+   ============================================ */
+
+.bluesky-banner-gradient-pending {
+    /* Neutral placeholder gradient - will be updated by JS with color from avatar */
+    background: var(--bluesky-banner-gradient, linear-gradient(135deg, #e0e0e0, #c0c0c0));
+}
+
+/* Container Query for Compact Layout */
+@container (max-width: 340px) {
+    .bluesky-profile-banner-full .bluesky-profile-banner-avatar {
+        width: 60px;
+        height: 60px;
+        margin-top: -30px;
+    }
+}
