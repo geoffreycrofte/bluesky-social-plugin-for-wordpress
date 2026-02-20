@@ -703,4 +703,121 @@ class BlueSky_Render_Front
         <?php
         return ob_get_clean();
     }
+
+    /**
+     * Render the BlueSky profile banner
+     * @param array $atts Attributes: layout ('full'|'compact'), account_id, theme
+     * @return string HTML output
+     */
+    public function render_profile_banner($atts = [])
+    {
+        // Parse attributes with defaults
+        $atts = wp_parse_args($atts, [
+            'layout' => 'full',
+            'account_id' => '',
+            'theme' => $this->options['theme'] ?? 'system',
+        ]);
+
+        $layout = $atts['layout'];
+        $account_id = $atts['account_id'];
+        $theme = $atts['theme'];
+
+        // Fetch profile via API handler (uses cache-first with stale-while-revalidate)
+        $helpers = new BlueSky_Helpers();
+        $profile_cache_key = $helpers->get_profile_transient_key($account_id);
+        $cached_profile = get_transient($profile_cache_key);
+        $is_fresh = BlueSky_Helpers::is_cache_fresh($profile_cache_key);
+        $cache_timestamp = null;
+
+        if ($cached_profile !== false) {
+            // Fast path: use cached profile
+            $profile = $cached_profile;
+
+            // If cache is stale, schedule background refresh
+            if (!$is_fresh) {
+                BlueSky_Helpers::schedule_cache_refresh($profile_cache_key, $account_id, []);
+                // Get cache timestamp from freshness marker
+                $freshness_key = $profile_cache_key . '_fresh';
+                $cache_timestamp = get_transient($freshness_key);
+                if (false === $cache_timestamp) {
+                    // Freshness marker expired - estimate from transient expiry
+                    $cache_timestamp = time() - 600; // Assume 10 minutes old
+                }
+            }
+        } else {
+            // No cache: fetch fresh data
+            $profile = $this->api_handler->get_bluesky_profile();
+        }
+
+        // If no profile data available, return empty (graceful degradation)
+        if (!$profile) {
+            return '';
+        }
+
+        // Check for missing banner - set flag for gradient fallback
+        $needs_gradient_fallback = empty($profile['banner']);
+
+        // Build CSS classes
+        $classes = [
+            'bluesky-profile-banner',
+            "bluesky-profile-banner-{$layout}",
+            "theme-{$theme}",
+        ];
+
+        $aria_label = __('Bluesky Profile Banner', 'social-integration-for-bluesky');
+
+        // Select template based on layout
+        $template = $layout === 'compact'
+            ? 'profile-banner-compact.php'
+            : 'profile-banner-full.php';
+
+        // Render template with variables: $profile, $classes, $aria_label, $needs_gradient_fallback, $this
+        ob_start();
+
+        // Prepend stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
+        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . "templates/frontend/{$template}";
+
+        return ob_get_clean();
+    }
+
+    /**
+     * Get inline styles for profile banner customization
+     * @return string Style tag with custom CSS
+     */
+    private function get_profile_banner_styles()
+    {
+        $options = $this->options;
+
+        if (
+            !isset($options["customisation"]) ||
+            !is_array($options["customisation"]) ||
+            !isset($options["customisation"]["banner"])
+        ) {
+            return '';
+        }
+
+        $output = "\n" . "<!-- Profile Banner Custom Styles -->" . "\n";
+        $output .= '<style id="bluesky-profile-banner-custom-styles">' . "\n";
+        $output .= ".bluesky-profile-banner {" . "\n";
+
+        $custom = $options["customisation"]["banner"];
+        foreach ($custom as $element => $props) {
+            if (is_array($props)) {
+                foreach ($props as $k => $prop) {
+                    $custom_prop = "--bluesky-banner-custom-" . $element . "-" . $k;
+                    $output .= "\t" . esc_attr($custom_prop) . ": " . intval($prop["value"]) . "px!important;" . "\n";
+                }
+            }
+        }
+
+        $output .= "}" . "\n";
+        $output .= "</style>" . "\n";
+
+        return $output;
+    }
 }
