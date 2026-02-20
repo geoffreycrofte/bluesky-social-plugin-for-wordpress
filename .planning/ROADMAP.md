@@ -102,21 +102,21 @@ Plans:
 - [ ] 04-05-PLAN.md -- Integration wiring + E2E human verification
 
 ### Phase 5: Profile & Content Display
-**Goal**: Users can display Bluesky-style profile banners and choose grid/list layouts with advanced filtering
+**Goal**: Users can display Bluesky-style profile banners and enhanced feed with GIF support, skeleton loaders, and polished states
 **Depends on**: Phase 4
-**Requirements**: PROF-01, PROF-02, PROF-03, DISP-01, DISP-02, DISP-03, DISP-04
+**Requirements**: PROF-01, PROF-02, PROF-03, DISP-04 (DISP-01, DISP-02, DISP-03 dropped by user)
 **Success Criteria** (what must be TRUE):
   1. Profile banner displays header image with overlaid avatar, name, bio, and follower counts (Bluesky-style)
   2. Profile banner available as Gutenberg block with inspector controls
   3. Profile banner available as shortcode and classic widget
-  4. User can choose grid or list layout for posts feed in block/widget settings
-  5. User can filter displayed posts by date range
-  6. User can filter displayed posts by hashtag
-  7. Existing reply/repost filters work seamlessly with new layout and filter options
-**Plans**: TBD
+  4. Existing reply/repost filters work seamlessly with feed enhancements
+**Plans:** 4 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md -- Profile banner renderer with two variants (full + compact) and CSS
+- [ ] 05-02-PLAN.md -- Feed enhancements: GIF detection, skeleton loaders, empty/stale states
+- [ ] 05-03-PLAN.md -- Profile banner Gutenberg block, shortcode, widget, gradient fallback JS
+- [ ] 05-04-PLAN.md -- Integration wiring + E2E human verification
 
 ### Phase 6: Visual Customization
 **Goal**: Users can deeply customize appearance of all Bluesky content with live preview
