@@ -369,6 +369,11 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
     --avatar-size: 0;
 }
 
+/* Stale indicator - "Last updated…" */
+.bluesky-stale-indicator {
+    display: none;
+}
+
 /**
  * Styles for the profile card darkmode
  */

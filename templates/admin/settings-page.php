@@ -87,11 +87,8 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
             settings_fields("bluesky_settings_group");
             do_settings_sections(BLUESKY_PLUGIN_SETTING_PAGENAME);
 
-            $style_layout = !isset(
-                $this->options["styles"]["feed_layout"],
-            )
-                ? "default"
-                : $this->options["styles"]["feed_layout"];
+            $style_feed_layout = $this->options["styles"]["feed_layout"] ?? "default";
+            $style_profile_layout = $this->options["styles"]["profile_layout"] ?? "default";
             ?>
 
             <div id="styles" aria-hidden="false" class="bluesky-social-integration-admin-content">
@@ -105,65 +102,6 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     "social-integration-for-bluesky",
                 ); ?></p>
 
-                <h3><?php echo esc_html__(
-                    "Customize Feed Layout",
-                    "social-integration-for-bluesky",
-                ); ?></h3>
-
-                <p><?php echo esc_html__(
-                    'Pick the layout that suits you best. Be careful, some of them could come later, and with specific pre-defined options. (e.g. "no-replies" by default)',
-                    "social-integration-for-bluesky",
-                ); ?></p>
-
-                <div class="bluesky-social-integration-layout-options">
-                    <label for="bluesky_settings_feed_layout_default">
-                        <input id="bluesky_settings_feed_layout_default" type="radio" name="bluesky_settings[styles][feed_layout]" value="default"<?php echo $style_layout ===
-                        "default"
-                            ? ' checked="checked"'
-                            : ""; ?>>
-
-                        <span class="screen-reader-text"><?php echo esc_html__(
-                            "Default layout",
-                            "social-integration-for-bluesky",
-                        ); ?></span>
-
-                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
-                            "/assets/img/layout-default.svg"; ?>" alt="" width="150" height="163">
-                    </label>
-
-                    <label for="bluesky_settings_feed_layout_2">
-                        <input id="bluesky_settings_feed_layout_2" type="radio" name="bluesky_settings[styles][feed_layout]" value="layout_2"<?php echo $style_layout ===
-                        "layout_2"
-                            ? ' checked="checked"'
-                            : ""; ?>>
-
-                        <span class="screen-reader-text"><?php echo esc_html__(
-                            "Light Weight Layout",
-                            "social-integration-for-bluesky",
-                        ); ?></span>
-
-                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
-                            "/assets/img/layout-layout_2.svg"; ?>" alt="" width="150" height="163">
-                    </label>
-                </div>
-
-                <?php submit_button(
-                    null,
-                    "primary large",
-                    null,
-                    true,
-                ); ?>
-
-                <h3><?php echo esc_html__(
-                    "Customize Font Styling",
-                    "social-integration-for-bluesky",
-                ); ?></h3>
-
-                <p><?php echo esc_html__(
-                    "Tweak the display of each block by customizing the font sizes. Find the best balance!",
-                    "social-integration-for-bluesky",
-                ); ?></p>
-
                 <div class="bluesky-custom-styles-output" hidden>
                     <?php
                     $render_front = new BlueSky_Render_Front(
@@ -172,6 +110,61 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     $render_front->render_inline_custom_styles();
                     ?>
                 </div>
+
+                <!-- ============================
+                     Profile Customization
+                     ============================ -->
+
+                <h3><?php echo esc_html__(
+                    "Profile Customization",
+                    "social-integration-for-bluesky",
+                ); ?></h3>
+
+                <h4><?php echo esc_html__(
+                    "Profile Layout",
+                    "social-integration-for-bluesky",
+                ); ?></h4>
+
+                <p><?php echo esc_html__(
+                    "Choose the default layout for your profile card.",
+                    "social-integration-for-bluesky",
+                ); ?></p>
+
+                <div class="bluesky-social-integration-layout-options">
+                    <label for="bluesky_settings_profile_layout_default">
+                        <input id="bluesky_settings_profile_layout_default" type="radio" name="bluesky_settings[styles][profile_layout]" value="default"<?php echo $style_profile_layout === "default" ? ' checked="checked"' : ""; ?>>
+                        
+                        <span class="screen-reader-text"><?php echo esc_html__(
+                            "Default",
+                            "social-integration-for-bluesky",
+                        ); ?></span>
+
+                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
+                            "/assets/img/profile-layout-default.svg"; ?>" alt="" width="150" height="163">
+                    </label>
+
+                    <label for="bluesky_settings_profile_layout_compact">
+                        <input id="bluesky_settings_profile_layout_compact" type="radio" name="bluesky_settings[styles][profile_layout]" value="compact"<?php echo $style_profile_layout === "compact" ? ' checked="checked"' : ""; ?>>
+                        
+                        <span class="screen-reader-text"><?php echo esc_html__(
+                            "Compact",
+                            "social-integration-for-bluesky",
+                        ); ?></span>
+
+                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
+                            "/assets/img/profile-layout-compact.svg"; ?>" alt="" width="150" height="163">
+                    </label>
+                </div>
+
+                <h4><?php echo esc_html__(
+                    "Profile Font Styling",
+                    "social-integration-for-bluesky",
+                ); ?></h4>
+
+                <p><?php echo esc_html__(
+                    "Tweak the font sizes for the profile card.",
+                    "social-integration-for-bluesky",
+                ); ?></p>
 
                 <div class="bluesky-social-integration-large-content">
                     <section class="bluesky-social-integration-interactive" aria-label="[bluesky_profile]">
@@ -359,7 +352,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                                         <td colspan="2">
                                         <?php submit_button(
                                             null,
-                                            "primary large",
+                                            "secondary large",
                                             null,
                                             false,
                                         ); ?>
@@ -369,7 +362,72 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                             </table>
                         </div>
                     </section>
+                </div>
 
+                <?php submit_button(
+                    null,
+                    "primary large",
+                    null,
+                    true,
+                ); ?>
+
+                <hr />
+                <!-- ============================
+                     Feed Customization
+                     ============================ -->
+
+                <h3><?php echo esc_html__(
+                    "Feed Customization",
+                    "social-integration-for-bluesky",
+                ); ?></h3>
+
+                <h4><?php echo esc_html__(
+                    "Feed Layout",
+                    "social-integration-for-bluesky",
+                ); ?></h4>
+
+                <p><?php echo esc_html__(
+                    'Pick the layout that suits you best. Be careful, some of them could come later, and with specific pre-defined options. (e.g. "no-replies" by default)',
+                    "social-integration-for-bluesky",
+                ); ?></p>
+
+                <div class="bluesky-social-integration-layout-options">
+                    <label for="bluesky_settings_feed_layout_default">
+                        <input id="bluesky_settings_feed_layout_default" type="radio" name="bluesky_settings[styles][feed_layout]" value="default"<?php echo $style_feed_layout === "default" ? ' checked="checked"' : ""; ?>>
+
+                        <span class="screen-reader-text"><?php echo esc_html__(
+                            "Default layout",
+                            "social-integration-for-bluesky",
+                        ); ?></span>
+
+                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
+                            "/assets/img/layout-default.svg"; ?>" alt="" width="150" height="163">
+                    </label>
+
+                    <label for="bluesky_settings_feed_layout_2">
+                        <input id="bluesky_settings_feed_layout_2" type="radio" name="bluesky_settings[styles][feed_layout]" value="layout_2"<?php echo $style_feed_layout === "layout_2" ? ' checked="checked"' : ""; ?>>
+
+                        <span class="screen-reader-text"><?php echo esc_html__(
+                            "Light Weight Layout",
+                            "social-integration-for-bluesky",
+                        ); ?></span>
+
+                        <img src="<?php echo BLUESKY_PLUGIN_FOLDER .
+                            "/assets/img/layout-layout_2.svg"; ?>" alt="" width="150" height="163">
+                    </label>
+                </div>
+
+                <h4><?php echo esc_html__(
+                    "Feed Font Styling",
+                    "social-integration-for-bluesky",
+                ); ?></h4>
+
+                <p><?php echo esc_html__(
+                    "Tweak the font sizes for the posts feed.",
+                    "social-integration-for-bluesky",
+                ); ?></p>
+
+                <div class="bluesky-social-integration-large-content">
                     <section class="bluesky-social-integration-interactive" aria-label="[bluesky_last_posts]">
                         <div class="bluesky-social-integration-interactive-visual">
                             <?php echo do_shortcode(
@@ -592,7 +650,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                                         <td colspan="2">
                                         <?php submit_button(
                                             null,
-                                            "primary large",
+                                            "secondary large",
                                             null,
                                             false,
                                         ); ?>
@@ -604,6 +662,13 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     </section>
 
                 </div>
+
+                <?php submit_button(
+                    null,
+                    "primary large",
+                    null,
+                    true,
+                ); ?>
             </div>
 
 
@@ -650,6 +715,10 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                         "social-integration-for-bluesky",
                     ); ?></p>
                     <ul>
+                        <li><code>layout</code> - <?php echo esc_html__(
+                            'The layout to use. Options are "default" and "compact". Default uses the global setting.',
+                            "social-integration-for-bluesky",
+                        ); ?></li>
                         <li><code>displaybanner</code> - <?php echo esc_html__(
                             "Whether to display the profile banner. Default is true.",
                             "social-integration-for-bluesky",
@@ -673,6 +742,14 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                         <li><code>classname</code> - <?php echo esc_html__(
                             "Additional CSS class to apply to the profile card.",
                             "social-integration-for-bluesky",
+                        ); ?></li>
+                        <li><code>account_id</code> - <?php echo sprintf(
+                            esc_html__(
+                                'The UUID of a specific account to display. Leave empty to use the active account. %1$sFind your Bluesky DID%2$s.',
+                                "social-integration-for-bluesky",
+                            ),
+                            '<a href="https://ilo.so/bluesky-did" target="_blank" rel="noopener noreferrer">',
+                            '</a>',
                         ); ?></li>
                     </ul>
 
@@ -701,6 +778,10 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                         "social-integration-for-bluesky",
                     ); ?></p>
                     <ul>
+                        <li><code>layout</code> - <?php echo esc_html__(
+                            'Override the feed layout. Options are "default", "layout_2" or "compact" (compact with header). Leave empty to use the global setting.',
+                            "social-integration-for-bluesky",
+                        ); ?></li>
                         <li><code>displayembeds</code> - <?php echo esc_html__(
                             "Whether to display embedded media in the posts. Default is true.",
                             "social-integration-for-bluesky",
@@ -728,6 +809,14 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                         <li><code>theme</code> - <?php echo esc_html__(
                             'The theme to use for displaying the posts. Options are "light", "dark", and "system". Default is "system".',
                             "social-integration-for-bluesky",
+                        ); ?></li>
+                        <li><code>account_id</code> - <?php echo sprintf(
+                            esc_html__(
+                                'The UUID of a specific account to display. Leave empty to use the active account. %1$sFind your Bluesky DID%2$s.',
+                                "social-integration-for-bluesky",
+                            ),
+                            '<a href="https://ilo.so/bluesky-did" target="_blank" rel="noopener noreferrer">',
+                            '</a>',
                         ); ?></li>
                     </ul>
 

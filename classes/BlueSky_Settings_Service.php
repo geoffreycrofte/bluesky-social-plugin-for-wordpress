@@ -278,6 +278,12 @@ class BlueSky_Settings_Service
         }
 
         // Sanitize Layouts
+        $sanitized["styles"]["profile_layout"] =
+            isset($input["styles"]["profile_layout"]) &&
+            in_array($input["styles"]["profile_layout"], ["default", "compact"])
+                ? esc_attr($input["styles"]["profile_layout"])
+                : "default";
+
         $sanitized["styles"]["feed_layout"] =
             isset($input["styles"]["feed_layout"]) &&
             in_array($input["styles"]["feed_layout"], ["default", "layout_2"])
@@ -369,6 +375,14 @@ class BlueSky_Settings_Service
         if (isset($_POST['bluesky_set_discussion_account']) && $this->account_manager) {
             $discussion_id = sanitize_text_field(wp_unslash($_POST['bluesky_discussion_account'] ?? ''));
             $this->account_manager->set_discussion_account($discussion_id);
+        }
+
+        // Sync global display settings to bluesky_global_settings for multi-account mode
+        $global_settings = get_option('bluesky_global_settings', []);
+        if (!empty($global_settings)) {
+            $global_settings['styles']['profile_layout'] = $sanitized['styles']['profile_layout'];
+            $global_settings['styles']['feed_layout'] = $sanitized['styles']['feed_layout'];
+            update_option('bluesky_global_settings', $global_settings);
         }
 
         // Check if activation date exists (plugin activation before v1.3.0 wouldn't have it)

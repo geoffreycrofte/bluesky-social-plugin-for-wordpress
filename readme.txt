@@ -56,27 +56,31 @@ Some other included features:
 
 In the shortcodes below, the complete list of attributes is displayed. You can omit them if you want, as the default values or the global values will be used if you omit them.
 
-==== Display your profile banner ====
+==== Display your profile card ====
 
-`[bluesky_profile theme="system" styleclass="" displaybanner="true" displayavatar="true" displaycounters="true" displaybio="true"]`
+`[bluesky_profile theme="system" layout="default" styleclass="" displaybanner="true" displayavatar="true" displaycounters="true" displaybio="true" account_id=""]`
 
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
+- `layout`: choose the profile card layout (values: `default`, `compact`)
 - `styleclass`: accept any string class-valid to customise the class attribute
 - `displaybanner`: either you want to display your profile banner image or not (values: `true`, `false`)
 - `displayavatar`: either you want to display your profile avatar or not (values: `true`, `false`)
 - `displaycounters`: either you want to display your followers, following and posts, or not (values: `true`, `false`)
 - `displaybio`: either you want to display your profile description or not (values: `true`, `false`)
+- `account_id`: the UUID of a specific account to display. Leave empty to use the active account (multi-account feature)
 
 ==== Display the last posts ====
 
-`[bluesky_last_posts displayembeds="true" theme="system" noreplies="true" noreposts="true" numberofposts="5"]`
+`[bluesky_last_posts displayembeds="true" theme="system" noreplies="true" noreposts="true" numberofposts="5" layout="" account_id=""]`
 
-- `displaysembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
+- `displayembeds`: either you want to display only your posts, or include the embeds too (values: `true`, `false`)
 - `noreplies`: either you want to hide your replies, or include them in your feed (values: `true`, `false`)
 - `noreposts`: either you want to hide your reposts, or include them in your feed (values: `true`, `false`)
 - `nocounters` - Whether to hide like, repost, reply, and quote counters (value: `true`, `false`)
 - `theme`: displays a different set of colors supporting dark and light modes (values: `system`, `light`, `dark`)
 - `numberofposts`: any number of posts to display. (advice, don't set a too high value)
+- `layout`: override the default feed layout (values: `default`, `layout_2` or `compact`). Leave empty to use the global setting
+- `account_id`: the UUID of a specific account to display. Leave empty to use the active account (multi-account feature)
 
 == Installation ==
 
@@ -142,6 +146,10 @@ No it is not. But I'm always happy when core team developers suggest new feature
   * Display the BlueSky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
   * Added the ability to display BlueSky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
   * Check in the Post List if the syndication exists (BlueSky column)
+ * **Admin UX Improvements**
+  * Site Health dedicated section for this plugin
+  * Clearer error messages
+  * Smoother ways to fix issues.
 * **Improvements**
  * **Core functions**
   * Rework of the entire codebase for a more maintainable code.

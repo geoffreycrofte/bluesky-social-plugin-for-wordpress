@@ -50,6 +50,31 @@
               "social-integration-for-bluesky",
             ),
           },
+          el(SelectControl, {
+            key: "layout-select",
+            label: __("Layout", "social-integration-for-bluesky"),
+            value: attributes.layout,
+            options: [
+              {
+                label: __(
+                  "Default (global setting)",
+                  "social-integration-for-bluesky",
+                ),
+                value: "",
+              },
+              {
+                label: __("Normal", "social-integration-for-bluesky"),
+                value: "default",
+              },
+              {
+                label: __("Compact", "social-integration-for-bluesky"),
+                value: "compact",
+              },
+            ],
+            onChange: function (value) {
+              setAttributes({ layout: value });
+            },
+          }),
           el(ToggleControl, {
             key: "banner-toggle",
             label: __("Display Banner", "social-integration-for-bluesky"),
@@ -142,6 +167,10 @@
       },
     ],
     attributes: {
+      layout: {
+        type: "string",
+        default: "",
+      },
       displaybanner: {
         type: "boolean",
         default: true,

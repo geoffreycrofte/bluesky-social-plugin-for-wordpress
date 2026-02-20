@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 ?>
-<div class="bluesky-stale-indicator" style="font-size: 0.8em; color: #666; margin-top: 5px;">
+<div class="bluesky-stale-indicator">
     <?php
     printf(
         esc_html__('Last updated %s ago', 'social-integration-for-bluesky'),

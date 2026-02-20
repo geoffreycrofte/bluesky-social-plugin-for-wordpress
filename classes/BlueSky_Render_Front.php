@@ -43,11 +43,6 @@ class BlueSky_Render_Front
             $this,
             "bluesky_last_posts_shortcode",
         ]);
-        add_shortcode("bluesky_profile_banner", [
-            $this,
-            "bluesky_profile_banner_shortcode",
-        ]);
-
         // Some extensions for wp_kses
         add_filter("wp_kses_allowed_html", [$this, "allow_svg_tags"], 10, 2);
     }
@@ -128,6 +123,7 @@ class BlueSky_Render_Front
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
             "account_id" => "",
+            "layout" => "",
         ]);
 
         // Convert string boolean values to actual booleans
@@ -166,6 +162,7 @@ class BlueSky_Render_Front
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
             "account_id" => "",
+            "layout" => "",
         ];
 
         // Merge defaults with provided attributes
@@ -179,7 +176,12 @@ class BlueSky_Render_Front
         $number_of_posts = $attributes["numberofposts"];
         $no_counters = $attributes["nocounters"];
         $account_id = $attributes["account_id"];
-        $layout = $this->options["styles"]["feed_layout"] ?? "default";
+        $layout = !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["feed_layout"] ?? "default");
+
+        // Normalize "compact" alias to "layout_2"
+        if ($layout === "compact") {
+            $layout = "layout_2";
+        }
 
         // Cache-first: check transient before making any API call
         $helpers = new BlueSky_Helpers();
@@ -353,6 +355,7 @@ class BlueSky_Render_Front
                 "displaycounters" => true,
                 "displaybio" => true,
                 "account_id" => "",
+                "layout" => $this->options["styles"]["profile_layout"] ?? "default",
             ],
             $atts,
         );
@@ -375,24 +378,58 @@ class BlueSky_Render_Front
     }
 
     /**
-     * Shortcode for BlueSky profile banner
-     * @param array $atts Shortcode attributes
+     * Render the profile card in compact layout
+     * @param array $profile Profile data
+     * @param array $attributes Block/shortcode attributes
+     * @param bool $is_fresh Whether the cache is fresh
+     * @param int|null $cache_timestamp Cache timestamp for stale indicator
      * @return string HTML output
      */
-    public function bluesky_profile_banner_shortcode($atts = [])
+    private function render_profile_compact($profile, $attributes, $is_fresh, $cache_timestamp)
     {
-        // Convert shortcode attributes to array and merge with defaults
-        $attributes = shortcode_atts(
-            [
-                "layout" => "full",
-                "account_id" => "",
-                "theme" => "system",
-            ],
-            $atts,
-            "bluesky_profile_banner",
+        $theme = $attributes["theme"] ?? ($this->options["theme"] ?? "system");
+
+        // Check for missing banner - set flag for gradient fallback
+        $needs_gradient_fallback = empty($profile['banner']);
+
+        // Build CSS classes - reuse the main profile card class with a compact modifier
+        $classes = [
+            'bluesky-social-integration-profile-card',
+            'display-compact',
+            $attributes["styleClass"] ?? "",
+            "theme-{$theme}",
+        ];
+
+        // Add display toggle classes (same as default layout)
+        $display_elements = ["banner", "avatar", "counters", "bio"];
+        foreach ($display_elements as $element) {
+            $option_key = "display" . $element;
+            if (
+                isset($attributes[$option_key]) &&
+                $attributes[$option_key] === false
+            ) {
+                $classes[] = "no-" . strtolower($element);
+            }
+        }
+
+        $aria_label = sprintf(
+            __("BlueSky Social Card of %s", "social-integration-for-bluesky"),
+            $profile["displayName"] ?? '',
         );
 
-        return $this->render_profile_banner($attributes);
+        ob_start();
+        do_action("bluesky_before_profile_card_markup", $profile);
+
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
+        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/profile-banner-compact.php';
+
+        do_action("bluesky_after_profile_card_markup", $profile);
+        return ob_get_clean();
     }
 
     /**
@@ -444,6 +481,7 @@ class BlueSky_Render_Front
                 "displaycounters" => $attributes["displaycounters"] ?? true,
                 "displaybio" => $attributes["displaybio"] ?? true,
                 "account_id" => $account_id,
+                "layout" => !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["profile_layout"] ?? "default"),
             ]);
             return $this->render_profile_skeleton(implode(" ", $classes_arr), $params);
         } else {
@@ -458,6 +496,13 @@ class BlueSky_Render_Front
                     "social-integration-for-bluesky",
                 ) .
                 "</p>";
+        }
+
+        $layout = !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["profile_layout"] ?? "default");
+
+        // Compact layout uses a different template
+        if ($layout === "compact") {
+            return $this->render_profile_compact($profile, $attributes, $is_fresh, $cache_timestamp);
         }
 
         $classes = [
@@ -729,120 +774,4 @@ class BlueSky_Render_Front
         return ob_get_clean();
     }
 
-    /**
-     * Render the BlueSky profile banner
-     * @param array $atts Attributes: layout ('full'|'compact'), account_id, theme
-     * @return string HTML output
-     */
-    public function render_profile_banner($atts = [])
-    {
-        // Parse attributes with defaults
-        $atts = wp_parse_args($atts, [
-            'layout' => 'full',
-            'account_id' => '',
-            'theme' => $this->options['theme'] ?? 'system',
-        ]);
-
-        $layout = $atts['layout'];
-        $account_id = $atts['account_id'];
-        $theme = $atts['theme'];
-
-        // Fetch profile via API handler (uses cache-first with stale-while-revalidate)
-        $helpers = new BlueSky_Helpers();
-        $profile_cache_key = $helpers->get_profile_transient_key($account_id);
-        $cached_profile = get_transient($profile_cache_key);
-        $is_fresh = BlueSky_Helpers::is_cache_fresh($profile_cache_key);
-        $cache_timestamp = null;
-
-        if ($cached_profile !== false) {
-            // Fast path: use cached profile
-            $profile = $cached_profile;
-
-            // If cache is stale, schedule background refresh
-            if (!$is_fresh) {
-                BlueSky_Helpers::schedule_cache_refresh($profile_cache_key, $account_id, []);
-                // Get cache timestamp from freshness marker
-                $freshness_key = $profile_cache_key . '_fresh';
-                $cache_timestamp = get_transient($freshness_key);
-                if (false === $cache_timestamp) {
-                    // Freshness marker expired - estimate from transient expiry
-                    $cache_timestamp = time() - 600; // Assume 10 minutes old
-                }
-            }
-        } else {
-            // No cache: fetch fresh data
-            $profile = $this->api_handler->get_bluesky_profile();
-        }
-
-        // If no profile data available, return empty (graceful degradation)
-        if (!$profile) {
-            return '';
-        }
-
-        // Check for missing banner - set flag for gradient fallback
-        $needs_gradient_fallback = empty($profile['banner']);
-
-        // Build CSS classes
-        $classes = [
-            'bluesky-profile-banner',
-            "bluesky-profile-banner-{$layout}",
-            "theme-{$theme}",
-        ];
-
-        $aria_label = __('Bluesky Profile Banner', 'social-integration-for-bluesky');
-
-        // Select template based on layout
-        $template = $layout === 'compact'
-            ? 'profile-banner-compact.php'
-            : 'profile-banner-full.php';
-
-        // Render template with variables: $profile, $classes, $aria_label, $needs_gradient_fallback, $this
-        ob_start();
-
-        // Prepend stale indicator if cache is stale
-        if (!$is_fresh && null !== $cache_timestamp) {
-            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
-            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
-        }
-
-        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . "templates/frontend/{$template}";
-
-        return ob_get_clean();
-    }
-
-    /**
-     * Get inline styles for profile banner customization
-     * @return string Style tag with custom CSS
-     */
-    private function get_profile_banner_styles()
-    {
-        $options = $this->options;
-
-        if (
-            !isset($options["customisation"]) ||
-            !is_array($options["customisation"]) ||
-            !isset($options["customisation"]["banner"])
-        ) {
-            return '';
-        }
-
-        $output = "\n" . "<!-- Profile Banner Custom Styles -->" . "\n";
-        $output .= '<style id="bluesky-profile-banner-custom-styles">' . "\n";
-        $output .= ".bluesky-profile-banner {" . "\n";
-
-        $custom = $options["customisation"]["banner"];
-        foreach ($custom as $element => $props) {
-            if (is_array($props)) {
-                foreach ($props as $k => $prop) {
-                    $custom_prop = "--bluesky-banner-custom-" . $element . "-" . $k;
-                    $output .= "\t" . esc_attr($custom_prop) . ": " . intval($prop["value"]) . "px!important;" . "\n";
-                }
-            }
-        }
-
-        $output .= "}" . "\n";
-        $output .= "</style>" . "\n";
-
-        return $output;
-    }
 }

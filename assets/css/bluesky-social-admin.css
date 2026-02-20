@@ -11,7 +11,10 @@
 }
 
 .bluesky-social-integration-admin {
+    --primary-lighter: #d8ebff;
+    --primary-light: #4a9ff9;
     --primary: #1185FE;
+    --primary-dark: #0765c9;
     font-size: 14px;
     margin-left: -20px;
     line-height: 1.5;
@@ -23,6 +26,7 @@
 }
 
 .bluesky-social-integration-admin .bluesky-social-integration-profile-card {
+    align-self: flex-start;
     max-width: 560px;
     width: 100%;
 }
@@ -178,13 +182,19 @@
     list-style: circle;
 }
 
-.bluesky-social-integration-admin .button.button-large {
+.bluesky-social-integration-admin .button.button {
     font-size: 14px;
     padding: 4px 16px;
     border-radius: 8px;
-    background-color: var(--primary);
+    color: var(--primary-dark);
+    background-color: var(--primary-lighter);
     font-weight: bold;
     border: none;
+}
+
+.bluesky-social-integration-admin .button.button-primary.button-large {
+    background-color: var(--primary);
+    color: white;
 }
 
 .bluesky-metabox-description.bluesky-metabox-description.bluesky-metabox-description {
@@ -283,6 +293,7 @@
 }
 
 .bluesky-social-integration-interactive .bluesky-social-integration-last-post {
+    align-self: flex-start;
     max-width: 560px;
     width: 100%;
 }

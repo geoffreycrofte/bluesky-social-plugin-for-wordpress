@@ -115,12 +115,6 @@ class BlueSky_Assets_Service
                 [],
                 BLUESKY_PLUGIN_VERSION,
             );
-            wp_enqueue_style(
-                "bluesky-profile-banner",
-                BLUESKY_PLUGIN_FOLDER . "assets/css/bluesky-profile-banner.css",
-                [],
-                BLUESKY_PLUGIN_VERSION,
-            );
             wp_enqueue_script(
                 "bluesky-async-loader",
                 BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-async-loader.js",

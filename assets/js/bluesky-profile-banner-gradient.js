@@ -80,17 +80,7 @@
                     var brightened = adjustBrightness(r, g, b, 20);
                     var gradient = 'linear-gradient(135deg, rgb(' + r + ',' + g + ',' + b + '), rgb(' + brightened[0] + ',' + brightened[1] + ',' + brightened[2] + '))';
 
-                    // Apply gradient to the appropriate element
-                    var targetElement = element;
-                    if (element.classList.contains('bluesky-profile-banner-full')) {
-                        // For full variant, apply to header section
-                        var header = element.querySelector('.bluesky-profile-banner-header');
-                        if (header) {
-                            targetElement = header;
-                        }
-                    }
-
-                    targetElement.style.setProperty('--bluesky-banner-gradient', gradient);
+                    element.style.setProperty('--bluesky-banner-gradient', gradient);
                     element.classList.remove('bluesky-banner-gradient-pending');
                 } else {
                     // Color extraction failed, use hash fallback
@@ -122,16 +112,7 @@
 
         var gradient = 'linear-gradient(135deg, rgb(' + color1[0] + ',' + color1[1] + ',' + color1[2] + '), rgb(' + color2[0] + ',' + color2[1] + ',' + color2[2] + '))';
 
-        // Apply gradient to the appropriate element
-        var targetElement = element;
-        if (element.classList.contains('bluesky-profile-banner-full')) {
-            var header = element.querySelector('.bluesky-profile-banner-header');
-            if (header) {
-                targetElement = header;
-            }
-        }
-
-        targetElement.style.setProperty('--bluesky-banner-gradient', gradient);
+        element.style.setProperty('--bluesky-banner-gradient', gradient);
         element.classList.remove('bluesky-banner-gradient-pending');
     }
 

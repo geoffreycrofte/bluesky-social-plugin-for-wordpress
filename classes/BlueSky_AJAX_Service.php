@@ -129,6 +129,7 @@ class BlueSky_AJAX_Service
             "displaycounters" => filter_var($params["displaycounters"] ?? true, FILTER_VALIDATE_BOOLEAN),
             "displaybio" => filter_var($params["displaybio"] ?? true, FILTER_VALIDATE_BOOLEAN),
             "account_id" => sanitize_text_field($params["account_id"] ?? ""),
+            "layout" => sanitize_text_field($params["layout"] ?? ""),
         ];
 
         // Create per-account API handler
