@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 5 (Profile & Content Display) — Plan 1 complete
+**Current focus:** Phase 5 (Profile & Content Display) — Plan 2 complete
 
 ## Current Position
 
-Phase: 5 of 7 (Profile & Content Display) — Plan 1 of 4 complete
-Next: 05-02 (Gutenberg block registration)
-Last activity: 2026-02-20 — 05-01 complete (Profile banner renderer with full/compact variants)
+Phase: 5 of 7 (Profile & Content Display) — Plan 2 of 4 complete
+Next: 05-03 (Gutenberg block registration)
+Last activity: 2026-02-20 — 05-02 complete (Feed UX polish with GIF detection, skeleton loaders, empty/stale states)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██▌       ] 25% (Phase 5)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [█████     ] 50% (Phase 5)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: ~3.1 minutes (automated plans)
-- Total execution time: ~2.6 hours + 5 iterative testing sessions
+- Total execution time: ~2.7 hours + 5 iterative testing sessions
 
 **By Phase:**
 
@@ -30,7 +30,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 02 | 6 | ~40 min | ~6.7 min |
 | 03 | 6 | ~24 min | ~4.0 min |
 | 04 | 5 | ~20 min | ~4.0 min |
-| 05 | 1 | ~2.7 min | ~2.7 min |
+| 05 | 2 | ~5.9 min | ~3.0 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -53,6 +53,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 04-04: Automated execution (2.0 min) — WordPress Site Health integration with tests & debug info
 - Plan 04-05: Checkpoint (~8 min) — integration wiring, 4 bug fixes, UX tweaks, human approved
 - Plan 05-01: Automated execution (2.7 min) — profile banner renderer with full/compact variants, gradient fallback
+- Plan 05-02: Automated execution (3.2 min) — GIF detection, skeleton loaders, empty/stale states
 
 *Updated after each plan completion*
 
@@ -151,6 +152,11 @@ Recent decisions affecting current work:
 - Gradient fallback via data-avatar-url attribute for JS color extraction (progressive enhancement) (05-01)
 - All three stats (followers/following/posts) visible on both banner variants (05-01)
 - Container queries for responsive banner layout (better than media queries for widgets) (05-01)
+- GIF detection via authoritative mimeType from Bluesky API (not URL extension parsing) (05-02)
+- GIF images load eagerly without lazy loading for immediate animation (05-02)
+- Skeleton loaders match exact layout dimensions to minimize CLS (05-02)
+- CSS-only shimmer animation with 2-second infinite loop (05-02)
+- Empty state uses friendly "No posts yet" message with butterfly icon (05-02)
 
 ### Pending Todos
 
@@ -164,8 +170,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 05-01-PLAN.md
-Resume file: .planning/phases/05-profile-content-display/05-01-SUMMARY.md
+Stopped at: Completed 05-02-PLAN.md
+Resume file: .planning/phases/05-profile-content-display/05-02-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
