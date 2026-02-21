@@ -173,9 +173,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Phase 5 complete
-Resume file: .planning/phases/05-profile-content-display/05-04-SUMMARY.md
+Last session: 2026-02-21
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-advanced-syndication/06-CONTEXT.md
 
 ---
 *State initialized: 2026-02-14*
