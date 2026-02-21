@@ -17,8 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Performance & Resilience** - Async syndication with rate limit handling (completed 2026-02-19)
 - [ ] **Phase 4: Error Handling & UX** - Actionable errors and health monitoring
 - [x] **Phase 5: Profile & Content Display** - Profile banner and advanced feed layouts
-- [ ] **Phase 6: Visual Customization** - Deep customization with live preview
-- [ ] **Phase 7: Advanced Syndication** - Format options and category-based rules
+- [ ] **Phase 6: Advanced Syndication** - Format options and category-based rules
 
 ## Phase Details
 
@@ -118,24 +117,9 @@ Plans:
 - [ ] 05-03-PLAN.md -- Profile banner Gutenberg block, shortcode, widget, gradient fallback JS
 - [ ] 05-04-PLAN.md -- Integration wiring + E2E human verification
 
-### Phase 6: Visual Customization
-**Goal**: Users can deeply customize appearance of all Bluesky content with live preview
-**Depends on**: Phase 5
-**Requirements**: CUST-01, CUST-02, CUST-03, CUST-04, CUST-05
-**Success Criteria** (what must be TRUE):
-  1. User can select color themes (red, blue, green, pink, yellow, violet) with dark/light mode variants
-  2. User can control typography (font family, weight, line-height) for displayed content
-  3. Customization changes show live preview in admin/editor before saving
-  4. Pre-built style presets available for quick setup (e.g., "Minimal", "Bold", "Classic")
-  5. Both Gutenberg blocks and classic widgets support all customization options consistently
-**Plans**: TBD
-
-Plans:
-- [ ] 06-01: TBD
-
-### Phase 7: Advanced Syndication
+### Phase 6: Advanced Syndication
 **Goal**: Users can configure syndication format globally with per-post overrides and category rules
-**Depends on**: Phase 6
+**Depends on**: Phase 5
 **Requirements**: SYND-01, SYND-02, SYND-03, SYND-04
 **Success Criteria** (what must be TRUE):
   1. Global default syndication format setting (basic link vs rich card with image/excerpt) in settings
@@ -145,12 +129,12 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 06-01: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -159,8 +143,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 3. Performance & Resilience | 0/TBD | Complete    | 2026-02-19 |
 | 4. Error Handling & UX | 0/TBD | Not started | - |
 | 5. Profile & Content Display | 4/4 | Complete | 2026-02-20 |
-| 6. Visual Customization | 0/TBD | Not started | - |
-| 7. Advanced Syndication | 0/TBD | Not started | - |
+| 6. Advanced Syndication | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-14*

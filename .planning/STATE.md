@@ -5,12 +5,12 @@
 See: .planning/PROJECT.md (updated 2026-02-14)
 
 **Core value:** WordPress users can seamlessly bridge their WordPress site and Bluesky presence — displaying Bluesky content on their site and syndicating WordPress posts to Bluesky — with zero silent failures and clear recovery paths when things go wrong.
-**Current focus:** Phase 5 complete — ready for Phase 6 (Visual Customization)
+**Current focus:** Phase 5 complete — ready for Phase 6 (Advanced Syndication)
 
 ## Current Position
 
-Phase: 5 of 7 (Profile & Content Display) — COMPLETE
-Next: Phase 6 (Visual Customization) — needs planning
+Phase: 5 of 6 (Profile & Content Display) — COMPLETE
+Next: Phase 6 (Advanced Syndication) — needs planning
 Last activity: 2026-02-20 — 05-04 complete (E2E verification with 2 rounds of rework, human approved)
 
 Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5)
