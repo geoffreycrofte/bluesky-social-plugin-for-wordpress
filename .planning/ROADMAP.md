@@ -118,18 +118,21 @@ Plans:
 - [ ] 05-04-PLAN.md -- Integration wiring + E2E human verification
 
 ### Phase 6: Advanced Syndication
-**Goal**: Users can configure syndication format globally with per-post overrides and category rules
+**Goal**: Users can configure editable syndication text with character counting, category-based routing rules per account, and global syndication controls
 **Depends on**: Phase 5
 **Requirements**: SYND-01, SYND-02, SYND-03, SYND-04
 **Success Criteria** (what must be TRUE):
-  1. Global default syndication format setting (basic link vs rich card with image/excerpt) in settings
-  2. Per-post format override available in editor sidebar
+  1. Per-post editable syndication text with live grapheme-based character counter (300 limit)
+  2. Editable text available in both Gutenberg sidebar panel and pre-publish panel
   3. Category-based syndication rules (e.g., "only syndicate posts in Blog category to Account A")
-  4. Per-account toggle for auto-post vs manual syndication
-**Plans**: TBD
+  4. Global syndication pause toggle in settings
+**Plans:** 4 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md -- Editable post text meta, character counter utility, Gutenberg sidebar panel
+- [ ] 06-02-PLAN.md -- Category rules settings tab, account data extension, global pause toggle
+- [ ] 06-03-PLAN.md -- Pre-publish panel extension, syndication flow wiring (custom text, filtering, pause)
+- [ ] 06-04-PLAN.md -- End-to-end verification checkpoint (human verify)
 
 ## Progress
 
@@ -143,7 +146,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Performance & Resilience | 0/TBD | Complete    | 2026-02-19 |
 | 4. Error Handling & UX | 0/TBD | Not started | - |
 | 5. Profile & Content Display | 4/4 | Complete | 2026-02-20 |
-| 6. Advanced Syndication | 0/TBD | Not started | - |
+| 6. Advanced Syndication | 0/4 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-14*
