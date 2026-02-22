@@ -88,6 +88,15 @@ class BlueSky_Post_Metabox
             function_exists("use_block_editor_for_post") &&
             use_block_editor_for_post($post)
         ) {
+            // Enqueue character counter utility first
+            wp_enqueue_script(
+                "bluesky-character-counter",
+                BLUESKY_PLUGIN_FOLDER . "assets/js/bluesky-character-counter.js",
+                [],
+                BLUESKY_PLUGIN_VERSION,
+                true
+            );
+
             wp_enqueue_script(
                 "bluesky-pre-publish-panel",
                 BLUESKY_PLUGIN_FOLDER . "blocks/bluesky-pre-publish-panel.js",
@@ -98,6 +107,7 @@ class BlueSky_Post_Metabox
                     "wp-data",
                     "wp-components",
                     "wp-i18n",
+                    "bluesky-character-counter",
                 ],
                 BLUESKY_PLUGIN_VERSION,
                 true,

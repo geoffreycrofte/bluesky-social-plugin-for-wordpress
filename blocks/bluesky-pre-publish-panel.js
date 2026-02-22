@@ -171,6 +171,77 @@
             );
         }
 
+        renderEditableSyndicationText() {
+            const { meta, updateMeta, title, excerpt } = this.props;
+            const customText = meta._bluesky_syndication_text || '';
+
+            // Generate default text if custom text is empty
+            let displayText = customText;
+            if (!customText) {
+                // Same logic as sidebar panel - generate from title + excerpt
+                const postTitle = title || '';
+                const postExcerpt = excerpt || '';
+                displayText = postTitle;
+                if (postExcerpt) {
+                    displayText += '\n\n' + postExcerpt;
+                }
+            }
+
+            // Get character count status
+            const countStatus = window.BlueSkyCharacterCounter
+                ? window.BlueSkyCharacterCounter.getCountStatus(displayText, 300)
+                : { count: displayText.length, isOverLimit: displayText.length > 300 };
+
+            const countColor = countStatus.isOverLimit ? '#d63638' : '#757575';
+
+            return wp.element.createElement('div', {
+                style: {
+                    borderTop: '1px solid #ddd',
+                    marginTop: '12px',
+                    paddingTop: '12px'
+                }
+            },
+                wp.element.createElement('p', {
+                    style: { fontWeight: 600, fontSize: '13px', marginBottom: '8px' }
+                }, __('Post text:', 'social-integration-for-bluesky')),
+                wp.element.createElement('textarea', {
+                    value: customText,
+                    onChange: (e) => {
+                        updateMeta({ _bluesky_syndication_text: e.target.value });
+                    },
+                    placeholder: __('Auto-generated from title and excerpt', 'social-integration-for-bluesky'),
+                    rows: 4,
+                    style: {
+                        width: '100%',
+                        padding: '8px',
+                        fontSize: '13px',
+                        borderRadius: '2px',
+                        border: '1px solid #8c8f94'
+                    }
+                }),
+                wp.element.createElement('div', {
+                    style: {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '4px'
+                    }
+                },
+                    wp.element.createElement('span', {
+                        style: { color: countColor, fontSize: '12px' }
+                    }, `${countStatus.count} / 300`),
+                    customText && wp.element.createElement('button', {
+                        type: 'button',
+                        className: 'components-button is-link is-small',
+                        onClick: () => {
+                            updateMeta({ _bluesky_syndication_text: '' });
+                        },
+                        style: { fontSize: '12px' }
+                    }, __('Reset to default', 'social-integration-for-bluesky'))
+                )
+            );
+        }
+
         render() {
             const { loading, preview, error } = this.state;
             const dontSyndicate = this.props.meta._bluesky_dont_syndicate;
@@ -220,6 +291,8 @@
                     }, __('This is what will be posted to Bluesky:', 'social-integration-for-bluesky')),
 
                     this.renderAccountSelection(),
+
+                    this.renderEditableSyndicationText(),
 
                     loading && wp.element.createElement('div', {
                         className: 'bluesky-preview-loading',
