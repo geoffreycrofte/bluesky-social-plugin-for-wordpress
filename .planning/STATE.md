@@ -10,10 +10,10 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 ## Current Position
 
 Phase: 6 of 6 (Advanced Syndication) — IN PROGRESS
-Current Plan: 06-01 (Editable Syndication Text) — COMPLETE
-Last activity: 2026-02-22 — 06-01 complete (editable syndication text with grapheme counter)
+Current Plan: 06-02 (Category Rules and Global Pause) — COMPLETE
+Last activity: 2026-02-22 — 06-02 complete (category routing with include/exclude rules, global pause toggle)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5) | [██        ] 20% (Phase 6)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5) | [████      ] 40% (Phase 6)
 
 ## Performance Metrics
 
@@ -31,7 +31,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 03 | 6 | ~24 min | ~4.0 min |
 | 04 | 5 | ~20 min | ~4.0 min |
 | 05 | 3 | ~9.6 min | ~3.2 min |
-| 06 | 1 | ~2.3 min | ~2.3 min |
+| 06 | 2 | ~5.6 min | ~2.8 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -58,6 +58,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 05-03: Automated execution (3.7 min) — profile banner block, widget, shortcode with Color Thief gradient
 - Plan 05-04: Checkpoint (~45 min) — E2E verification, 2 rounds of rework (10 items + 3 bug fixes), human approved
 - Plan 06-01: Automated execution (2.3 min) — editable syndication text with Intl.Segmenter grapheme counter
+- Plan 06-02: Automated execution (3.3 min) — category routing rules with include/exclude logic, global pause toggle
 
 *Updated after each plan completion*
 
@@ -167,6 +168,10 @@ Recent decisions affecting current work:
 - Character counter uses Intl.Segmenter with text.length fallback for browser compatibility (06-01)
 - Sidebar panel hidden when syndication disabled (respects _bluesky_dont_syndicate) (06-01)
 - Preview shown for auto-generated text when meta field is empty (06-01)
+- Category include rules use OR logic (any match syndicates post to account) (06-02)
+- Exclude rules checked first with higher priority than include rules (06-02)
+- Empty category rules default to syndicating all categories (opt-out model) (06-02)
+- Global pause toggle shows warning color when enabled for visual prominence (06-02)
 
 ### Pending Todos
 
@@ -180,8 +185,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 06-01-PLAN.md
-Resume file: .planning/phases/06-advanced-syndication/06-01-SUMMARY.md
+Stopped at: Completed 06-02-PLAN.md
+Resume file: .planning/phases/06-advanced-syndication/06-02-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
