@@ -110,14 +110,14 @@ class BlueSky_Settings_Service
         add_settings_section(
             "bluesky_customization_settings",
             esc_html__(
-                "BlueSky Customization Settings",
+                "Feed Options",
                 "social-integration-for-bluesky",
             ),
             [$this, "customization_section_callback"],
             BLUESKY_PLUGIN_SETTING_PAGENAME,
             [
                 "before_section" =>
-                    '<div id="customization" aria-hidden="false" class="bluesky-social-integration-admin-content">',
+                    '<div id="feed-options" aria-hidden="false" class="bluesky-social-integration-admin-content">',
                 "after_section" => $submit_button . "\n\n" . "</div>",
                 "section_class" => "bluesky-customization-settings",
             ],
@@ -181,8 +181,9 @@ class BlueSky_Settings_Service
             ? BlueSky_Helpers::normalize_handle(sanitize_text_field($input["handle"]))
             : "";
         $sanitized["enable_multi_account"] = !empty($input["enable_multi_account"]);
-        $sanitized["auto_syndicate"] = isset($input["auto_syndicate"]) ? 1 : 0;
         $sanitized["global_pause"] = isset($input["global_pause"]) ? 1 : 0;
+        // Keep auto_syndicate in sync (inverted) for retro-compat with classic editor metabox
+        $sanitized["auto_syndicate"] = $sanitized["global_pause"] ? 0 : 1;
         $sanitized["no_replies"] = isset($input["no_replies"]) ? 1 : 0;
         $sanitized["no_embeds"] = isset($input["no_embeds"]) ? 1 : 0;
         $sanitized["no_reposts"] = isset($input["no_reposts"]) ? 1 : 0;
@@ -378,6 +379,44 @@ class BlueSky_Settings_Service
             $this->account_manager->set_discussion_account($discussion_id);
         }
 
+        // Process category rules if the syndication tab was submitted
+        // Category rules live in bluesky_category_rules[] (outside bluesky_settings namespace)
+        if ($this->account_manager) {
+            $posted_rules = isset($_POST['bluesky_category_rules']) && is_array($_POST['bluesky_category_rules'])
+                ? $_POST['bluesky_category_rules']
+                : [];
+
+            // Get all auto-syndicate accounts to handle clearing rules for unchecked accounts
+            $all_accounts = $this->account_manager->get_accounts();
+
+            foreach ($all_accounts as $acct_id => $account) {
+                if (empty($account['auto_syndicate'])) {
+                    continue; // Only process auto-syndicate accounts (same as the category rules form)
+                }
+
+                if (isset($posted_rules[$acct_id])) {
+                    $rules = $posted_rules[$acct_id];
+                    $include_categories = isset($rules['include']) && is_array($rules['include'])
+                        ? array_map('intval', $rules['include'])
+                        : [];
+                    $exclude_categories = isset($rules['exclude']) && is_array($rules['exclude'])
+                        ? array_map('intval', $rules['exclude'])
+                        : [];
+                } else {
+                    // Account not in POST = all checkboxes unchecked → clear rules
+                    $include_categories = [];
+                    $exclude_categories = [];
+                }
+
+                $this->account_manager->update_account($acct_id, [
+                    'category_rules' => [
+                        'include' => $include_categories,
+                        'exclude' => $exclude_categories
+                    ]
+                ]);
+            }
+        }
+
         // Sync global display settings to bluesky_global_settings for multi-account mode
         $global_settings = get_option('bluesky_global_settings', []);
         if (!empty($global_settings)) {
@@ -423,19 +462,6 @@ class BlueSky_Settings_Service
                 ),
                 "callback" => "render_multi_account_toggle",
                 "section" => "bluesky_main_settings",
-            ],
-            "bluesky_auto_syndicate" => [
-                "label" => __(
-                    "Auto-Syndicate Posts",
-                    "social-integration-for-bluesky",
-                ),
-                "callback" => "render_syndicate_field",
-                "section" => "bluesky_customization_settings",
-            ],
-            "bluesky_theme" => [
-                "label" => __("Theme", "social-integration-for-bluesky"),
-                "callback" => "render_theme_field",
-                "section" => "bluesky_customization_settings",
             ],
             "bluesky_posts_limit" => [
                 "label" => __(
@@ -716,7 +742,12 @@ class BlueSky_Settings_Service
 
         echo '<h3>' . esc_html__('Connected Accounts', 'social-integration-for-bluesky') . '</h3>';
         echo '<p class="description">' .
-             esc_html__('Active account is the default account used for widgets, shortcodes & blocks if no other account is specified.', 'social-integration-for-bluesky') .
+             '<strong>' . esc_html__('Active account:', 'social-integration-for-bluesky') . '</strong>&nbsp;' .
+             esc_html__('Is the default account used for widgets, shortcodes & blocks if no other account is specified.', 'social-integration-for-bluesky') .
+             '</p>';
+        echo '<p class="description">' .
+             '<strong>' . esc_html__('Auto-Syndicate:', 'social-integration-for-bluesky') . '</strong>&nbsp;' .
+             esc_html__('If checked, it’ll syndicate all new posts, unless you filter it by including/excluding categorie. (See Syndication tab)', 'social-integration-for-bluesky') .
              '</p>';
 
         // Get accounts
@@ -794,7 +825,7 @@ class BlueSky_Settings_Service
 
                 // Make Active button
                 if (!$is_active) {
-                    echo '<div class="bluesky-account-action" style="display: inline; margin-right: 8px;">';
+                    echo '<div class="bluesky-account-action">';
                     wp_nonce_field('bluesky_switch_account_' . $account_id, '_bluesky_switch_nonce_' . esc_attr($account_id), true, true);
                     echo '<input type="hidden" name="account_id" value="' . esc_attr($account_id) . '" />';
                     echo '<button type="button" name="bluesky_switch_account" class="button button-small bluesky-action-btn">' .
@@ -804,7 +835,7 @@ class BlueSky_Settings_Service
                 }
 
                 // Remove button
-                echo '<div class="bluesky-account-action" style="display: inline;">';
+                echo '<div class="bluesky-account-action">';
                 wp_nonce_field('bluesky_remove_account_' . $account_id, '_bluesky_remove_nonce_' . esc_attr($account_id), true, true);
                 echo '<input type="hidden" name="account_id" value="' . esc_attr($account_id) . '" />';
                 echo '<button type="button" name="bluesky_remove_account" class="button button-small bluesky-remove-account-btn bluesky-action-btn">' .
@@ -897,10 +928,19 @@ class BlueSky_Settings_Service
 
     /**
      * Render global pause field
+     * Retro-compat: reads from global_pause first, falls back to inverted auto_syndicate
+     * (auto_syndicate=0 means pause=1, auto_syndicate=1 means pause=0)
      */
     public function render_global_pause_field()
     {
-        $global_pause = $this->options["global_pause"] ?? 0;
+        // Retro-compat: if global_pause is not explicitly set, derive from auto_syndicate
+        if (isset($this->options["global_pause"])) {
+            $global_pause = $this->options["global_pause"];
+        } else {
+            // Invert: auto_syndicate=1 (enabled) means not paused, auto_syndicate=0 means paused
+            $auto_syndicate = $this->options["auto_syndicate"] ?? 1;
+            $global_pause = $auto_syndicate ? 0 : 1;
+        }
 
         echo '<input id="' .
             esc_attr(BLUESKY_PLUGIN_OPTIONS . "_global_pause") .

@@ -273,6 +273,7 @@ class BlueSky_Assets_Service
                 'wp-element',
                 'wp-data',
                 'wp-compose',
+                'wp-components',
                 'wp-i18n',
                 'bluesky-character-counter'
             ],

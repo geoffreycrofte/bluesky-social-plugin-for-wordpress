@@ -36,20 +36,17 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
             </a>
 
             <?php if ($auth) { ?>
-            <a href="#customization" aria-controls="customization" class="privacy-settings-tab">
+            <a href="#feed-options" aria-controls="feed-options" class="privacy-settings-tab">
                 <?php esc_html_e(
-                    "Customization",
+                    "Feed Options",
                     "social-integration-for-bluesky",
                 ); ?>
             </a>
             <?php } ?>
 
             <?php if ($auth) { ?>
-            <a href="#styles" aria-controls="styles" class="privacy-settings-tab">
-                <?php esc_html_e(
-                    "Styles",
-                    "social-integration-for-bluesky",
-                ); ?>
+            <a href="#syndication" aria-controls="syndication" class="privacy-settings-tab">
+                <?php esc_html_e('Syndication', 'social-integration-for-bluesky'); ?>
             </a>
             <?php } ?>
 
@@ -63,15 +60,9 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
             <?php } ?>
 
             <?php if ($auth) { ?>
-            <a href="#syndication" aria-controls="syndication" class="privacy-settings-tab">
-                <?php esc_html_e('Syndication', 'social-integration-for-bluesky'); ?>
-            </a>
-            <?php } ?>
-
-            <?php if ($auth) { ?>
-            <a href="#shortcodes" aria-controls="shortcodes" class="privacy-settings-tab">
-                <?php echo esc_html__(
-                    "The shortcodes",
+            <a href="#styles" aria-controls="styles" class="privacy-settings-tab">
+                <?php esc_html_e(
+                    "Styles",
                     "social-integration-for-bluesky",
                 ); ?>
             </a>
@@ -107,6 +98,39 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     "Decide how you want your Bluesky blocks to look like!",
                     "social-integration-for-bluesky",
                 ); ?></p>
+
+                <!-- ============================
+                     Theme
+                     ============================ -->
+
+                <h3><?php echo esc_html__(
+                    "Theme",
+                    "social-integration-for-bluesky",
+                ); ?></h3>
+
+                <table class="form-table" role="presentation">
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                <label for="<?php echo esc_attr(BLUESKY_PLUGIN_OPTIONS . '_theme'); ?>">
+                                    <?php echo esc_html__("Theme", "social-integration-for-bluesky"); ?>
+                                </label>
+                            </th>
+                            <td>
+                                <?php $this->render_theme_field(); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php submit_button(
+                    null,
+                    "primary large",
+                    null,
+                    true,
+                ); ?>
+
+                <hr />
 
                 <div class="bluesky-custom-styles-output" hidden>
                     <?php
@@ -704,13 +728,88 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                 <h3><?php esc_html_e('Category Rules', 'social-integration-for-bluesky'); ?></h3>
                 <p><?php esc_html_e('Configure which categories should be syndicated to which accounts. If no rules are set, all posts will be syndicated.', 'social-integration-for-bluesky'); ?></p>
 
+                 <p class="description">
+                    <?php printf(
+                        esc_html__('%1$sInclude:%2$s Only syndicate posts with these categories.%3$s%1$sExclude%2$s: Never syndicate posts with these categories. If no rules are set, all posts syndicate.', 'social-integration-for-bluesky'),
+                        '<strong>',
+                        '</strong>',
+                        '<br>'
+                    ); ?>
+                </p>
+
                 <?php
                 // Include category rules template
                 include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/admin/settings-category-rules.php';
                 ?>
+
+                <?php submit_button(null, 'primary large', null, true); ?>
             </div>
 
-            <div id="shortcodes" aria-hidden="false" class="bluesky-social-integration-admin-content">
+            <div id="about" aria-hidden="false" class="bluesky-social-integration-admin-content">
+                <h2><?php echo esc_html__(
+                    "About this plugin",
+                    "social-integration-for-bluesky",
+                ); ?></h2>
+                <?php // translators: %s is the name of the developer.
+?>
+                <p><?php echo sprintf(
+                    esc_html__(
+                        "This plugin is written by %s.",
+                        "social-integration-for-bluesky",
+                    ),
+                    '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>',
+                ); ?><br><?php echo esc_html__(
+   "This extension is not an official BlueSky plugin.",
+   "social-integration-for-bluesky",
+); ?></p>
+
+                <?php // translators: %1$s is the link opening tag, %2$s closing link tag.
+?>
+                <p>
+                    <?php echo sprintf(
+                        esc_html__(
+                            'Need help with something? Have a suggestion? %1$sAsk away%2$s.',
+                            "social-integration-for-bluesky",
+                        ),
+                        '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">',
+                        "</a>",
+                    ); ?><br>
+                    <?php echo sprintf(
+                        esc_html__(
+                            'You want to contribute to this project? %1$sHere is the Github Repository%2$s.',
+                            "social-integration-for-bluesky",
+                        ),
+                        '<a href="https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress" target="_blank">',
+                        "</a>",
+                    ); ?>
+                </p>
+
+                <?php $title = __(
+                    "Rate this plugin on WordPress.org",
+                    "social-integration-for-bluesky",
+                ); ?>
+
+                <?php // translators: %1$s is the link opening tag, %2$s closing link tag.
+?>
+                <p><?php echo sprintf(
+                    esc_html__(
+                        'Want to support the plugin? %1$sGive a review%2$s',
+                        "social-integration-for-bluesky",
+                    ),
+                    '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' .
+                        esc_attr($title) .
+                        '">',
+                    " ⭐️⭐️⭐️⭐️⭐️</a>",
+                ); ?></p>
+
+                <h2><?php echo esc_html__(
+                    "Some Plugin Engine Info",
+                    "social-integration-for-bluesky",
+                ); ?></h2>
+                <?php echo $this->display_health_section(); ?>
+
+                <hr />
+
                 <h2><?php echo esc_html__(
                     "About the shortcodes",
                     "social-integration-for-bluesky",
@@ -872,70 +971,6 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                     </div>
                 </div>
                 <?php } ?>
-            </div>
-
-            <div id="about" aria-hidden="false" class="bluesky-social-integration-admin-content">
-                <h2><?php echo esc_html__(
-                    "About this plugin",
-                    "social-integration-for-bluesky",
-                ); ?></h2>
-                <?php // translators: %s is the name of the developer.
-?>
-                <p><?php echo sprintf(
-                    esc_html__(
-                        "This plugin is written by %s.",
-                        "social-integration-for-bluesky",
-                    ),
-                    '<a href="https://geoffreycrofte.com" target="_blank"><strong>Geoffrey Crofte</strong></a>',
-                ); ?><br><?php echo esc_html__(
-   "This extension is not an official BlueSky plugin.",
-   "social-integration-for-bluesky",
-); ?></p>
-
-                <?php // translators: %1$s is the link opening tag, %2$s closing link tag.
-?>
-                <p>
-                    <?php echo sprintf(
-                        esc_html__(
-                            'Need help with something? Have a suggestion? %1$sAsk away%2$s.',
-                            "social-integration-for-bluesky",
-                        ),
-                        '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/#new-topic-0" target="_blank">',
-                        "</a>",
-                    ); ?><br>
-                    <?php echo sprintf(
-                        esc_html__(
-                            'You want to contribute to this project? %1$sHere is the Github Repository%2$s.',
-                            "social-integration-for-bluesky",
-                        ),
-                        '<a href="https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress" target="_blank">',
-                        "</a>",
-                    ); ?>
-                </p>
-
-                <?php $title = __(
-                    "Rate this plugin on WordPress.org",
-                    "social-integration-for-bluesky",
-                ); ?>
-
-                <?php // translators: %1$s is the link opening tag, %2$s closing link tag.
-?>
-                <p><?php echo sprintf(
-                    esc_html__(
-                        'Want to support the plugin? %1$sGive a review%2$s',
-                        "social-integration-for-bluesky",
-                    ),
-                    '<a href="https://wordpress.org/support/plugin/social-integration-for-bluesky/reviews/" target="_blank" title="' .
-                        esc_attr($title) .
-                        '">',
-                    " ⭐️⭐️⭐️⭐️⭐️</a>",
-                ); ?></p>
-
-                <h2><?php echo esc_html__(
-                    "Some Plugin Engine Info",
-                    "social-integration-for-bluesky",
-                ); ?></h2>
-                <?php echo $this->display_health_section(); ?>
             </div>
 
         </form>

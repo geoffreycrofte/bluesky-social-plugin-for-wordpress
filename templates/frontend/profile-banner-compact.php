@@ -11,7 +11,7 @@ if (!defined("ABSPATH")) {
 // $needs_gradient_fallback - Boolean flag for missing banner
 ?>
 
-<aside class="<?php echo esc_attr(implode(" ", array_filter($classes))); ?>"
+<aside class="<?php echo esc_attr(implode(" ", array_filter((array)$classes))); ?>"
      aria-label="<?php echo esc_attr($aria_label); ?>"
      <?php if ($needs_gradient_fallback && !empty($profile['avatar'])): ?>
      data-avatar-url="<?php echo esc_url($profile['avatar']); ?>"

@@ -10,11 +10,17 @@ if (!defined("ABSPATH")) {
 // Get accounts
 $accounts = $this->account_manager ? $this->account_manager->get_accounts() : [];
 
+// Filter to only auto-syndicate accounts
+$syndicate_accounts = array_filter($accounts, function ($account) {
+    return !empty($account['auto_syndicate']);
+});
+
 // Get all categories
 $categories = get_categories(['hide_empty' => false]);
 
 // Check if we have data to display
 $has_accounts = !empty($accounts);
+$has_syndicate_accounts = !empty($syndicate_accounts);
 $has_categories = !empty($categories);
 ?>
 
@@ -23,45 +29,41 @@ $has_categories = !empty($categories);
         <p class="description">
             <?php esc_html_e('Connect at least one Bluesky account to configure category rules.', 'social-integration-for-bluesky'); ?>
         </p>
+    <?php elseif (!$has_syndicate_accounts) : ?>
+        <p class="description">
+            <?php esc_html_e('Enable auto-syndicate on at least one account to configure category rules.', 'social-integration-for-bluesky'); ?>
+        </p>
     <?php elseif (!$has_categories) : ?>
         <p class="description">
             <?php esc_html_e('Create categories in WordPress to set up syndication rules.', 'social-integration-for-bluesky'); ?>
         </p>
     <?php else : ?>
-        <form method="post" action="">
-            <?php wp_nonce_field('bluesky_category_rules_nonce', '_bluesky_category_rules_nonce'); ?>
-
-            <?php foreach ($accounts as $account_id => $account) :
+            <?php foreach ($syndicate_accounts as $account_id => $account) :
                 $account_name = $account['name'] ?? __('Unknown Account', 'social-integration-for-bluesky');
                 $account_handle = $account['handle'] ?? '';
                 $category_rules = $account['category_rules'] ?? ['include' => [], 'exclude' => []];
                 $include_categories = $category_rules['include'] ?? [];
                 $exclude_categories = $category_rules['exclude'] ?? [];
             ?>
-                <div class="bluesky-category-rules-account" style="background: #f9f9f9; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 4px;">
-                    <h4 style="margin-top: 0;">
+                <div class="bluesky-category-rules-account">
+                    <h4>
                         <?php echo esc_html($account_name); ?>
                         <?php if ($account_handle) : ?>
-                            <span style="color: #666; font-weight: normal; font-size: 0.9em;">
+                            <span class="account-handle">
                                 (<?php echo esc_html($account_handle); ?>)
                             </span>
                         <?php endif; ?>
                     </h4>
-
-                    <p class="description" style="margin-bottom: 15px;">
-                        <?php esc_html_e('Include: Only syndicate posts with these categories. Exclude: Never syndicate posts with these categories. If no rules are set, all posts syndicate.', 'social-integration-for-bluesky'); ?>
-                    </p>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="category-include-exclude-container">
                         <!-- Include Categories -->
                         <div>
-                            <h5 style="margin-top: 0; margin-bottom: 10px;">
+                            <h5>
                                 <?php esc_html_e('Include Categories', 'social-integration-for-bluesky'); ?>
                             </h5>
-                            <p class="description" style="margin-bottom: 10px;">
+                            <p class="description">
                                 <?php esc_html_e('Only syndicate posts with at least one of these categories (OR logic).', 'social-integration-for-bluesky'); ?>
                             </p>
-                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff;">
+                            <div class="categories-container">
                                 <?php foreach ($categories as $category) : ?>
                                     <label style="display: block; margin-bottom: 5px;">
                                         <input
@@ -79,15 +81,15 @@ $has_categories = !empty($categories);
 
                         <!-- Exclude Categories -->
                         <div>
-                            <h5 style="margin-top: 0; margin-bottom: 10px;">
+                            <h5>
                                 <?php esc_html_e('Exclude Categories', 'social-integration-for-bluesky'); ?>
                             </h5>
-                            <p class="description" style="margin-bottom: 10px;">
+                            <p class="description">
                                 <?php esc_html_e('Never syndicate posts with any of these categories (higher priority than include).', 'social-integration-for-bluesky'); ?>
                             </p>
-                            <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fff;">
+                            <div class="categories-container">
                                 <?php foreach ($categories as $category) : ?>
-                                    <label style="display: block; margin-bottom: 5px;">
+                                    <label>
                                         <input
                                             type="checkbox"
                                             name="bluesky_category_rules[<?php echo esc_attr($account_id); ?>][exclude][]"
@@ -95,7 +97,7 @@ $has_categories = !empty($categories);
                                             <?php checked(in_array($category->term_id, $exclude_categories)); ?>
                                         />
                                         <?php echo esc_html($category->name); ?>
-                                        <span style="color: #666; font-size: 0.9em;">(<?php echo esc_html($category->count); ?>)</span>
+                                        <span class="small-description">(<?php echo esc_html($category->count); ?>)</span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
@@ -103,12 +105,5 @@ $has_categories = !empty($categories);
                     </div>
                 </div>
             <?php endforeach; ?>
-
-            <p class="submit">
-                <button type="submit" name="bluesky_save_category_rules" class="button button-primary button-large">
-                    <?php esc_html_e('Save Category Rules', 'social-integration-for-bluesky'); ?>
-                </button>
-            </p>
-        </form>
     <?php endif; ?>
 </div>

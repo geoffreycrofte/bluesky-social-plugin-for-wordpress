@@ -150,7 +150,8 @@
     border-left-color: darkred;
 }
 
-.bluesky-social-integration-admin .form-table {
+.bluesky-social-integration-admin .form-table,
+.bluesky-category-rules-account {
     border: 24px solid white;
     border-top-width: 12px;
     border-bottom-width: 12px;
@@ -190,6 +191,26 @@
     background-color: var(--primary-lighter);
     font-weight: bold;
     border: none;
+}
+
+.bluesky-social-integration-admin .button.button-small {
+    display: inline-block;
+    margin-block: 2px;
+    font-size: 13px;
+    padding: 0px 8px;
+    font-weight: 600;
+}
+
+.bluesky-account-action .button-small {
+    margin-inline: 2px;
+}
+
+.bluesky-account-list.bluesky-account-list td:has(.bluesky-account-action) {
+    padding-inline: 6px;
+}
+
+.bluesky-account-action {
+    display: inline-block;
 }
 
 .bluesky-social-integration-admin .button.button-primary.button-large {
@@ -535,4 +556,51 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 @keyframes rotation {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/**
+ * Syndication & Categories
+ */
+
+.bluesky-category-rules-account {
+    margin-block-start: 2em;
+}
+
+.bluesky-category-rules-account h4 {
+    font-size: 1rem;
+    margin-block: 0.5em;
+}
+
+.bluesky-category-rules-account h4 span.account-handle {
+    font-size: 0.9em;
+    font-weight: normal;
+    color: #666;
+}
+
+.bluesky-category-rules-account h5 {
+    margin-bottom: 0;
+}
+
+.bluesky-category-rules-account .category-include-exclude-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.bluesky-category-rules-account .categories-container {
+    max-height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.bluesky-category-rules-account .categories-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.bluesky-category-rules-account .small-description {
+    color: #666;
+    font-size: 0.9em;
 }

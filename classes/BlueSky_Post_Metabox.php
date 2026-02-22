@@ -124,9 +124,19 @@ class BlueSky_Post_Metabox
             // Add account data if multi-account is enabled
             if ($this->account_manager->is_multi_account_enabled()) {
                 $localize_data["multiAccountEnabled"] = true;
-                $localize_data["accounts"] = array_values(
-                    $this->account_manager->get_accounts()
-                );
+                // Only pass safe fields to JS (no app_password/did)
+                $accounts = $this->account_manager->get_accounts();
+                $safe_accounts = [];
+                foreach ($accounts as $account) {
+                    $safe_accounts[] = [
+                        'id' => $account['id'] ?? '',
+                        'name' => $account['name'] ?? '',
+                        'handle' => $account['handle'] ?? '',
+                        'auto_syndicate' => !empty($account['auto_syndicate']),
+                        'category_rules' => $account['category_rules'] ?? ['include' => [], 'exclude' => []],
+                    ];
+                }
+                $localize_data["accounts"] = $safe_accounts;
             } else {
                 $localize_data["multiAccountEnabled"] = false;
                 $localize_data["accounts"] = [];
@@ -141,10 +151,22 @@ class BlueSky_Post_Metabox
     }
 
     /**
-     * Add the Bluesky meta box to the post editor
+     * Add the Bluesky meta box to the post editor (classic editor only)
+     * In Gutenberg, the sidebar panel handles all syndication controls.
      */
     public function add_bluesky_meta_box()
     {
+        global $post;
+
+        // Skip meta box in Gutenberg — sidebar panel handles it
+        if (
+            $post &&
+            function_exists("use_block_editor_for_post") &&
+            use_block_editor_for_post($post)
+        ) {
+            return;
+        }
+
         add_meta_box(
             "bluesky_syndication_meta_box",
             esc_html__("Bluesky Syndication", "social-integration-for-bluesky"),
