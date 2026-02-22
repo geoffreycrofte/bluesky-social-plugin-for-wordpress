@@ -48,6 +48,17 @@ class BlueSky_Post_Metabox
                 return current_user_can("edit_posts");
             },
         ]);
+
+        register_post_meta("post", "_bluesky_syndication_text", [
+            "show_in_rest" => true,
+            "single" => true,
+            "type" => "string",
+            "default" => "",
+            "sanitize_callback" => "sanitize_textarea_field",
+            "auth_callback" => function () {
+                return current_user_can("edit_posts");
+            },
+        ]);
     }
 
     /**
