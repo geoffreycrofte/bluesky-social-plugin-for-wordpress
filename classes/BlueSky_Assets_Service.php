@@ -31,6 +31,9 @@ class BlueSky_Assets_Service
         // Enqueue syndication notice script on post edit screens
         $this->enqueue_syndication_notice_script();
 
+        // Enqueue Gutenberg sidebar panel scripts
+        $this->enqueue_sidebar_panel_scripts();
+
         wp_enqueue_style(
             "bluesky-social-admin",
             BLUESKY_PLUGIN_FOLDER . "assets/css/bluesky-social-admin.css",
@@ -228,5 +231,53 @@ class BlueSky_Assets_Service
                 'unknown_account' => __('unknown', 'social-integration-for-bluesky'),
             ],
         ]);
+    }
+
+    /**
+     * Enqueue Gutenberg sidebar panel scripts
+     * Loads on post editor screens for syndication text editing
+     */
+    public function enqueue_sidebar_panel_scripts()
+    {
+        $screen = get_current_screen();
+        if (!$screen || !in_array($screen->base, ['post', 'post-new'])) {
+            return;
+        }
+
+        global $post;
+        if (!$post || $post->post_type !== 'post') {
+            return;
+        }
+
+        // Only load in Gutenberg editor
+        if (!function_exists('use_block_editor_for_post') || !use_block_editor_for_post($post)) {
+            return;
+        }
+
+        // Enqueue character counter utility
+        wp_enqueue_script(
+            'bluesky-character-counter',
+            BLUESKY_PLUGIN_FOLDER . 'assets/js/bluesky-character-counter.js',
+            [],
+            BLUESKY_PLUGIN_VERSION,
+            true
+        );
+
+        // Enqueue sidebar panel
+        wp_enqueue_script(
+            'bluesky-sidebar-panel',
+            BLUESKY_PLUGIN_FOLDER . 'blocks/bluesky-sidebar-panel.js',
+            [
+                'wp-plugins',
+                'wp-edit-post',
+                'wp-element',
+                'wp-data',
+                'wp-compose',
+                'wp-i18n',
+                'bluesky-character-counter'
+            ],
+            BLUESKY_PLUGIN_VERSION,
+            true
+        );
     }
 }
