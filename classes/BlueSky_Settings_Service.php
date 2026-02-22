@@ -182,6 +182,7 @@ class BlueSky_Settings_Service
             : "";
         $sanitized["enable_multi_account"] = !empty($input["enable_multi_account"]);
         $sanitized["auto_syndicate"] = isset($input["auto_syndicate"]) ? 1 : 0;
+        $sanitized["global_pause"] = isset($input["global_pause"]) ? 1 : 0;
         $sanitized["no_replies"] = isset($input["no_replies"]) ? 1 : 0;
         $sanitized["no_embeds"] = isset($input["no_embeds"]) ? 1 : 0;
         $sanitized["no_reposts"] = isset($input["no_reposts"]) ? 1 : 0;
@@ -888,6 +889,30 @@ class BlueSky_Settings_Service
             esc_html(
                 __(
                     "Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it.",
+                    "social-integration-for-bluesky",
+                ),
+            ) .
+            "</span>";
+    }
+
+    /**
+     * Render global pause field
+     */
+    public function render_global_pause_field()
+    {
+        $global_pause = $this->options["global_pause"] ?? 0;
+
+        echo '<input id="' .
+            esc_attr(BLUESKY_PLUGIN_OPTIONS . "_global_pause") .
+            '" type="checkbox" name="bluesky_settings[global_pause]" value="1" ' .
+            checked(1, $global_pause, false) .
+            ' aria-describedby="bluesky-global-pause-desc" />';
+
+        echo '<span class="description bluesky-description" id="bluesky-global-pause-desc" style="' .
+            ($global_pause ? 'color: #d63638; font-weight: 500;' : '') . '">' .
+            esc_html(
+                __(
+                    "Pause all syndication to Bluesky. When enabled, no posts will be syndicated to any account. Use this for maintenance or troubleshooting.",
                     "social-integration-for-bluesky",
                 ),
             ) .
@@ -1832,6 +1857,79 @@ class BlueSky_Settings_Service
     }
 
     /**
+     * Handle category rules save
+     */
+    private function handle_category_rules_save()
+    {
+        if (!isset($_POST['bluesky_save_category_rules'])) {
+            return;
+        }
+
+        if (!$this->account_manager) {
+            return;
+        }
+
+        // Verify nonce
+        if (!isset($_POST['_bluesky_category_rules_nonce']) ||
+            !wp_verify_nonce($_POST['_bluesky_category_rules_nonce'], 'bluesky_category_rules_nonce')) {
+            add_settings_error(
+                'bluesky_messages',
+                'bluesky_category_rules_error',
+                __('Security check failed. Please try again.', 'social-integration-for-bluesky'),
+                'error'
+            );
+            return;
+        }
+
+        // Get category rules from POST
+        $category_rules_data = isset($_POST['bluesky_category_rules']) && is_array($_POST['bluesky_category_rules'])
+            ? $_POST['bluesky_category_rules']
+            : [];
+
+        $accounts_updated = 0;
+
+        foreach ($category_rules_data as $account_id => $rules) {
+            $account_id = sanitize_text_field($account_id);
+
+            $include_categories = isset($rules['include']) && is_array($rules['include'])
+                ? array_map('intval', $rules['include'])
+                : [];
+
+            $exclude_categories = isset($rules['exclude']) && is_array($rules['exclude'])
+                ? array_map('intval', $rules['exclude'])
+                : [];
+
+            $category_rules = [
+                'include' => $include_categories,
+                'exclude' => $exclude_categories
+            ];
+
+            $result = $this->account_manager->update_account($account_id, ['category_rules' => $category_rules]);
+
+            if (!is_wp_error($result)) {
+                $accounts_updated++;
+            }
+        }
+
+        if ($accounts_updated > 0) {
+            add_settings_error(
+                'bluesky_messages',
+                'bluesky_category_rules_success',
+                sprintf(
+                    _n(
+                        'Category rules updated for %d account.',
+                        'Category rules updated for %d accounts.',
+                        $accounts_updated,
+                        'social-integration-for-bluesky'
+                    ),
+                    $accounts_updated
+                ),
+                'success'
+            );
+        }
+    }
+
+    /**
      * Clear all Bluesky content transients (profile, posts).
      * Called when the account changes or on logout.
      */
@@ -1882,6 +1980,9 @@ class BlueSky_Settings_Service
     {
         // Handle account actions first
         $this->handle_account_actions();
+
+        // Handle category rules save
+        $this->handle_category_rules_save();
 
         // Load template
         ob_start();

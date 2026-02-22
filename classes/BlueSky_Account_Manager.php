@@ -292,7 +292,8 @@ class BlueSky_Account_Manager {
             'is_active' => false, // Will be set to true if first account
             'auto_syndicate' => isset($data['auto_syndicate']) ? (bool) $data['auto_syndicate'] : true,
             'owner_id' => isset($data['owner_id']) ? intval($data['owner_id']) : 0,
-            'created_at' => time()
+            'created_at' => time(),
+            'category_rules' => ['include' => [], 'exclude' => []]
         ];
 
         // Get existing accounts
@@ -414,9 +415,74 @@ class BlueSky_Account_Manager {
             }
             $accounts[$account_id]['app_password'] = $encrypted_password;
         }
+        if (isset($data['category_rules'])) {
+            $accounts[$account_id]['category_rules'] = [
+                'include' => array_map('intval', $data['category_rules']['include'] ?? []),
+                'exclude' => array_map('intval', $data['category_rules']['exclude'] ?? [])
+            ];
+        }
 
         update_option('bluesky_accounts', $accounts);
 
+        return true;
+    }
+
+    /**
+     * Check if a post should be syndicated to a specific account based on category rules
+     *
+     * @param int $post_id Post ID
+     * @param string $account_id Account UUID
+     * @return bool True if post should be syndicated, false otherwise
+     */
+    public function should_syndicate_to_account($post_id, $account_id) {
+        $account = $this->get_account($account_id);
+        if (!$account) {
+            return false;
+        }
+
+        // Get category rules for this account
+        $category_rules = $account['category_rules'] ?? ['include' => [], 'exclude' => []];
+        $include_rules = $category_rules['include'] ?? [];
+        $exclude_rules = $category_rules['exclude'] ?? [];
+
+        // If no rules are set (both empty), syndicate everything
+        if (empty($include_rules) && empty($exclude_rules)) {
+            return true;
+        }
+
+        // Get post categories
+        $post_categories = get_the_category($post_id);
+        $post_category_ids = [];
+        foreach ($post_categories as $category) {
+            $post_category_ids[] = $category->term_id;
+        }
+
+        // Check exclude rules first (higher priority)
+        if (!empty($exclude_rules)) {
+            foreach ($post_category_ids as $cat_id) {
+                if (in_array($cat_id, $exclude_rules)) {
+                    return false; // Post has an excluded category
+                }
+            }
+        }
+
+        // Check include rules (OR logic)
+        if (!empty($include_rules)) {
+            // If include rules exist but post has no categories, don't syndicate
+            if (empty($post_category_ids)) {
+                return false;
+            }
+
+            // Post needs at least one included category
+            foreach ($post_category_ids as $cat_id) {
+                if (in_array($cat_id, $include_rules)) {
+                    return true; // Found at least one included category
+                }
+            }
+            return false; // Post has categories but none are included
+        }
+
+        // If only exclude rules exist and post passed the exclude check, syndicate
         return true;
     }
 
