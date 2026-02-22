@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 
 ## Current Position
 
-Phase: 5 of 6 (Profile & Content Display) — COMPLETE
-Next: Phase 6 (Advanced Syndication) — needs planning
-Last activity: 2026-02-20 — 05-04 complete (E2E verification with 2 rounds of rework, human approved)
+Phase: 6 of 6 (Advanced Syndication) — IN PROGRESS
+Current Plan: 06-01 (Editable Syndication Text) — COMPLETE
+Last activity: 2026-02-22 — 06-01 complete (editable syndication text with grapheme counter)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5) | [██        ] 20% (Phase 6)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
-- Average duration: ~3.1 minutes (automated plans)
+- Total plans completed: 26
+- Average duration: ~3.0 minutes (automated plans)
 - Total execution time: ~2.8 hours + 5 iterative testing sessions
 
 **By Phase:**
@@ -31,6 +31,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 03 | 6 | ~24 min | ~4.0 min |
 | 04 | 5 | ~20 min | ~4.0 min |
 | 05 | 3 | ~9.6 min | ~3.2 min |
+| 06 | 1 | ~2.3 min | ~2.3 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -56,6 +57,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 05-02: Automated execution (3.2 min) — GIF detection, skeleton loaders, empty/stale states
 - Plan 05-03: Automated execution (3.7 min) — profile banner block, widget, shortcode with Color Thief gradient
 - Plan 05-04: Checkpoint (~45 min) — E2E verification, 2 rounds of rework (10 items + 3 bug fixes), human approved
+- Plan 06-01: Automated execution (2.3 min) — editable syndication text with Intl.Segmenter grapheme counter
 
 *Updated after each plan completion*
 
@@ -161,6 +163,10 @@ Recent decisions affecting current work:
 - Empty state uses friendly "No posts yet" message with butterfly icon (05-02)
 - Color Thief CDN for gradient fallback with hash-based fallback when CORS blocks (05-03)
 - GIF images excluded from lightbox for inline playback UX (05-03)
+- Empty syndication text triggers auto-generation from title + excerpt at syndication time (06-01)
+- Character counter uses Intl.Segmenter with text.length fallback for browser compatibility (06-01)
+- Sidebar panel hidden when syndication disabled (respects _bluesky_dont_syndicate) (06-01)
+- Preview shown for auto-generated text when meta field is empty (06-01)
 
 ### Pending Todos
 
@@ -173,10 +179,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-advanced-syndication/06-CONTEXT.md
+Last session: 2026-02-22
+Stopped at: Completed 06-01-PLAN.md
+Resume file: .planning/phases/06-advanced-syndication/06-01-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
-*Last updated: 2026-02-20*
+*Last updated: 2026-02-22*
