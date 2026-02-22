@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-14)
 ## Current Position
 
 Phase: 6 of 6 (Advanced Syndication) — IN PROGRESS
-Current Plan: 06-02 (Category Rules and Global Pause) — COMPLETE
-Last activity: 2026-02-22 — 06-02 complete (category routing with include/exclude rules, global pause toggle)
+Current Plan: 06-03 (Syndication Integration) — COMPLETE
+Last activity: 2026-02-22 — 06-03 complete (wired editable text, category filtering, and global pause into all syndication paths)
 
-Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5) | [████      ] 40% (Phase 6)
+Progress: [██████████] 100% (Phase 1) | [██████████] 100% (Phase 2) | [██████████] 100% (Phase 3) | [██████████] 100% (Phase 4) | [██████████] 100% (Phase 5) | [██████    ] 60% (Phase 6)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: ~3.0 minutes (automated plans)
-- Total execution time: ~2.8 hours + 5 iterative testing sessions
+- Total execution time: ~2.9 hours + 5 iterative testing sessions
 
 **By Phase:**
 
@@ -31,7 +31,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 | 03 | 6 | ~24 min | ~4.0 min |
 | 04 | 5 | ~20 min | ~4.0 min |
 | 05 | 3 | ~9.6 min | ~3.2 min |
-| 06 | 2 | ~5.6 min | ~2.8 min |
+| 06 | 3 | ~8.9 min | ~3.0 min |
 
 **Recent Trend:**
 - Plans 01-01 through 01-04: Automated execution (2-7 min each)
@@ -59,6 +59,7 @@ Progress: [██████████] 100% (Phase 1) | [██████�
 - Plan 05-04: Checkpoint (~45 min) — E2E verification, 2 rounds of rework (10 items + 3 bug fixes), human approved
 - Plan 06-01: Automated execution (2.3 min) — editable syndication text with Intl.Segmenter grapheme counter
 - Plan 06-02: Automated execution (3.3 min) — category routing rules with include/exclude logic, global pause toggle
+- Plan 06-03: Automated execution (3.3 min) — syndication integration (wired editable text, category filtering, global pause)
 
 *Updated after each plan completion*
 
@@ -172,6 +173,10 @@ Recent decisions affecting current work:
 - Exclude rules checked first with higher priority than include rules (06-02)
 - Empty category rules default to syndicating all categories (opt-out model) (06-02)
 - Global pause toggle shows warning color when enabled for visual prominence (06-02)
+- Pre-publish panel includes editable syndication text with character counter (06-03)
+- Global pause checked at entry point of both sync and async syndication paths (06-03)
+- Category filtering applied after account selection but before syndication delegation (06-03)
+- Empty custom text falls back to post title at syndication time (06-03)
 
 ### Pending Todos
 
@@ -185,8 +190,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 06-02-PLAN.md
-Resume file: .planning/phases/06-advanced-syndication/06-02-SUMMARY.md
+Stopped at: Completed 06-03-PLAN.md
+Resume file: .planning/phases/06-advanced-syndication/06-03-SUMMARY.md
 
 ---
 *State initialized: 2026-02-14*
