@@ -63,6 +63,12 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
             <?php } ?>
 
             <?php if ($auth) { ?>
+            <a href="#syndication" aria-controls="syndication" class="privacy-settings-tab">
+                <?php esc_html_e('Syndication', 'social-integration-for-bluesky'); ?>
+            </a>
+            <?php } ?>
+
+            <?php if ($auth) { ?>
             <a href="#shortcodes" aria-controls="shortcodes" class="privacy-settings-tab">
                 <?php echo esc_html__(
                     "The shortcodes",
@@ -671,6 +677,38 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                 ); ?>
             </div>
 
+            <div id="syndication" aria-hidden="false" class="bluesky-social-integration-admin-content">
+                <h2><?php esc_html_e('Syndication Settings', 'social-integration-for-bluesky'); ?></h2>
+                <p><?php esc_html_e('Control global syndication behavior and configure category-based routing rules for your accounts.', 'social-integration-for-bluesky'); ?></p>
+
+                <h3><?php esc_html_e('Global Syndication Control', 'social-integration-for-bluesky'); ?></h3>
+                <table class="form-table" role="presentation">
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                <label for="<?php echo esc_attr(BLUESKY_PLUGIN_OPTIONS . '_global_pause'); ?>">
+                                    <?php esc_html_e('Pause All Syndication', 'social-integration-for-bluesky'); ?>
+                                </label>
+                            </th>
+                            <td>
+                                <?php $this->render_global_pause_field(); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php submit_button(null, 'primary large', null, true); ?>
+
+                <hr style="margin: 2em 0;" />
+
+                <h3><?php esc_html_e('Category Rules', 'social-integration-for-bluesky'); ?></h3>
+                <p><?php esc_html_e('Configure which categories should be syndicated to which accounts. If no rules are set, all posts will be syndicated.', 'social-integration-for-bluesky'); ?></p>
+
+                <?php
+                // Include category rules template
+                include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/admin/settings-category-rules.php';
+                ?>
+            </div>
 
             <div id="shortcodes" aria-hidden="false" class="bluesky-social-integration-admin-content">
                 <h2><?php echo esc_html__(
