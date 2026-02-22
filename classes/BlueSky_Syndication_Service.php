@@ -71,6 +71,12 @@ class BlueSky_Syndication_Service
      */
     public function syndicate_post_to_bluesky($new_status, $old_status, $post)
     {
+        // Check global pause FIRST
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        if (!empty($options['global_pause'])) {
+            return; // All syndication paused
+        }
+
         if (
             "publish" === $new_status &&
             "publish" !== $old_status &&
@@ -153,8 +159,12 @@ class BlueSky_Syndication_Service
                 }
             }
 
+            // Get custom syndication text if set
+            $custom_text = get_post_meta($post_id, '_bluesky_syndication_text', true);
+            $post_title_for_bluesky = !empty($custom_text) ? $custom_text : $post->post_title;
+
             $bluesky_post_info = $this->api_handler->syndicate_post_to_bluesky(
-                $post->post_title,
+                $post_title_for_bluesky,
                 $permalink,
                 $excerpt,
                 $image_url,
@@ -244,9 +254,18 @@ class BlueSky_Syndication_Service
             return;
         }
 
+        // Filter accounts through category rules
+        $filtered_account_ids = array_filter($selected_account_ids, function($account_id) use ($post_id, $account_manager) {
+            return $account_manager->should_syndicate_to_account($post_id, $account_id);
+        });
+
+        if (empty($filtered_account_ids)) {
+            return; // No accounts match category rules
+        }
+
         // Delegate to async handler if available
         if ($this->async_handler) {
-            $scheduled = $this->async_handler->schedule_syndication($post_id, $selected_account_ids);
+            $scheduled = $this->async_handler->schedule_syndication($post_id, $filtered_account_ids);
             if ($scheduled) {
                 // Successfully scheduled async job
                 return;
@@ -284,6 +303,10 @@ class BlueSky_Syndication_Service
             }
         }
 
+        // Get custom syndication text if set
+        $custom_text = get_post_meta($post_id, '_bluesky_syndication_text', true);
+        $post_title_for_bluesky = !empty($custom_text) ? $custom_text : $post->post_title;
+
         // Get existing syndication results to check per-account syndication status
         $existing_info_json = get_post_meta(
             $post_id,
@@ -294,12 +317,12 @@ class BlueSky_Syndication_Service
             ? json_decode($existing_info_json, true)
             : [];
 
-        // Syndicate to each selected account
+        // Syndicate to each selected account (use filtered_account_ids from category filtering)
         $syndication_results = is_array($existing_info) ? $existing_info : [];
         $all_accounts = $account_manager->get_accounts();
         $first_successful_account = null;
 
-        foreach ($selected_account_ids as $account_id) {
+        foreach ($filtered_account_ids as $account_id) {
             // Skip if already syndicated to this account
             if (isset($syndication_results[$account_id]) &&
                 !empty($syndication_results[$account_id]['success'])) {
@@ -317,7 +340,7 @@ class BlueSky_Syndication_Service
 
             // Syndicate to this account
             $result = $api->syndicate_post_to_bluesky(
-                $post->post_title,
+                $post_title_for_bluesky,
                 $permalink,
                 $excerpt,
                 $image_url

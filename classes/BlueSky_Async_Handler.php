@@ -102,6 +102,12 @@ class BlueSky_Async_Handler {
      * @return void
      */
     public function process_syndication($post_id, $account_ids, $attempt = 1) {
+        // Check global pause FIRST
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        if (!empty($options['global_pause'])) {
+            return; // All syndication paused
+        }
+
         // Get post object
         $post = get_post($post_id);
         if (!$post) {
@@ -123,6 +129,21 @@ class BlueSky_Async_Handler {
                 $image_url = $matches[1];
             }
         }
+
+        // Filter accounts through category rules
+        $account_manager = $this->account_manager ?: new BlueSky_Account_Manager();
+        $account_ids = array_filter($account_ids, function($account_id) use ($post_id, $account_manager) {
+            return $account_manager->should_syndicate_to_account($post_id, $account_id);
+        });
+
+        if (empty($account_ids)) {
+            update_post_meta($post_id, '_bluesky_syndication_status', 'completed');
+            return;
+        }
+
+        // Get custom syndication text if set
+        $custom_text = get_post_meta($post_id, '_bluesky_syndication_text', true);
+        $post_title = !empty($custom_text) ? $custom_text : $post->post_title;
 
         // Get existing syndication results
         $existing_info_json = get_post_meta($post_id, '_bluesky_syndication_bs_post_info', true);
@@ -178,7 +199,7 @@ class BlueSky_Async_Handler {
 
             // Syndicate to this account
             $result = $api->syndicate_post_to_bluesky(
-                $post->post_title,
+                $post_title,
                 $permalink,
                 $excerpt,
                 $image_url
@@ -506,6 +527,10 @@ class BlueSky_Async_Handler {
             }
         }
 
+        // Get custom syndication text if set
+        $custom_text = get_post_meta($post_id, '_bluesky_syndication_text', true);
+        $post_title = !empty($custom_text) ? $custom_text : $post->post_title;
+
         // Get all accounts
         $all_accounts = $this->account_manager ? $this->account_manager->get_accounts() : [];
         $syndication_results = [];
@@ -520,7 +545,7 @@ class BlueSky_Async_Handler {
             $api = BlueSky_API_Handler::create_for_account($account);
 
             $result = $api->syndicate_post_to_bluesky(
-                $post->post_title,
+                $post_title,
                 $permalink,
                 $excerpt,
                 $image_url
