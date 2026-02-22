@@ -269,6 +269,25 @@
                     className: 'bluesky-sidebar-panel'
                 },
 
+                // Global pause warning
+                window.blueskyPrePublishData && window.blueskyPrePublishData.globalPaused && wp.element.createElement('div', {
+                    style: {
+                        background: '#fcf0f1',
+                        borderLeft: '4px solid #d63638',
+                        padding: '8px 12px',
+                        marginBottom: '12px',
+                        fontSize: '13px'
+                    }
+                },
+                    wp.element.createElement('strong', { style: { color: '#d63638' } },
+                        __('Syndication is globally paused.', 'social-integration-for-bluesky')
+                    ),
+                    wp.element.createElement('a', {
+                        href: window.blueskyPrePublishData.settingsUrl,
+                        style: { display: 'block', marginTop: '4px' }
+                    }, __('Manage in Settings', 'social-integration-for-bluesky') + ' \u2192')
+                ),
+
                 // Don't syndicate toggle
                 wp.element.createElement(CheckboxControl, {
                     label: __("Don't syndicate this post", 'social-integration-for-bluesky'),

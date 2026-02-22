@@ -116,9 +116,12 @@ class BlueSky_Post_Metabox
             // Create nonce for the metabox
             $nonce = wp_create_nonce("bluesky_meta_box_nonce");
 
+            $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
             $localize_data = [
                 "nonce" => $nonce,
                 "postId" => $post->ID,
+                "globalPaused" => !empty($options['global_pause']),
+                "settingsUrl" => admin_url('options-general.php?page=bluesky-social-settings#syndication'),
             ];
 
             // Add account data if multi-account is enabled
@@ -214,6 +217,16 @@ class BlueSky_Post_Metabox
         ?>
 
         <div class="bluesky-meta-box-content">
+            <?php
+            $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+            if (!empty($options['global_pause'])) :
+                $settings_url = admin_url('options-general.php?page=bluesky-social-settings#syndication');
+            ?>
+            <div style="background: #fcf0f1; border-left: 4px solid #d63638; padding: 8px 12px; margin-bottom: 12px; font-size: 13px;">
+                <strong style="color: #d63638;"><?php esc_html_e('Syndication is globally paused.', 'social-integration-for-bluesky'); ?></strong>
+                <a href="<?php echo esc_url($settings_url); ?>" style="display: inline-block; margin-top: 4px;"><?php esc_html_e('Manage in Settings', 'social-integration-for-bluesky'); ?> &rarr;</a>
+            </div>
+            <?php endif; ?>
             <label for="bluesky_dont_syndicate">
                 <input type="checkbox" name="bluesky_dont_syndicate" id="bluesky_dont_syndicate" value="1" <?php checked(
                     $dont_syndicate,
