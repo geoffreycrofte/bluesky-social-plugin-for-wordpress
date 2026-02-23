@@ -222,9 +222,9 @@ class BlueSky_Post_Metabox
             if (!empty($options['global_pause'])) :
                 $settings_url = admin_url('options-general.php?page=bluesky-social-settings#syndication');
             ?>
-            <div style="background: #fcf0f1; border-left: 4px solid #d63638; padding: 8px 12px; margin-bottom: 12px; font-size: 13px;">
-                <strong style="color: #d63638;"><?php esc_html_e('Syndication is globally paused.', 'social-integration-for-bluesky'); ?></strong>
-                <a href="<?php echo esc_url($settings_url); ?>" style="display: inline-block; margin-top: 4px;"><?php esc_html_e('Manage in Settings', 'social-integration-for-bluesky'); ?> &rarr;</a>
+            <div class="bluesky-global-pause-warning">
+                <strong><?php esc_html_e('Syndication is globally paused.', 'social-integration-for-bluesky'); ?></strong>
+                <a href="<?php echo esc_url($settings_url); ?>" class="bluesky-global-pause-link"><?php esc_html_e('Manage in Settings', 'social-integration-for-bluesky'); ?> &rarr;</a>
             </div>
             <?php endif; ?>
             <label for="bluesky_dont_syndicate">
@@ -272,7 +272,7 @@ class BlueSky_Post_Metabox
             }
 
             if (!empty($accounts)) {
-                echo '<div class="bluesky-account-selection" id="bluesky-account-selection" style="margin-top: 12px;">';
+                echo '<div class="bluesky-account-selection" id="bluesky-account-selection">';
                 echo '<p><strong>' .
                     esc_html__(
                         "Syndicate to:",
@@ -286,7 +286,7 @@ class BlueSky_Post_Metabox
                         ? "checked"
                         : "";
                     printf(
-                        '<label style="display:block;margin:4px 0;"><input type="checkbox" name="bluesky_syndication_accounts[]" value="%s" %s class="bluesky-account-checkbox"> %s (@%s)</label>',
+                        '<label class="bluesky-account-label"><input type="checkbox" name="bluesky_syndication_accounts[]" value="%s" %s class="bluesky-account-checkbox"> %s (@%s)</label>',
                         esc_attr($acct_id),
                         $checked,
                         esc_html($account["name"] ?? ''),

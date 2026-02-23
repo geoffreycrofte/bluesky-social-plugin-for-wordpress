@@ -10,11 +10,11 @@ if (!defined("ABSPATH")) {
 
 $auth = true; // Render all tabs immediately — auth check happens via AJAX
 ?>
-<main class="bluesky-social-integration-admin">
+<div class="bluesky-social-integration-admin">
     <header role="banner" class="privacy-settings-header">
         <div class="privacy-settings-title-section">
             <h1>
-                <svg width="64" height="56" viewBox="0 0 166 146" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg aria-hidden="true" width="64" height="56" viewBox="0 0 166 146" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M36.454 10.4613C55.2945 24.5899 75.5597 53.2368 83 68.6104C90.4409 53.238 110.705 24.5896 129.546 10.4613C143.14 0.26672 165.167 -7.6213 165.167 17.4788C165.167 22.4916 162.289 59.5892 160.602 65.6118C154.736 86.5507 133.361 91.8913 114.348 88.6589C147.583 94.3091 156.037 113.025 137.779 131.74C103.101 167.284 87.9374 122.822 84.05 111.429C83.3377 109.34 83.0044 108.363 82.9995 109.194C82.9946 108.363 82.6613 109.34 81.949 111.429C78.0634 122.822 62.8997 167.286 28.2205 131.74C9.96137 113.025 18.4158 94.308 51.6513 88.6589C32.6374 91.8913 11.2622 86.5507 5.39715 65.6118C3.70956 59.5886 0.832367 22.4911 0.832367 17.4788C0.832367 -7.6213 22.8593 0.26672 36.453 10.4613H36.454Z" fill="#1185FE"/>
                 </svg>
                 <?php echo esc_html__(
@@ -723,7 +723,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
 
                 <?php submit_button(null, 'primary large', null, true); ?>
 
-                <hr style="margin: 2em 0;" />
+                <hr class="bluesky-section-divider" />
 
                 <h3><?php esc_html_e('Category Rules', 'social-integration-for-bluesky'); ?></h3>
                 <p><?php esc_html_e('Configure which categories should be syndicated to which accounts. If no rules are set, all posts will be syndicated.', 'social-integration-for-bluesky'); ?></p>
@@ -801,6 +801,29 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                         '">',
                     " ⭐️⭐️⭐️⭐️⭐️</a>",
                 ); ?></p>
+
+                <hr />
+
+                <div class="bluesky-donation-box">
+                    <h2><?php echo esc_html__(
+                        "Support the Developer",
+                        "social-integration-for-bluesky",
+                    ); ?></h2>
+                    <p><?php echo esc_html__(
+                        "This plugin is free and built with care on personal time. If it saves you time or brings value to your site, consider buying the developer a coffee (or two)!",
+                        "social-integration-for-bluesky",
+                    ); ?></p>
+                    <div class="bluesky-donation-links">
+                        <a href="https://paypal.me/crofte" target="_blank" rel="noopener noreferrer" class="bluesky-donation-link bluesky-donation-paypal">
+                            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.77.77 0 0 1 .757-.654h6.32c2.1 0 3.574.472 4.38 1.404.782.905.952 2.158.506 3.727l-.01.042v.37l.297.167c.25.128.45.28.608.457.266.298.437.675.508 1.12.074.458.047 1.003-.08 1.617a5.303 5.303 0 0 1-.618 1.63 3.646 3.646 0 0 1-.928 1.032 3.618 3.618 0 0 1-1.236.614c-.472.14-1.014.21-1.612.21h-.383a1.15 1.15 0 0 0-1.135.97l-.03.162-.483 3.063-.022.117a.143.143 0 0 1-.142.12H7.076Z" fill="#253B80"/><path d="M19.432 8.077c-.01.065-.023.13-.036.198-.997 5.116-4.41 6.883-8.77 6.883H8.4a1.08 1.08 0 0 0-1.065.913l-.86 5.45-.243 1.544a.567.567 0 0 0 .56.656h3.932c.467 0 .864-.34.937-.8l.04-.199.743-4.716.048-.258a.945.945 0 0 1 .937-.8h.59c3.82 0 6.81-1.55 7.685-6.033.366-1.872.177-3.434-.792-4.533a3.764 3.764 0 0 0-1.08-.808l-.003.003Z" fill="#179BD7"/><path d="M18.354 7.644a7.937 7.937 0 0 0-.98-.217 12.447 12.447 0 0 0-1.985-.146h-6.02a.94.94 0 0 0-.936.8L7.34 14.92l-.03.193a1.08 1.08 0 0 1 1.066-.913h2.226c4.36 0 7.773-1.772 8.77-6.895a7.85 7.85 0 0 0 .037-.198 5.298 5.298 0 0 0-.797-.345l-.258-.118Z" fill="#222D65"/></svg>
+                            <?php echo esc_html__("PayPal", "social-integration-for-bluesky"); ?>
+                        </a>
+                        <a href="https://revolut.me/crofte?note=Bluesky%20WordPress%20Plugin" target="_blank" rel="noopener noreferrer" class="bluesky-donation-link bluesky-donation-revolut">
+                            <svg aria-hidden="true" width="18" height="20" viewBox="0 0 36 41" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 10.7886H11.3882V40.6639H4V10.7886Z" fill="white" fill-opacity="0.1"/><path d="M34.5573 12.4969C34.5573 6.15755 29.395 1 23.0494 1H4V7.3801H22.1437C25.0154 7.3801 27.3941 9.6362 27.4467 12.4091C27.4729 13.7975 26.9519 15.1078 25.9795 16.0987C25.0067 17.0899 23.707 17.6361 22.3197 17.6361H15.2519C15.0009 17.6361 14.7966 17.84 14.7966 18.0909V23.7614C14.7966 23.8578 14.8264 23.95 14.8825 24.0276L26.8743 40.6641H35.6524L23.6328 23.9821C29.6859 23.6782 34.5573 18.5924 34.5573 12.4969Z" fill="white" fill-opacity="0.1"/><path d="M0 9.78857H7.3882V39.6639H0V9.78857Z" fill="white"/><path d="M30.5573 11.4969C30.5573 5.15755 25.395 0 19.0494 0H0V6.3801H18.1437C21.0154 6.3801 23.3941 8.6362 23.4467 11.4091C23.4729 12.7975 22.9519 14.1078 21.9795 15.0987C21.0067 16.0899 19.707 16.6361 18.3197 16.6361H11.2519C11.0009 16.6361 10.7966 16.84 10.7966 17.0909V22.7614C10.7966 22.8578 10.8264 22.95 10.8825 23.0276L22.8743 39.6641H31.6524L19.6328 22.9821C25.6859 22.6782 30.5573 17.5924 30.5573 11.4969Z" fill="white"/></svg>
+                            <?php echo esc_html__("Revolut", "social-integration-for-bluesky"); ?>
+                        </a>
+                    </div>
+                </div>
 
                 <h2><?php echo esc_html__(
                     "Some Plugin Engine Info",
@@ -976,6 +999,40 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
         </form>
     </div>
 
+    <aside class="bluesky-donate-sidebar is-collapsed">
+        <button class="bluesky-donate-button" type="button" aria-expanded="false" aria-controls="bluesky-donate-panel">
+            <span class="screen-reader-text"><?php esc_html_e(
+                "Support the plugin",
+                "social-integration-for-bluesky",
+            ); ?></span>
+            <span aria-hidden="true">🍩</span>
+        </button>
+        <div id="bluesky-donate-panel" class="bluesky-donate-sidebar-content" aria-hidden="true">
+            <h2><?php esc_html_e(
+                "Support this Plugin",
+                "social-integration-for-bluesky",
+            ); ?></h2>
+            <p><?php echo esc_html__(
+                "This plugin is free, open-source, and maintained on personal time. If it helps you connect with the Bluesky community, a small donation goes a long way!",
+                "social-integration-for-bluesky",
+            ); ?></p>
+            <div class="bluesky-donate-sidebar-links">
+                <a href="https://paypal.me/crofte" target="_blank" rel="noopener noreferrer" class="bluesky-donation-link bluesky-donation-paypal">
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.77.77 0 0 1 .757-.654h6.32c2.1 0 3.574.472 4.38 1.404.782.905.952 2.158.506 3.727l-.01.042v.37l.297.167c.25.128.45.28.608.457.266.298.437.675.508 1.12.074.458.047 1.003-.08 1.617a5.303 5.303 0 0 1-.618 1.63 3.646 3.646 0 0 1-.928 1.032 3.618 3.618 0 0 1-1.236.614c-.472.14-1.014.21-1.612.21h-.383a1.15 1.15 0 0 0-1.135.97l-.03.162-.483 3.063-.022.117a.143.143 0 0 1-.142.12H7.076Z" fill="#253B80"/><path d="M19.432 8.077c-.01.065-.023.13-.036.198-.997 5.116-4.41 6.883-8.77 6.883H8.4a1.08 1.08 0 0 0-1.065.913l-.86 5.45-.243 1.544a.567.567 0 0 0 .56.656h3.932c.467 0 .864-.34.937-.8l.04-.199.743-4.716.048-.258a.945.945 0 0 1 .937-.8h.59c3.82 0 6.81-1.55 7.685-6.033.366-1.872.177-3.434-.792-4.533a3.764 3.764 0 0 0-1.08-.808l-.003.003Z" fill="#179BD7"/><path d="M18.354 7.644a7.937 7.937 0 0 0-.98-.217 12.447 12.447 0 0 0-1.985-.146h-6.02a.94.94 0 0 0-.936.8L7.34 14.92l-.03.193a1.08 1.08 0 0 1 1.066-.913h2.226c4.36 0 7.773-1.772 8.77-6.895a7.85 7.85 0 0 0 .037-.198 5.298 5.298 0 0 0-.797-.345l-.258-.118Z" fill="#222D65"/></svg>
+                    <?php echo esc_html__("Donate via PayPal", "social-integration-for-bluesky"); ?>
+                </a>
+                <a href="https://revolut.me/crofte?note=Bluesky%20WordPress%20Plugin" target="_blank" rel="noopener noreferrer" class="bluesky-donation-link bluesky-donation-revolut">
+                    <svg aria-hidden="true" width="18" height="20" viewBox="0 0 36 41" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 10.7886H11.3882V40.6639H4V10.7886Z" fill="white" fill-opacity="0.1"/><path d="M34.5573 12.4969C34.5573 6.15755 29.395 1 23.0494 1H4V7.3801H22.1437C25.0154 7.3801 27.3941 9.6362 27.4467 12.4091C27.4729 13.7975 26.9519 15.1078 25.9795 16.0987C25.0067 17.0899 23.707 17.6361 22.3197 17.6361H15.2519C15.0009 17.6361 14.7966 17.84 14.7966 18.0909V23.7614C14.7966 23.8578 14.8264 23.95 14.8825 24.0276L26.8743 40.6641H35.6524L23.6328 23.9821C29.6859 23.6782 34.5573 18.5924 34.5573 12.4969Z" fill="white" fill-opacity="0.1"/><path d="M0 9.78857H7.3882V39.6639H0V9.78857Z" fill="white"/><path d="M30.5573 11.4969C30.5573 5.15755 25.395 0 19.0494 0H0V6.3801H18.1437C21.0154 6.3801 23.3941 8.6362 23.4467 11.4091C23.4729 12.7975 22.9519 14.1078 21.9795 15.0987C21.0067 16.0899 19.707 16.6361 18.3197 16.6361H11.2519C11.0009 16.6361 10.7966 16.84 10.7966 17.0909V22.7614C10.7966 22.8578 10.8264 22.95 10.8825 23.0276L22.8743 39.6641H31.6524L19.6328 22.9821C25.6859 22.6782 30.5573 17.5924 30.5573 11.4969Z" fill="white"/></svg>
+                    <?php echo esc_html__("Donate via Revolut", "social-integration-for-bluesky"); ?>
+                </a>
+            </div>
+            <p class="bluesky-donate-thanks"><?php echo esc_html__(
+                "Thank you for your generosity!",
+                "social-integration-for-bluesky",
+            ); ?></p>
+        </div>
+    </aside>
+
     <?php if (
         (isset($_GET["godmode"]) && current_user_can("manage_options")) ||
         defined("WP_DEBUG") ||
@@ -987,7 +1044,7 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
                 "Debug Bar",
                 "social-integration-for-bluesky",
             ); ?></span>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><path fill="currentColor" d="M8.06561801,18.9432081 L14.565618,4.44320807 C14.7350545,4.06523433 15.1788182,3.8961815 15.5567919,4.06561801 C15.9032679,4.2209348 16.0741922,4.60676263 15.9697642,4.9611247 L15.934382,5.05679193 L9.43438199,19.5567919 C9.26494549,19.9347657 8.82118181,20.1038185 8.44320807,19.934382 C8.09673215,19.7790652 7.92580781,19.3932374 8.03023576,19.0388753 L8.06561801,18.9432081 L14.565618,4.44320807 L8.06561801,18.9432081 Z M2.21966991,11.4696699 L6.46966991,7.21966991 C6.76256313,6.9267767 7.23743687,6.9267767 7.53033009,7.21966991 C7.79659665,7.48593648 7.8208027,7.90260016 7.60294824,8.19621165 L7.53033009,8.28033009 L3.81066017,12 L7.53033009,15.7196699 C7.8232233,16.0125631 7.8232233,16.4874369 7.53033009,16.7803301 C7.26406352,17.0465966 6.84739984,17.0708027 6.55378835,16.8529482 L6.46966991,16.7803301 L2.21966991,12.5303301 C1.95340335,12.2640635 1.9291973,11.8473998 2.14705176,11.5537883 L2.21966991,11.4696699 L6.46966991,7.21966991 L2.21966991,11.4696699 Z M16.4696699,7.21966991 C16.7359365,6.95340335 17.1526002,6.9291973 17.4462117,7.14705176 L17.5303301,7.21966991 L21.7803301,11.4696699 C22.0465966,11.7359365 22.0708027,12.1526002 21.8529482,12.4462117 L21.7803301,12.5303301 L17.5303301,16.7803301 C17.2374369,17.0732233 16.7625631,17.0732233 16.4696699,16.7803301 C16.2034034,16.5140635 16.1791973,16.0973998 16.3970518,15.8037883 L16.4696699,15.7196699 L20.1893398,12 L16.4696699,8.28033009 C16.1767767,7.98743687 16.1767767,7.51256313 16.4696699,7.21966991 Z"></path></svg>
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"><path fill="currentColor" d="M8.06561801,18.9432081 L14.565618,4.44320807 C14.7350545,4.06523433 15.1788182,3.8961815 15.5567919,4.06561801 C15.9032679,4.2209348 16.0741922,4.60676263 15.9697642,4.9611247 L15.934382,5.05679193 L9.43438199,19.5567919 C9.26494549,19.9347657 8.82118181,20.1038185 8.44320807,19.934382 C8.09673215,19.7790652 7.92580781,19.3932374 8.03023576,19.0388753 L8.06561801,18.9432081 L14.565618,4.44320807 L8.06561801,18.9432081 Z M2.21966991,11.4696699 L6.46966991,7.21966991 C6.76256313,6.9267767 7.23743687,6.9267767 7.53033009,7.21966991 C7.79659665,7.48593648 7.8208027,7.90260016 7.60294824,8.19621165 L7.53033009,8.28033009 L3.81066017,12 L7.53033009,15.7196699 C7.8232233,16.0125631 7.8232233,16.4874369 7.53033009,16.7803301 C7.26406352,17.0465966 6.84739984,17.0708027 6.55378835,16.8529482 L6.46966991,16.7803301 L2.21966991,12.5303301 C1.95340335,12.2640635 1.9291973,11.8473998 2.14705176,11.5537883 L2.21966991,11.4696699 L6.46966991,7.21966991 L2.21966991,11.4696699 Z M16.4696699,7.21966991 C16.7359365,6.95340335 17.1526002,6.9291973 17.4462117,7.14705176 L17.5303301,7.21966991 L21.7803301,11.4696699 C22.0465966,11.7359365 22.0708027,12.1526002 21.8529482,12.4462117 L21.7803301,12.5303301 L17.5303301,16.7803301 C17.2374369,17.0732233 16.7625631,17.0732233 16.4696699,16.7803301 C16.2034034,16.5140635 16.1791973,16.0973998 16.3970518,15.8037883 L16.4696699,15.7196699 L20.1893398,12 L16.4696699,8.28033009 C16.1767767,7.98743687 16.1767767,7.51256313 16.4696699,7.21966991 Z"></path></svg>
         </button>
         <div id="bluesky-debug-bar" class="bluesky-debug-sidebar-content" aria-hidden="true">
             <h2><?php esc_html_e(
@@ -1032,4 +1089,4 @@ $auth = true; // Render all tabs immediately — auth check happens via AJAX
         </div>
     </aside>
    <?php } ?>
-</main>
+</div>

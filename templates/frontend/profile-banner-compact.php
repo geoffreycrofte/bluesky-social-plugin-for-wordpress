@@ -31,14 +31,18 @@ if (!defined("ABSPATH")) {
              loading="lazy">
 
         <div class="bluesky-social-integration-content">
-            <p class="bluesky-social-integration-name">
+            <h3 class="bluesky-social-integration-name">
                 <a href="https://bsky.app/profile/<?php echo esc_attr($profile['handle']); ?>" target="_blank" rel="noopener noreferrer">
                     <?php echo esc_html($profile['displayName']); ?>
                 </a>
-            </p>
+            </h3>
 
             <p class="bluesky-social-integration-handle">
-                <a href="https://bsky.app/profile/<?php echo esc_attr($profile['handle']); ?>" target="_blank" rel="noopener noreferrer">
+                <a href="https://bsky.app/profile/<?php echo esc_attr($profile['handle']); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr(sprintf(
+                    /* translators: %s is the Bluesky handle */
+                    __("@%s on Bluesky", "social-integration-for-bluesky"),
+                    $profile['handle']
+                )); ?>">
                     <span>@</span><?php echo esc_html($profile['handle']); ?>
                 </a>
             </p>

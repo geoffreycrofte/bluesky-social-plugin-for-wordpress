@@ -137,6 +137,45 @@
     }
 
     /**
+     * Donate sidebar
+     */
+    const donatebtn = document.querySelector(".bluesky-donate-button");
+    const donateSidebar = document.querySelector(".bluesky-donate-sidebar");
+
+    if (donatebtn && donateSidebar) {
+      const donateContent = donateSidebar.querySelector(
+        ".bluesky-donate-sidebar-content",
+      );
+      const closeDonate = () => {
+        donateSidebar.classList.add("is-collapsed");
+        donatebtn.setAttribute("aria-expanded", "false");
+        donateContent.setAttribute("aria-hidden", "true");
+      };
+      const openDonate = () => {
+        donateSidebar.classList.remove("is-collapsed");
+        donatebtn.setAttribute("aria-expanded", "true");
+        donateContent.setAttribute("aria-hidden", "false");
+      };
+
+      donatebtn.addEventListener("click", () => {
+        if (donateSidebar.classList.contains("is-collapsed")) {
+          openDonate();
+        } else {
+          closeDonate();
+        }
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (
+          !donateSidebar.classList.contains("is-collapsed") &&
+          e.key === "Escape"
+        ) {
+          closeDonate();
+        }
+      });
+    }
+
+    /**
      * Multi-account progressive disclosure
      */
     const multiAccountToggle = document.getElementById("bluesky-enable-multi-account");

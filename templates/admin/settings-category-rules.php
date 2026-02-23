@@ -56,16 +56,16 @@ $has_categories = !empty($categories);
                     </h4>
                     <div class="category-include-exclude-container">
                         <!-- Include Categories -->
-                        <div>
-                            <h5>
+                        <fieldset class="bluesky-category-fieldset">
+                            <legend>
                                 <?php esc_html_e('Include Categories', 'social-integration-for-bluesky'); ?>
-                            </h5>
+                            </legend>
                             <p class="description">
                                 <?php esc_html_e('Only syndicate posts with at least one of these categories (OR logic).', 'social-integration-for-bluesky'); ?>
                             </p>
                             <div class="categories-container">
                                 <?php foreach ($categories as $category) : ?>
-                                    <label style="display: block; margin-bottom: 5px;">
+                                    <label class="bluesky-category-label">
                                         <input
                                             type="checkbox"
                                             name="bluesky_category_rules[<?php echo esc_attr($account_id); ?>][include][]"
@@ -73,23 +73,23 @@ $has_categories = !empty($categories);
                                             <?php checked(in_array($category->term_id, $include_categories)); ?>
                                         />
                                         <?php echo esc_html($category->name); ?>
-                                        <span style="color: #666; font-size: 0.9em;">(<?php echo esc_html($category->count); ?>)</span>
+                                        <span class="small-description">(<?php echo esc_html($category->count); ?>)</span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
-                        </div>
+                        </fieldset>
 
                         <!-- Exclude Categories -->
-                        <div>
-                            <h5>
+                        <fieldset class="bluesky-category-fieldset">
+                            <legend>
                                 <?php esc_html_e('Exclude Categories', 'social-integration-for-bluesky'); ?>
-                            </h5>
+                            </legend>
                             <p class="description">
                                 <?php esc_html_e('Never syndicate posts with any of these categories (higher priority than include).', 'social-integration-for-bluesky'); ?>
                             </p>
                             <div class="categories-container">
                                 <?php foreach ($categories as $category) : ?>
-                                    <label>
+                                    <label class="bluesky-category-label">
                                         <input
                                             type="checkbox"
                                             name="bluesky_category_rules[<?php echo esc_attr($account_id); ?>][exclude][]"
@@ -101,7 +101,7 @@ $has_categories = !empty($categories);
                                     </label>
                                 <?php endforeach; ?>
                             </div>
-                        </div>
+                        </fieldset>
                     </div>
                 </div>
             <?php endforeach; ?>

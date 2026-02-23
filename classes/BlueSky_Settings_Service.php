@@ -1878,7 +1878,7 @@ class BlueSky_Settings_Service
             $account_id = sanitize_text_field($_POST['bluesky_discussion_account'] ?? '');
             $result = $this->account_manager->set_discussion_account($account_id);
 
-            if (is_wp_error($result)) {
+            if ($result instanceof \WP_Error) {
                 add_settings_error(
                     'bluesky_messages',
                     'bluesky_account_error',

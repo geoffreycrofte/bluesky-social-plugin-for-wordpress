@@ -39,8 +39,9 @@ Some other included features:
  
 * **Auto-post new WordPress posts on BlueSky**
   * Preview the post for BlueSky on WordPress pre-post checks panel (if activated)
-  * Display the syndicated post directly below the Gutenberg editor for reference.
-  * It displays also the discussion on this BlueSky post if any.
+  * Edit the future BlueSky post right in the Gutenberg editor's sidebar if needed.
+  * Syndication can be triggered based on post categories: associate one or multiple account to one or multiple categories. (Include/exclude mechanics)
+  * You have a "stop all syndication" option, just in case.
  
 * **Make BlueSky discussions for syndicated posts visible**
   * Activate the "Discussions" option to display Bluesky discussion even if the comment section of your posts is deactivated.
@@ -49,10 +50,11 @@ Some other included features:
   * Choose to include photos, videos and attachments.
   * Important: people you mute or block on Bluesky won't be visible in the discussions.
 
-* Encrypted App Password for a more secure connection
-* Cache for a more performant display and avoid BlueSky request limitations
-* Dark/Light mode (by default system/user choice)
-* Custom font sizing for both blocks/shortcods
+* Encrypted App Password for a more secure connection.
+* Cache for a more performant display and avoid BlueSky request limitations.
+* Asynchronous load of data from BlueSky for a better UX.
+* Dark/Light mode (by default system/user choice).
+* Custom font sizing for both blocks/shortcodes.
 
 ## Shortcode usage
 
@@ -98,11 +100,11 @@ Yes, this plugin uses a mix of secret keys, salts and OpenSSL methods to secure 
 
 ### Do you care for performance?
 
-No I don't. Just kidding, I do care for performance. The plugin uses caching to reduce the number of calls to the BlueSky API.
+No I don't. Just kidding, I do care for performance. The plugin uses caching to reduce the number of calls to the BlueSky API. It also uses asynchronous loading states (accessibility compatible) to load data.
 
 ### What are the current options?
 
-You have some options available like multiple ways to display your profile card and posts, the number of posts to display, whether to display embedded records or not, and the theme of the profile card and posts.
+You have some options available like multiple ways to display your profile card and posts, the number of posts to display, whether to display embedded records or not, and the theme of the profile card and posts. Since version 2.0.0 you can also set up multiple accounts, auto-syndication with category matching, and add the BlueSky discussion near your comment area.
 
 ### How do I report issues?
 
@@ -145,6 +147,7 @@ No it is not. But I'm always happy when core team developers suggest new feature
     * Pick a primary account named "Active" that will served as default account for Last Posts & Profile blocks
     * Gutenberg Last Posts & Profile blocks now have an "accounts" option to let you pick one of the registered BlueSky profiles.
     * Associate auto-syndication of a specific category to a specific Bluesky account. (include/exclude mechanics)
+    * Pause all syndication with one action (just in case, for maintenance or troubleshooting)
   * **BlueSky Discussions:**
     * Display the BlueSky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
     * Added the ability to display BlueSky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)

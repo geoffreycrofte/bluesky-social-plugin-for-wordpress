@@ -29,12 +29,16 @@ if (!defined("ABSPATH")) {
     </div>
 
     <div class="bluesky-social-integration-content">
-        <p class="bluesky-social-integration-name"><?php echo esc_html(
+        <h2 class="bluesky-social-integration-name"><?php echo esc_html(
             $profile["displayName"],
-        ); ?></p>
+        ); ?></h2>
         <p class="bluesky-social-integration-handle"><a href="https://bsky.app/profile/<?php echo esc_attr(
             $profile["handle"],
-        ); ?>"><span>@</span><?php echo esc_html($profile["handle"]); ?></a></p>
+        ); ?>" aria-label="<?php echo esc_attr(sprintf(
+            /* translators: %s is the Bluesky handle */
+            __("@%s on Bluesky", "social-integration-for-bluesky"),
+            $profile["handle"]
+        )); ?>"><span>@</span><?php echo esc_html($profile["handle"]); ?></a></p>
         <p class="bluesky-social-integration-followers">
             <span class="followers"><span class="nb"><?php echo esc_html(
                 intval($profile["followersCount"]),

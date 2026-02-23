@@ -87,10 +87,16 @@ body.block-editor-page .wp-block-bluesky-social-profile a {
     padding-top: var(--bluesky-card-spacing);
 }
 
+h2.bluesky-social-integration-name,
+h3.bluesky-social-integration-name,
 .bluesky-social-integration-name {
     color: var(--bluesky-primary-color) !important;
     font-weight: bold !important;
     font-size: var(--bluesky-profile-custom-name-fs, 20px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+    letter-spacing: normal !important;
 }
 
 .bluesky-social-integration-handle.bluesky-social-integration-handle {
@@ -126,7 +132,7 @@ body.block-editor-page .wp-block-bluesky-social-profile a {
 
 .bluesky-social-integration-followers span + span::before {
     content: "• ";
-    opacity: 0.4;
+    opacity: 0.6;
 }
 
 .bluesky-profile-block {

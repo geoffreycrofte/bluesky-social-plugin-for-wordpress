@@ -575,6 +575,45 @@ body.block-editor-page .wp-block-bluesky-social-posts a {
     image-rendering: auto;
 }
 
+/* Skeleton loader dimension classes */
+.bluesky-skeleton-avatar--post {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.bluesky-skeleton-name {
+    width: 120px;
+    height: 1em;
+    margin-bottom: 0.4em;
+}
+
+.bluesky-skeleton-handle {
+    width: 80px;
+    height: 0.875em;
+    margin-bottom: 0.6em;
+}
+
+.bluesky-skeleton-content-line {
+    margin-bottom: 0.4em;
+}
+
+.bluesky-skeleton-text-partial {
+    width: 60%;
+}
+
+.bluesky-skeleton-counters {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.bluesky-skeleton-counter {
+    width: 40px;
+    height: 1em;
+}
+
 /* Empty state styles */
 .bluesky-social-integration-empty-state {
     text-align: center;

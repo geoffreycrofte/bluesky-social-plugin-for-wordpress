@@ -311,20 +311,14 @@
 
                     // Global pause warning
                     window.blueskyPrePublishData && window.blueskyPrePublishData.globalPaused && wp.element.createElement('div', {
-                        style: {
-                            background: '#fcf0f1',
-                            borderLeft: '4px solid #d63638',
-                            padding: '8px 12px',
-                            marginBottom: '12px',
-                            fontSize: '13px'
-                        }
+                        className: 'bluesky-global-pause-warning'
                     },
-                        wp.element.createElement('strong', { style: { color: '#d63638' } },
+                        wp.element.createElement('strong', null,
                             __('Syndication is globally paused.', 'social-integration-for-bluesky')
                         ),
                         wp.element.createElement('a', {
                             href: window.blueskyPrePublishData.settingsUrl,
-                            style: { display: 'block', marginTop: '4px' }
+                            className: 'bluesky-global-pause-link'
                         }, __('Manage in Settings', 'social-integration-for-bluesky') + ' \u2192')
                     ),
 

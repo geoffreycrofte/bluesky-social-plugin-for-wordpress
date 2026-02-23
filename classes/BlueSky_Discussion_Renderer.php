@@ -346,7 +346,7 @@ class BlueSky_Discussion_Renderer
                 $html .=
                     '<div class="bluesky-external-thumb"><img src="' .
                     esc_url($external["thumb"]) .
-                    '" alt="" loading="lazy" decoding="async" /></div>';
+                    '" alt="' . esc_attr($external["title"] ?? "") . '" loading="lazy" decoding="async" /></div>';
             }
 
             $html .= '<div class="bluesky-external-content">';

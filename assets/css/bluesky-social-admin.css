@@ -15,6 +15,12 @@
     --primary-light: #4a9ff9;
     --primary: #1185FE;
     --primary-dark: #0765c9;
+    --bluesky-admin-warning-bg: #fcf0f1;
+    --bluesky-admin-warning-border: #d63638;
+    --bluesky-admin-warning-text: #d63638;
+    --bluesky-admin-muted-text: #666;
+    --bluesky-admin-spacing-sm: 4px;
+    --bluesky-admin-spacing-md: 12px;
     font-size: 14px;
     margin-left: -20px;
     line-height: 1.5;
@@ -51,8 +57,8 @@
     font-weight: 500;
 }
 
-.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus {
-    outline: 0;
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper a.active {
@@ -61,6 +67,7 @@
 
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus-visible {
     outline: 2px solid var(--primary);
+    outline-offset: -2px;
 }
 
 .bluesky-social-integration-admin-content {
@@ -324,6 +331,157 @@ input.bluesky-custom-unit.bluesky-custom-unit {
     padding-right: 0;
 }
 
+/**
+ * Donation Sidebar
+ */
+.bluesky-donate-sidebar {
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(380px, 90vw);
+    transition: transform .5s;
+    z-index: 1;
+}
+
+.bluesky-donate-sidebar.is-collapsed {
+    transform: translateX(100%);
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button {
+    position: absolute;
+    left: -40px;
+    top: calc(var(--wp-admin--admin-bar--height) + 16px);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #f5a623, #e8901a);
+    color: black;
+    font-size: 1.65em;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button:hover,
+.bluesky-donate-sidebar .bluesky-donate-button:focus-visible {
+    background: linear-gradient(135deg, #e8901a, #d47a10);
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button:focus-visible {
+    outline: 2px dotted #f5a623;
+    outline-offset: 2px;
+}
+
+.bluesky-donate-sidebar-content {
+    height: 100%;
+    overflow: auto;
+    padding: 32px 48px 32px 24px;
+    background: white;
+    box-shadow: -4px 0 40px -12px rgba(0, 0, 0, .12);
+}
+
+.bluesky-donate-sidebar-content h2 {
+    color: var(--primary);
+    font-size: 1.5em;
+    margin-top: 0;
+}
+
+.bluesky-donate-sidebar-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3c434a;
+}
+
+.bluesky-donate-sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.bluesky-donate-thanks {
+    margin-top: 24px;
+    font-style: italic;
+    color: #666;
+}
+
+/**
+ * Donation Links (shared between sidebar and about section)
+ */
+.bluesky-donation-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.bluesky-donation-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+    text-decoration: none;
+}
+
+.bluesky-donation-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+}
+
+.bluesky-donation-paypal {
+    background: #ffc439;
+    color: #253b80;
+}
+
+.bluesky-donation-paypal:hover {
+    background: #f0b72e;
+    color: #253b80;
+}
+
+.bluesky-donation-revolut {
+    background: #191c1f;
+    color: #ffffff;
+}
+
+.bluesky-donation-revolut:hover {
+    background: #2c3338;
+    color: #ffffff;
+}
+
+.bluesky-donation-revolut:focus-visible {
+    outline-color: #191c1f;
+    color: #fff;
+}
+
+/**
+ * Donation Box (About section)
+ */
+.bluesky-donation-box {
+    background: linear-gradient(135deg, #fffbf0 0%, #fff7e6 100%);
+    border: 1px solid #f0e5c8;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 1.5em;
+}
+
+.bluesky-donation-box h2 {
+    margin-top: 0;
+}
+
+.bluesky-donation-box .bluesky-donation-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
 .bluesky-debug-sidebar {
     box-sizing: border-box;
     position: fixed;
@@ -342,7 +500,7 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 .bluesky-debug-sidebar .bluesky-open-button {
     position: absolute;
     left: -40px;
-    top: var(--wp-admin--admin-bar--height);
+    top: calc(var(--wp-admin--admin-bar--height) + 64px);
     padding: 0;
     width: 40px;
     height: 40px;
@@ -577,8 +735,22 @@ input.bluesky-custom-unit.bluesky-custom-unit {
     color: #666;
 }
 
-.bluesky-category-rules-account h5 {
-    margin-bottom: 0;
+.bluesky-category-fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bluesky-category-fieldset legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 0.25em;
+}
+
+.bluesky-category-label {
+    display: block;
+    margin-bottom: 5px;
 }
 
 .bluesky-category-rules-account .category-include-exclude-container {
@@ -601,6 +773,42 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 }
 
 .bluesky-category-rules-account .small-description {
-    color: #666;
+    color: var(--bluesky-admin-muted-text, #666);
     font-size: 0.9em;
+}
+
+/**
+ * Global Pause Warning
+ */
+.bluesky-global-pause-warning {
+    background: var(--bluesky-admin-warning-bg, #fcf0f1);
+    border-left: 4px solid var(--bluesky-admin-warning-border, #d63638);
+    padding: 8px var(--bluesky-admin-spacing-md, 12px);
+    margin-bottom: var(--bluesky-admin-spacing-md, 12px);
+    font-size: 13px;
+}
+
+.bluesky-global-pause-warning strong {
+    color: var(--bluesky-admin-warning-text, #d63638);
+}
+
+.bluesky-global-pause-link {
+    display: inline-block;
+    margin-top: var(--bluesky-admin-spacing-sm, 4px);
+}
+
+/**
+ * Metabox Utilities
+ */
+.bluesky-account-selection {
+    margin-top: var(--bluesky-admin-spacing-md, 12px);
+}
+
+.bluesky-account-label {
+    display: block;
+    margin: var(--bluesky-admin-spacing-sm, 4px) 0;
+}
+
+.bluesky-section-divider {
+    margin: 2em 0;
 }
