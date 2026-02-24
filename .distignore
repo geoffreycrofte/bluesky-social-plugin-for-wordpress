@@ -10,8 +10,8 @@ icon.svg
 
 # Test related files
 .phpunit.result.cache
-.phpunit.phar
-.phpunit.xml
+phpunit.phar
+phpunit.xml
 tests/
 
 # AI Related
