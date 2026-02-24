@@ -3,6 +3,7 @@
     --bluesky-card-txt: #0b0f14;
     --bluesky-card-txt-alt: rgb(66, 87, 108);
     --bluesky-image-br: var(--bluesky-card-avatar-size);
+    --bluesky-primary-light: #4a9ff9;
     --bluesky-primary-color: #1083fe;
     --bluesky-card-border: 1px solid rgb(212, 219, 226);
     --bluesky-card-br: 8px;

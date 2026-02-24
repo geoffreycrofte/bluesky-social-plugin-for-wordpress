@@ -3,6 +3,7 @@
     --bluesky-card-txt: #0b0f14;
     --bluesky-card-txt-alt: rgb(66, 87, 108);
     --bluesky-image-br: var(--bluesky-card-avatar-size);
+    --bluesky-primary-light: #4a9ff9;
     --bluesky-primary-color: #1083fe;
     --bluesky-card-border: 1px solid rgb(212, 219, 226);
     --bluesky-card-br: 8px;
@@ -74,7 +75,7 @@
 }
 
 .bluesky-social-integration-content a {
-    color: var(--bluesky-primary-color) !important;
+    color: var(--bluesky-primary-light) !important;
 }
 
 /* Avoid annoying click/redirection when trying to get the block option */
@@ -90,7 +91,7 @@ body.block-editor-page .wp-block-bluesky-social-profile a {
 h2.bluesky-social-integration-name,
 h3.bluesky-social-integration-name,
 .bluesky-social-integration-name {
-    color: var(--bluesky-primary-color) !important;
+    color: var(--bluesky-primary-light) !important;
     font-weight: bold !important;
     font-size: var(--bluesky-profile-custom-name-fs, 20px) !important;
     margin: 0 !important;
@@ -102,6 +103,9 @@ h3.bluesky-social-integration-name,
 .bluesky-social-integration-handle.bluesky-social-integration-handle {
     color: var(--bluesky-card-txt-alt) !important;
     font-size: var(--bluesky-profile-custom-handle-fs, 14px) !important;
+}
+.bluesky-social-integration-handle.bluesky-social-integration-handle a {
+    color: inherit!important;
 }
 
 .bluesky-social-integration-description.bluesky-social-integration-description {

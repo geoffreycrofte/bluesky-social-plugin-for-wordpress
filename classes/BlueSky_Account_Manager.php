@@ -195,7 +195,7 @@ class BlueSky_Account_Manager {
                         'name' => 'Default Account',
                         'handle' => $settings['handle'],
                         'app_password' => $settings['app_password'],
-                        'did' => isset($settings['did']) ? $settings['did'] : '',
+                        'did' => !empty($settings['did']) ? $settings['did'] : get_transient((new BlueSky_Helpers())->get_did_transient_key()),
                         'is_active' => true,
                         'auto_syndicate' => true,
                         'owner_id' => 0,

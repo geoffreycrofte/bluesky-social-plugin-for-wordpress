@@ -352,7 +352,7 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 .bluesky-donate-sidebar .bluesky-donate-button {
     position: absolute;
     left: -40px;
-    top: calc(var(--wp-admin--admin-bar--height) + 16px);
+    top: calc(var(--wp-admin--admin-bar--height) + 110px);
     padding: 0;
     width: 40px;
     height: 40px;
@@ -471,7 +471,7 @@ input.bluesky-custom-unit.bluesky-custom-unit {
     margin-top: 1.5em;
 }
 
-.bluesky-donation-box h2 {
+.bluesky-donation-box.bluesky-donation-box.bluesky-donation-box h2 {
     margin-top: 0;
 }
 
