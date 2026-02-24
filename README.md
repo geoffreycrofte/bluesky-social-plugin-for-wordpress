@@ -255,6 +255,11 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 
 ## Upgrade Notice
 
+### 2.0.0
+This is a major update with a completely different technical way of handling multiple account.
+I suggest you update to this version only if you feel like beta testing it.
+Wait for 2.0.1+ if you manage a big audience website.
+
 ### 1.5.0
 This new version comes with new features, a bug fix on gutenberg blocks not being clickable, and some UI improvements here and there.
 

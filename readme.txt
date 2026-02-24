@@ -134,6 +134,8 @@ No it is not. But I'm always happy when core team developers suggest new feature
 12. The second layout of the Post Feed.
 13. Some other plugin settings options.
 14. The discussion on BlueSky added to the syndicated blog post.
+15. The "Compact" layout for the BlueSky profile banner in light and dark modes.
+16. The syndication options to associate categories and auto-syndication by account.
 
 == Changelog ==
 
@@ -258,6 +260,11 @@ Adds the proper information about the shortcodes in the setting page, the plugin
 * Initial release.
 
 == Upgrade Notice ==
+
+= 2.0.0 =
+This is a major update with a completely different technical way of handling multiple account.
+I suggest you update to this version only if you feel like beta testing it.
+Wait for 2.0.1+ if you manage a big audience website.
 
 = 1.5.0 =
 This new version comes with new features, a bug fix on gutenberg blocks not being clickable, and some UI improvements here and there.
