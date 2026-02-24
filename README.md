@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.9.1
 - Requires PHP: 7.4
-- Stable tag: 2.0.0
+- Stable tag: 2.0.2
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -141,6 +141,9 @@ No it is not. But I'm always happy when core team developers suggest new feature
 
 ## Changelog
 
+### 2.0.2
+Testing the Playground Live preview of the plugin (not visible from your website)
+
 ### 2.0.0
 * **NEW FEATURES**
   * **Multiple accounts**
@@ -150,10 +153,6 @@ No it is not. But I'm always happy when core team developers suggest new feature
     * Gutenberg Last Posts & Profile blocks now have an "accounts" option to let you pick one of the registered BlueSky profiles.
     * Associate auto-syndication of a specific category to a specific Bluesky account. (include/exclude mechanics)
     * Pause all syndication with one action (just in case, for maintenance or troubleshooting)
-  * **BlueSky Discussions:**
-    * Display the BlueSky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
-    * Added the ability to display BlueSky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
-    * Check in the Post List if the syndication exists (BlueSky column)
   * **Admin UX rework**
     * Setting page improvements (Shortcodes info has migrated into About section)
     * Site Health dedicated section for this plugin
@@ -174,6 +173,12 @@ No it is not. But I'm always happy when core team developers suggest new feature
 * **Compatibility**
   * Tested with WordPress 6.9.
   * Fixed the issue with Gutenberg blocks not being clickable for edit. (finally T.T)
+
+### 1.5.0
+* **BlueSky Discussions:**
+    * Display the BlueSky Post in the WP Post Editor below the Gutenberg editor, including link to the post, comments (discussion), and counters.
+    * Added the ability to display BlueSky discussion for syndicated posts below your blog posts, including options like the depth of the answers, their display, the image content, the counters, etc. (see `Settings > BlueSky Settings > Discussions`)
+    * Check in the Post List if the syndication exists (BlueSky column)
 
 ### 1.4.5
 * **Bug Fix**
