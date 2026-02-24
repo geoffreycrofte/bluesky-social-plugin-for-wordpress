@@ -122,20 +122,22 @@ No it is not. But I'm always happy when core team developers suggest new feature
 
 ## Screenshots
 
-1. The profile card in light theme.
-2. The list of posts in light theme.
-3. The profile card in dark theme.
-4. The list of posts in dark theme.
-5. The Gutenberg block lists. (the last one isn't ours)
-6. The BlueSky Posts Feed Gutenberg options.
-7. The BlueSky Profile Gutenberg options.
-8. The plugin settings screen.
-9. A post automatically shared after a WordPress publication.
-10. A gallery and a starterpack embedding.
-11. The lightbox when gallery images are available.
-12. The second layout of the Post Feed.
-13. Some other plugin settings options.
-14. The discussion on BlueSky added to the syndicated blog post.
+1. [The profile card in light theme](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-1.jpg)
+2. [The list of posts in light theme](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-2.jpg)
+3. [The profile card in dark theme](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-3.jpg)
+4. [The list of posts in dark theme](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-4.jpg)
+5. [The Gutenberg block lists (the last one isn't ours)](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-5.jpg)
+6. [The BlueSky Posts Feed Gutenberg options](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-6.jpg)
+7. [The BlueSky Profile Gutenberg options](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-7.jpg)
+8. [The plugin settings screen](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-8.jpg)
+9. [A post automatically shared after a WordPress publication](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-9.jpg)
+10. [A gallery and a starterpack embedding](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-10.jpg)
+11. [The lightbox when gallery images are available](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-11.jpg)
+12. [The second layout of the Post Feed](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-12.jpg)
+13. [Some other plugin settings options](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-13.jpg)
+14. [The discussion on BlueSky added to the syndicated blog post](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-14.jpg)
+15. [The "Compact" layout for the BlueSky profile banner in light and dark modes.](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-15.jpg)
+16. [The syndication options to associate categories and auto-syndication by account.](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-16.jpg)
 
 ## Changelog
 
