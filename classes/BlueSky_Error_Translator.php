@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  * Translates raw Bluesky API errors into user-friendly messages
  * following the "explain + action" pattern.
  *
- * @since 1.6.0
+ * @since 2.0.0
  */
 class BlueSky_Error_Translator
 {

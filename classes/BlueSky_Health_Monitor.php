@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * - Pass/fail status checks for accounts, credentials, and circuit breaker
  * - Debug information section with plugin version, API details, and per-account state
  *
- * @since 1.6.0
+ * @since 2.0.0
  */
 class BlueSky_Health_Monitor
 {

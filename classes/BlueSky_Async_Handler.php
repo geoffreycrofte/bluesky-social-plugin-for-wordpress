@@ -8,7 +8,7 @@
  * is not available.
  *
  * @package BlueSky_Social_Integration
- * @since 1.6.0
+ * @since 2.0.0
  */
 
 // Prevent direct access
