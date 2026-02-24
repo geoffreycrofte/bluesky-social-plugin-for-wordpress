@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  * Stores recent syndication events in a circular buffer using WordPress Options API.
  * Maintains up to 10 recent events with FIFO rotation.
  *
- * @since 1.6.0
+ * @since 2.0.0
  */
 class BlueSky_Activity_Logger
 {

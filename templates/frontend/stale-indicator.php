@@ -5,7 +5,7 @@
  * Displays "last updated X ago" message when serving stale cached data.
  *
  * @package BlueSky_Social_Integration
- * @since 1.6.0
+ * @since 2.0.0
  *
  * @var string $time_ago Human-readable time since last update (e.g., "5 minutes")
  */

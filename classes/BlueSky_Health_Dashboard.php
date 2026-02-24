@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
  * - Pending retries
  * - Recent activity log
  *
- * @since 1.6.0
+ * @since 2.0.0
  */
 class BlueSky_Health_Dashboard
 {

@@ -9,7 +9,7 @@
  * - Half-Open: Testing recovery (one request allowed after cooldown)
  *
  * @package BlueSky_Social_Integration
- * @since 1.6.0
+ * @since 2.0.0
  */
 
 class BlueSky_Circuit_Breaker {
