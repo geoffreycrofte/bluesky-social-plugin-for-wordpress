@@ -10,7 +10,7 @@
  * PHP request (page load). It requires zero database queries and has minimal overhead.
  *
  * @package Bluesky_Social_Integration
- * @since 1.5.0
+ * @since 2.0.0
  */
 
 class BlueSky_Request_Cache {

@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  * Manages multi-account data storage, CRUD operations, version-gated migration,
  * and feature toggle checking. This is the foundation for multi-account functionality.
  *
- * @since 1.5.0
+ * @since 2.0.0
  */
 class BlueSky_Account_Manager {
     /**
