@@ -31,12 +31,88 @@ class BlueSky_API_Handler
     private $access_token = null;
 
     /**
+     * Last authentication error details
+     * @var array|null
+     */
+    private $last_auth_error = null;
+
+    /**
+     * Account ID for multi-account transient scoping
+     * @var string|null
+     */
+    private $account_id = null;
+
+    /**
+     * Circuit breaker instance for this account
+     * @var BlueSky_Circuit_Breaker|null
+     */
+    private $circuit_breaker = null;
+
+    /**
+     * Rate limiter instance (shared across accounts)
+     * @var BlueSky_Rate_Limiter
+     */
+    private $rate_limiter;
+
+    /**
      * Constructor
      * @param array $options Plugin settings
      */
     public function __construct($options)
     {
         $this->options = $options;
+        $this->rate_limiter = new BlueSky_Rate_Limiter();
+
+        // Register background refresh hook (only once)
+        static $hooks_registered = false;
+        if (!$hooks_registered) {
+            add_action('bluesky_refresh_cache', [__CLASS__, 'background_refresh_cache'], 10, 1);
+            $hooks_registered = true;
+        }
+    }
+
+    /**
+     * Factory method to create an API handler for a specific account
+     *
+     * @param array $account Account array from BlueSky_Account_Manager
+     * @return BlueSky_API_Handler Configured API handler instance
+     */
+    public static function create_for_account($account)
+    {
+        // Build minimal options array that the API handler needs
+        $options = [
+            'handle' => $account['handle'],
+            'app_password' => $account['app_password'] // Already encrypted in storage
+        ];
+
+        $instance = new self($options);
+        // Set account_id so transient keys are scoped per-account
+        $instance->account_id = $account['id'] ?? null;
+        return $instance;
+    }
+
+    /**
+     * Get circuit breaker instance (lazy initialization)
+     *
+     * @return BlueSky_Circuit_Breaker|null Circuit breaker instance or null if no account_id
+     */
+    private function get_circuit_breaker()
+    {
+        if ($this->account_id && null === $this->circuit_breaker) {
+            $this->circuit_breaker = new BlueSky_Circuit_Breaker($this->account_id);
+        }
+        return $this->circuit_breaker;
+    }
+
+    /**
+     * Get stale cache data (data cached with extended TTL)
+     *
+     * @param string $cache_key Transient key
+     * @return mixed|false Cached data or false if not found
+     */
+    private function get_stale_cache($cache_key)
+    {
+        return get_transient($cache_key);
     }
 
     /**
@@ -47,18 +123,25 @@ class BlueSky_API_Handler
      */
     public function authenticate($force = false)
     {
+        $this->last_auth_error = null;
+
         // Check if credentials are set
         if (
             !isset($this->options["handle"]) ||
             !isset($this->options["app_password"])
         ) {
+            $this->last_auth_error = [
+                "code" => "MissingCredentials",
+                "message" => "Handle or app password is not configured.",
+                "status" => 0,
+            ];
             return false;
         }
 
         $helpers = new BlueSky_Helpers();
-        $access_tkey = $helpers->get_access_token_transient_key();
-        $refresh_tkey = $helpers->get_refresh_token_transient_key();
-        $did_tkey = $helpers->get_did_transient_key();
+        $access_tkey = $helpers->get_access_token_transient_key($this->account_id);
+        $refresh_tkey = $helpers->get_refresh_token_transient_key($this->account_id);
+        $did_tkey = $helpers->get_did_transient_key($this->account_id);
 
         // Retrieve saved tokens from transients
         $access_token = get_transient($access_tkey);
@@ -77,6 +160,7 @@ class BlueSky_API_Handler
             $response = wp_remote_post(
                 $this->bluesky_api_url . "com.atproto.server.refreshSession",
                 [
+                    "timeout" => 15,
                     "body" => wp_json_encode([
                         "refreshJwt" => $refresh_token,
                     ]),
@@ -88,6 +172,11 @@ class BlueSky_API_Handler
             );
 
             if (is_wp_error($response)) {
+                $this->last_auth_error = [
+                    "code" => "NetworkError",
+                    "message" => $response->get_error_message(),
+                    "status" => 0,
+                ];
                 return false;
             }
 
@@ -133,6 +222,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.server.createSession",
             [
+                "timeout" => 15,
                 "body" => wp_json_encode([
                     "identifier" => $this->options["handle"],
                     "password" => $password,
@@ -144,9 +234,15 @@ class BlueSky_API_Handler
         );
 
         if (is_wp_error($response)) {
+            $this->last_auth_error = [
+                "code" => "NetworkError",
+                "message" => $response->get_error_message(),
+                "status" => 0,
+            ];
             return false;
         }
 
+        $http_status = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if (
@@ -164,7 +260,36 @@ class BlueSky_API_Handler
             return true;
         }
 
+        // Capture error details from the API response
+        $this->last_auth_error = [
+            "code" => $body["error"] ?? "UnknownError",
+            "message" => $body["message"] ?? "",
+            "status" => $http_status,
+        ];
+
+        // Add rate limit info if available
+        $ratelimit_remaining = wp_remote_retrieve_header(
+            $response,
+            "ratelimit-remaining",
+        );
+        if ($ratelimit_remaining !== "") {
+            $this->last_auth_error["ratelimit_remaining"] =
+                $ratelimit_remaining;
+            $this->last_auth_error["ratelimit_reset"] =
+                wp_remote_retrieve_header($response, "ratelimit-reset");
+        }
+
         return false;
+    }
+
+    /**
+     * Get the last authentication error details
+     *
+     * @return array|null Error array with 'code', 'message', 'status' keys, or null if no error
+     */
+    public function get_last_auth_error()
+    {
+        return $this->last_auth_error;
     }
 
     /**
@@ -178,6 +303,8 @@ class BlueSky_API_Handler
         try {
             // clean the transient of the jwt
             $this->cleanup_session_data($helpers);
+            // clean cached content (profile, posts) so stale data isn't served
+            $this->cleanup_content_transients($helpers);
             // clean the handle and app_password options
             $this->cleanup_login_options();
             // done.
@@ -221,6 +348,29 @@ class BlueSky_API_Handler
     }
 
     /**
+     * Clear cached content transients (profile and all posts variants)
+     *
+     * @param BlueSky_Helpers $helpers
+     * @return void
+     */
+    private function cleanup_content_transients($helpers)
+    {
+        delete_transient($helpers->get_profile_transient_key());
+
+        global $wpdb;
+        $prefix = BLUESKY_PLUGIN_TRANSIENT . '-posts-';
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options}
+                 WHERE option_name LIKE %s
+                 OR option_name LIKE %s",
+                '_transient_' . $wpdb->esc_like($prefix) . '%',
+                '_transient_timeout_' . $wpdb->esc_like($prefix) . '%',
+            ),
+        );
+    }
+
+    /**
      * Fetch posts from BlueSky feed
      * @param int $limit Number of posts to fetch (default 10)
      * @return array|false Processed posts or false on failure
@@ -233,20 +383,63 @@ class BlueSky_API_Handler
         $helpers = new BlueSky_Helpers();
         $no_replies = $no_replies ?? ($this->options["no_replies"] ?? true);
         $no_reposts = $no_reposts ?? ($this->options["no_reposts"] ?? true);
+
+        // Get cache duration from options (default 10 minutes / 600 seconds)
+        $cache_duration = $this->options["cache_duration"]["total_seconds"] ?? 600;
+
+        // 1. REQUEST CACHE CHECK (first layer - zero DB queries)
+        $request_cache_key = BlueSky_Request_Cache::build_key('posts', [
+            'account_id' => $this->account_id,
+            'limit' => $limit,
+            'no_replies' => $no_replies,
+            'no_reposts' => $no_reposts,
+        ]);
+
+        if (BlueSky_Request_Cache::has($request_cache_key)) {
+            return BlueSky_Request_Cache::get($request_cache_key);
+        }
+
+        // 2. TRANSIENT CACHE CHECK (second layer - database)
         $cache_key = $helpers->get_posts_transient_key(
+            $this->account_id,
             $limit,
             $no_replies,
             $no_reposts,
         );
-        $cache_duration =
-            $this->options["cache_duration"]["total_seconds"] ?? 3600; // Default 1 hour
+        $freshness_key = $cache_key . '_fresh';
 
         // Skip cache if duration is 0
         if ($cache_duration > 0) {
             $cached_posts = get_transient($cache_key);
             if ($cached_posts !== false) {
+                // Store in request cache for subsequent calls
+                BlueSky_Request_Cache::set($request_cache_key, $cached_posts);
                 return $cached_posts;
             }
+        }
+
+        // 3. CIRCUIT BREAKER CHECK (before API call)
+        $circuit_breaker = $this->get_circuit_breaker();
+        if ($circuit_breaker && !$circuit_breaker->is_available()) {
+            // Circuit is open - return stale cached data if available
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
+        }
+
+        // 4. RATE LIMITER CHECK (before API call)
+        $account_id_for_limiter = $this->account_id ?? 'default';
+        if ($this->rate_limiter->is_rate_limited($account_id_for_limiter)) {
+            // Rate limited - return stale cached data if available
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
         }
 
         // Ensure authentication
@@ -257,9 +450,11 @@ class BlueSky_API_Handler
         // Sanitize limit
         $limit = max(1, min(10, intval($limit)));
 
+        // 5. MAKE API CALL
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getAuthorFeed",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -270,13 +465,34 @@ class BlueSky_API_Handler
             ],
         );
 
+        // 6. RATE LIMITER ON RESPONSE (check for 429)
+        if ($this->rate_limiter->check_rate_limit($response, $account_id_for_limiter)) {
+            // Got rate limited - return stale cached data if available
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
+        }
+
         if (is_wp_error($response)) {
+            // 7. CIRCUIT BREAKER ON FAILURE
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
         }
 
         $raw_posts = json_decode(wp_remote_retrieve_body($response), true);
 
         if (!isset($raw_posts["feed"])) {
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
         }
 
@@ -325,10 +541,21 @@ class BlueSky_API_Handler
             return strtotime($b["created_at"]) - strtotime($a["created_at"]);
         });
 
-        // Cache the posts if caching is enabled
-        if ($cache_duration > 0) {
-            set_transient($cache_key, $processed_posts, $cache_duration);
+        // 7. CIRCUIT BREAKER ON SUCCESS
+        if ($circuit_breaker) {
+            $circuit_breaker->record_success();
         }
+
+        // 8. STORE IN CACHES
+        if ($cache_duration > 0) {
+            // Store in transient with extended TTL (2x) for stale-while-revalidate
+            set_transient($cache_key, $processed_posts, $cache_duration * 2);
+            // Set freshness marker with normal TTL
+            set_transient($freshness_key, time(), $cache_duration);
+        }
+
+        // Store in request cache
+        BlueSky_Request_Cache::set($request_cache_key, $processed_posts);
 
         return $processed_posts;
     }
@@ -340,25 +567,66 @@ class BlueSky_API_Handler
     public function get_bluesky_profile()
     {
         $helpers = new BlueSky_Helpers();
-        $cache_key = $helpers->get_profile_transient_key();
-        $cache_duration =
-            $this->options["cache_duration"]["total_seconds"] ?? 3600; // Default 1 hour
+
+        // Get cache duration from options (default 10 minutes / 600 seconds)
+        $cache_duration = $this->options["cache_duration"]["total_seconds"] ?? 600;
+
+        // 1. REQUEST CACHE CHECK (first layer - zero DB queries)
+        $request_cache_key = BlueSky_Request_Cache::build_key('profile', [
+            'account_id' => $this->account_id,
+        ]);
+
+        if (BlueSky_Request_Cache::has($request_cache_key)) {
+            return BlueSky_Request_Cache::get($request_cache_key);
+        }
+
+        // 2. TRANSIENT CACHE CHECK (second layer - database)
+        $cache_key = $helpers->get_profile_transient_key($this->account_id);
+        $freshness_key = $cache_key . '_fresh';
 
         // Skip cache if duration is 0
         if ($cache_duration > 0) {
             $cached_profile = get_transient($cache_key);
             if ($cached_profile !== false) {
+                // Store in request cache for subsequent calls
+                BlueSky_Request_Cache::set($request_cache_key, $cached_profile);
                 return $cached_profile;
             }
+        }
+
+        // 3. CIRCUIT BREAKER CHECK (before API call)
+        $circuit_breaker = $this->get_circuit_breaker();
+        if ($circuit_breaker && !$circuit_breaker->is_available()) {
+            // Circuit is open - return stale cached data if available
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
+        }
+
+        // 4. RATE LIMITER CHECK (before API call)
+        $account_id_for_limiter = $this->account_id ?? 'default';
+        if ($this->rate_limiter->is_rate_limited($account_id_for_limiter)) {
+            // Rate limited - return stale cached data if available
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
         }
 
         if (!$this->authenticate()) {
             return false;
         }
 
+        // 5. MAKE API CALL
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.actor.getProfile",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -368,16 +636,52 @@ class BlueSky_API_Handler
             ],
         );
 
+        // 6. RATE LIMITER ON RESPONSE (check for 429)
+        if ($this->rate_limiter->check_rate_limit($response, $account_id_for_limiter)) {
+            // Got rate limited - return stale cached data if available
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
+            $stale_data = $this->get_stale_cache($cache_key);
+            if ($stale_data !== false) {
+                BlueSky_Request_Cache::set($request_cache_key, $stale_data);
+                return $stale_data;
+            }
+            return false;
+        }
+
         if (is_wp_error($response)) {
+            // 7. CIRCUIT BREAKER ON FAILURE
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
         }
 
         $decoded = json_decode(wp_remote_retrieve_body($response), true);
 
-        // Cache the profile if caching is enabled
-        if ($cache_duration > 0) {
-            set_transient($cache_key, $decoded, $cache_duration);
+        if (empty($decoded)) {
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
+            return false;
         }
+
+        // 7. CIRCUIT BREAKER ON SUCCESS
+        if ($circuit_breaker) {
+            $circuit_breaker->record_success();
+        }
+
+        // 8. STORE IN CACHES
+        if ($cache_duration > 0) {
+            // Store in transient with extended TTL (2x) for stale-while-revalidate
+            set_transient($cache_key, $decoded, $cache_duration * 2);
+            // Set freshness marker with normal TTL
+            set_transient($freshness_key, time(), $cache_duration);
+        }
+
+        // Store in request cache
+        BlueSky_Request_Cache::set($request_cache_key, $decoded);
 
         return $decoded;
     }
@@ -400,7 +704,9 @@ class BlueSky_API_Handler
         // Check if it's a local file path or URL
         if (filter_var($image_url, FILTER_VALIDATE_URL)) {
             // It's a URL, fetch it
-            $response = wp_remote_get($image_url);
+            $response = wp_remote_get($image_url, [
+                "timeout" => 15,
+            ]);
             if (is_wp_error($response)) {
                 return false;
             }
@@ -430,6 +736,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.repo.uploadBlob",
             [
+                "timeout" => 30,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                     "Content-Type" => $mime_type,
@@ -470,6 +777,18 @@ class BlueSky_API_Handler
         $excerpt = "",
         $image_url = "",
     ) {
+        // CIRCUIT BREAKER CHECK (before API call)
+        $circuit_breaker = $this->get_circuit_breaker();
+        if ($circuit_breaker && !$circuit_breaker->is_available()) {
+            return false;
+        }
+
+        // RATE LIMITER CHECK (before API call)
+        $account_id_for_limiter = $this->account_id ?? 'default';
+        if ($this->rate_limiter->is_rate_limited($account_id_for_limiter)) {
+            return false;
+        }
+
         if (!$this->authenticate()) {
             return false;
         }
@@ -580,6 +899,7 @@ class BlueSky_API_Handler
         $response = wp_remote_post(
             $this->bluesky_api_url . "com.atproto.repo.createRecord",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                     "Content-Type" => "application/json",
@@ -592,19 +912,42 @@ class BlueSky_API_Handler
             ],
         );
 
+        // RATE LIMITER ON RESPONSE (check for 429)
+        if ($this->rate_limiter->check_rate_limit($response, $account_id_for_limiter)) {
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
+            return false;
+        }
+
         if (is_wp_error($response)) {
+            // CIRCUIT BREAKER ON FAILURE
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
         }
 
         $response_code = wp_remote_retrieve_response_code($response);
         if ($response_code !== 200) {
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
         }
 
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
         if (!isset($body["uri"])) {
+            if ($circuit_breaker) {
+                $circuit_breaker->record_failure();
+            }
             return false;
+        }
+
+        // CIRCUIT BREAKER ON SUCCESS
+        if ($circuit_breaker) {
+            $circuit_breaker->record_success();
         }
 
         // Extract post information from the response
@@ -661,11 +1004,16 @@ class BlueSky_API_Handler
             $images = [];
             if (isset($post["embed"]["images"])) {
                 foreach ($post["embed"]["images"] as $image) {
+                    // Detect GIF images via MIME type from Bluesky API
+                    $is_gif = isset($image["image"]["mimeType"]) &&
+                              $image["image"]["mimeType"] === "image/gif";
+
                     $images[] = [
                         "url" => $image["fullsize"] ?? ($image["thumb"] ?? ""),
                         "alt" => $image["alt"] ?? "",
                         "width" => $image["aspectRatio"]["width"] ?? 0,
                         "height" => $image["aspectRatio"]["height"] ?? 0,
+                        "is_gif" => $is_gif,
                     ];
                 }
             }
@@ -744,6 +1092,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getPostThread",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -786,6 +1135,7 @@ class BlueSky_API_Handler
         $response = wp_remote_get(
             $this->bluesky_api_url . "app.bsky.feed.getPosts",
             [
+                "timeout" => 15,
                 "headers" => [
                     "Authorization" => "Bearer " . $this->access_token,
                 ],
@@ -907,5 +1257,120 @@ class BlueSky_API_Handler
         }
 
         return $embedded_media;
+    }
+
+    /**
+     * Background cache refresh callback (Action Scheduler hook)
+     *
+     * @param array $args Job arguments with 'cache_key', 'account_id', and 'params'
+     * @return void
+     */
+    public static function background_refresh_cache($args)
+    {
+        $cache_key = $args['cache_key'] ?? '';
+        $account_id = $args['account_id'] ?? '';
+        $params = $args['params'] ?? [];
+
+        if (empty($cache_key)) {
+            return;
+        }
+
+        // Determine cache type from key
+        if (strpos($cache_key, '-profile') !== false) {
+            // Profile refresh
+            self::refresh_profile_cache($cache_key, $account_id);
+        } elseif (strpos($cache_key, '-posts-') !== false) {
+            // Posts refresh
+            self::refresh_posts_cache($cache_key, $account_id, $params);
+        }
+
+        // Clear refreshing lock
+        $refreshing_key = $cache_key . '_refreshing';
+        delete_transient($refreshing_key);
+    }
+
+    /**
+     * Refresh profile cache in background
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @return void
+     */
+    private static function refresh_profile_cache($cache_key, $account_id)
+    {
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        $cache_duration = $options['cache_duration']['total_seconds'] ?? 600;
+
+        // Create API handler for the account
+        $api_handler = null;
+        if (!empty($account_id)) {
+            // Multi-account case
+            $account_manager = new BlueSky_Account_Manager();
+            $account = $account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = self::create_for_account($account);
+            }
+        }
+
+        if (!$api_handler) {
+            // Single account fallback
+            $api_handler = new self($options);
+        }
+
+        // Fetch fresh data (bypasses request cache, uses transient)
+        $profile = $api_handler->get_bluesky_profile();
+
+        if ($profile !== false) {
+            // Update transient with fresh data (2x TTL for stale fallback)
+            set_transient($cache_key, $profile, $cache_duration * 2);
+            // Set freshness marker transient (normal TTL)
+            $freshness_key = $cache_key . '_fresh';
+            set_transient($freshness_key, time(), $cache_duration);
+        }
+    }
+
+    /**
+     * Refresh posts cache in background
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @param array $params Fetch parameters
+     * @return void
+     */
+    private static function refresh_posts_cache($cache_key, $account_id, $params)
+    {
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        $cache_duration = $options['cache_duration']['total_seconds'] ?? 600;
+
+        // Create API handler for the account
+        $api_handler = null;
+        if (!empty($account_id)) {
+            // Multi-account case
+            $account_manager = new BlueSky_Account_Manager();
+            $account = $account_manager->get_account($account_id);
+            if ($account) {
+                $api_handler = self::create_for_account($account);
+            }
+        }
+
+        if (!$api_handler) {
+            // Single account fallback
+            $api_handler = new self($options);
+        }
+
+        // Fetch fresh data
+        $limit = $params['limit'] ?? 5;
+        $no_replies = $params['no_replies'] ?? true;
+        $no_reposts = $params['no_reposts'] ?? true;
+
+        $posts = $api_handler->fetch_bluesky_posts($limit, $no_replies, $no_reposts);
+
+        if ($posts !== false) {
+            // Update transient with fresh data (2x TTL for stale fallback)
+            set_transient($cache_key, $posts, $cache_duration * 2);
+            // Set freshness marker transient (normal TTL)
+            $freshness_key = $cache_key . '_fresh';
+            set_transient($freshness_key, time(), $cache_duration);
+        }
     }
 }

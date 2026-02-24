@@ -43,7 +43,6 @@ class BlueSky_Render_Front
             $this,
             "bluesky_last_posts_shortcode",
         ]);
-
         // Some extensions for wp_kses
         add_filter("wp_kses_allowed_html", [$this, "allow_svg_tags"], 10, 2);
     }
@@ -123,6 +122,8 @@ class BlueSky_Render_Front
             "noreposts" => $this->options["no_reposts"] ?? true,
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
+            "account_id" => "",
+            "layout" => "",
         ]);
 
         // Convert string boolean values to actual booleans
@@ -160,6 +161,8 @@ class BlueSky_Render_Front
             "noreposts" => $this->options["no_reposts"] ?? true,
             "numberofposts" => $this->options["posts_limit"] ?? 5,
             "nocounters" => $this->options["no_counters"] ?? false,
+            "account_id" => "",
+            "layout" => "",
         ];
 
         // Merge defaults with provided attributes
@@ -172,539 +175,104 @@ class BlueSky_Render_Front
         $theme = $attributes["theme"];
         $number_of_posts = $attributes["numberofposts"];
         $no_counters = $attributes["nocounters"];
-        $layout = $this->options["styles"]["feed_layout"] ?? "default";
+        $account_id = $attributes["account_id"];
+        $layout = !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["feed_layout"] ?? "default");
 
-        $posts = $this->api_handler->fetch_bluesky_posts(
+        // Normalize "compact" alias to "layout_2"
+        if ($layout === "compact") {
+            $layout = "layout_2";
+        }
+
+        // Cache-first: check transient before making any API call
+        $helpers = new BlueSky_Helpers();
+        $cache_key = $helpers->get_posts_transient_key(
+            $account_id,
             intval($number_of_posts),
             (bool) $no_replies,
             $no_reposts,
         );
+        $cached_posts = get_transient($cache_key);
+        $is_fresh = BlueSky_Helpers::is_cache_fresh($cache_key);
+        $cache_timestamp = null;
+
+        if ($cached_posts !== false) {
+            // Fast path: render from cache (no API call)
+            $posts = $cached_posts;
+
+            // If cache is stale, schedule background refresh
+            if (!$is_fresh) {
+                BlueSky_Helpers::schedule_cache_refresh($cache_key, $account_id, [
+                    'limit' => intval($number_of_posts),
+                    'no_replies' => (bool) $no_replies,
+                    'no_reposts' => $no_reposts,
+                ]);
+                // Get cache timestamp from freshness marker (it stores the time)
+                $freshness_key = $cache_key . '_fresh';
+                $cache_timestamp = get_transient($freshness_key);
+                if (false === $cache_timestamp) {
+                    // Freshness marker expired - estimate from transient expiry
+                    $cache_timestamp = time() - 600; // Assume 10 minutes old
+                }
+            }
+        } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
+            // No cache and not an AJAX/REST request: return skeleton placeholder
+            $params = wp_json_encode([
+                "theme" => $theme,
+                "numberofposts" => $number_of_posts,
+                "noreplies" => $no_replies,
+                "noreposts" => $no_reposts,
+                "nocounters" => $no_counters,
+                "displayembeds" => $display_embeds,
+                "account_id" => $account_id,
+            ]);
+            return $this->render_posts_skeleton($theme, $layout, $params);
+        } else {
+            // AJAX request: fetch fresh data
+            $posts = $this->api_handler->fetch_bluesky_posts(
+                intval($number_of_posts),
+                (bool) $no_replies,
+                $no_reposts,
+            );
+        }
 
         // Apply theme class
         $classes = " theme-" . esc_attr($theme);
         // Apply layout class
         $classes .= " display-" . esc_attr($layout);
 
-        if (isset($posts) && is_array($posts) && count($posts) > 0) {
-
-            ob_start();
-            do_action("bluesky_before_post_list_markup", $posts);
-            add_action("wp_head", [$this, "render_inline_custom_styles_posts"]);
-
-            // Spectra plugin may remove wp_head styles for some reasons. Try in wp_footer.
-            if (defined("UAGB_PLUGIN_DIR")) {
-                add_action("wp_footer", [
-                    $this,
-                    "render_inline_custom_styles_posts",
-                ]);
+        // For layout_2, fetch profile data for the header
+        $profile = null;
+        if ($layout === 'layout_2') {
+            $profile_cache_key = $helpers->get_profile_transient_key($account_id ?: null);
+            $profile = get_transient($profile_cache_key);
+            if ($profile === false) {
+                $profile = $this->api_handler->get_bluesky_profile();
             }
-            ?>
-
-            <aside class="bluesky-social-integration-last-post<?php echo esc_attr(
-                $classes,
-            ); ?>" aria-label="<?php esc_attr_e(
-    "List of the latest Bluesky Posts",
-    "social-integration-for-bluesky",
-); ?>">
-
-                <?php if ($layout === "layout_2") { ?>
-                <div class="bluesky-social-integration-profile-card-embedded">
-                    <?php $profile = $this->api_handler->get_bluesky_profile(); ?>
-
-                    <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset(
-                        $profile["banner"],
-                    )
-                        ? esc_url($profile["banner"])
-                        : BLUESKY_PLUGIN_FOLDER .
-                            "/assets/img/banner@2x.png"; ?>)">
-                        <?php
-                    // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                    ?>
-                        <img class="avatar bluesky-social-integration-avatar" width="40" height="40" src="<?php echo esc_url(
-                            $profile["avatar"],
-                        ); ?>" alt="">
-
-                        <div class="bluesky-social-integration-content">
-                            <div class="bluesky-social-integration-content-names">
-                                <p class="bluesky-social-integration-name"><?php echo esc_html(
-                                    $profile["displayName"],
-                                ); ?></p>
-                                <p class="bluesky-social-integration-handle"><span>@</span><?php echo esc_html(
-                                    $profile["handle"],
-                                ); ?></p>
-                            </div>
-                            <a class="bluesky-social-integration-profile-button" href="https://bsky.app/profile/<?php echo esc_attr(
-                                $profile["handle"],
-                            ); ?>"><span class="screen-reader-text"><?php esc_html_e(
-    "See Bluesky Profile",
-    "social-integration-for-bluesky",
-); ?></span><svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.1474 1.77775C18.0519 4.08719 14.7224 8.76976 13.4999 11.2827C12.2774 8.76994 8.94803 4.08714 5.85245 1.77775C3.61891 0.111357 -7.41864e-07 -1.17801 -7.41864e-07 2.92481C-7.41864e-07 3.7442 0.47273 9.80811 0.749991 10.7926C1.71375 14.2152 5.22563 15.0881 8.34952 14.5598C2.88903 15.4834 1.49994 18.5426 4.49985 21.6018C10.1973 27.4118 12.6887 20.144 13.3274 18.2817C13.4444 17.9403 13.4992 17.7806 13.5 17.9164C13.5008 17.7806 13.5556 17.9403 13.6726 18.2817C14.311 20.144 16.8024 27.412 22.5002 21.6018C25.5001 18.5426 24.1111 15.4832 18.6505 14.5598C21.7745 15.0881 25.2864 14.2152 26.25 10.7926C26.5273 9.80801 27 3.74411 27 2.92481C27 -1.17801 23.381 0.111357 21.1476 1.77775H21.1474Z" fill="currentColor"/>
-</svg></a>
-                        </div>
-                    </div>
-                </div>
-                <?php } ?>
-
-                <ul class="bluesky-social-integration-last-post-list">
-
-                    <?php
-                    do_action("bluesky_before_post_list_content", $posts);
-
-                    foreach ($posts as $post):
-                        do_action(
-                            "bluesky_before_post_list_item_markup",
-                            $post,
-                        ); ?>
-
-                    <li class="bluesky-social-integration-last-post-item">
-
-                        <?php do_action(
-                            "bluesky_before_post_list_item_content",
-                            $post,
-                        ); ?>
-
-                        <a title="<?php echo esc_attr(
-                            __(
-                                "Get to this post",
-                                "social-integration-for-bluesky",
-                            ),
-                        ); ?>" href="<?php echo esc_url(
-    $post["url"],
-); ?>" class="bluesky-social-integration-last-post-link"><span class="screen-reader-text"><?php echo esc_html(
-    __("Get to this post", "social-integration-for-bluesky"),
-); ?></span></a>
-                        <div class="bluesky-social-integration-last-post-header">
-                            <?php
-                        // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                        ?>
-                            <img src="<?php echo esc_url(
-                                $post["account"]["avatar"],
-                            ); ?>" width="42" height="42" alt="" class="avatar post-avatar">
-                        </div>
-                        <div class="bluesky-social-integration-last-post-content">
-                            <p class="bluesky-social-integration-post-account-info-names">
-                                <?php
-                        //TODO: should I use aria-hidden on the name and handle to make it lighter for screenreaders?
-                        ?>
-                                <span class="bluesky-social-integration-post-account-info-name"><?php echo esc_html(
-                                    $post["account"]["display_name"],
-                                ); ?></span>
-                                <span class="bluesky-social-integration-post-account-info-handle"><?php echo esc_html(
-                                    "@" . $post["account"]["handle"],
-                                ); ?></span>
-                                <span class="bluesky-social-integration-post-account-info-date"><?php echo str_replace(
-                                    " ",
-                                    " ",
-                                    esc_html(
-                                        human_time_diff(
-                                            strtotime($post["created_at"]),
-                                            current_time("U"),
-                                        ),
-                                    ),
-                                ); ?></span>
-                            </p>
-
-                            <div class="bluesky-social-integration-post-content-text"<?php echo isset(
-                                $post["langs"],
-                            ) && is_array($post["langs"])
-                                ? ' lang="' . $post["langs"][0] . '"'
-                                : ""; ?>>
-
-                            <?php
-                            echo $this->render_bluesky_post_content($post);
-
-                            // print the gallery of images if any
-                            if (!empty($post["images"]) && $display_embeds):
-
-                                wp_enqueue_style(
-                                    "bluesky-social-lightbox",
-                                    BLUESKY_PLUGIN_FOLDER .
-                                        "assets/css/bluesky-social-lightbox.css",
-                                    [],
-                                    BLUESKY_PLUGIN_VERSION,
-                                );
-                                wp_enqueue_script(
-                                    "bluesky-social-lightbox",
-                                    BLUESKY_PLUGIN_FOLDER .
-                                        "assets/js/bluesky-social-lightbox.js",
-                                    [],
-                                    BLUESKY_PLUGIN_VERSION,
-                                    [
-                                        "in_footer" => true,
-                                        "strategy" => "defer",
-                                    ],
-                                );
-                                ?>
-                                <div class="bluesky-social-integration-post-gallery" style="--bluesky-gallery-nb: <?php echo esc_attr(
-                                    count($post["images"]),
-                                ); ?>">
-                                    <?php foreach (
-                                        $post["images"]
-                                        as $image
-                                    ): ?>
-                                    <a href="<?php echo esc_url(
-                                        $image["url"],
-                                    ); ?>" class="bluesky-gallery-image"><?php
-                                        // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                                        ?><img src="<?php echo esc_url(
-    $image["url"],
-); ?>" alt="<?php echo isset($image["alt"])
-    ? esc_attr($image["alt"])
-    : ""; ?>" <?php echo !empty($image["width"]) && $image["width"] != "0"
-    ? ' width="' . esc_attr($image["width"]) . '"'
-    : ""; ?> <?php echo !empty($image["height"]) && $image["height"] != "0"
-     ? ' height="' . esc_attr($image["height"]) . '"'
-     : ""; ?> loading="lazy"></a>
-                                    <?php endforeach; ?>
-                                </div>
-
-                            <?php
-                            endif;
-                            ?>
-
-                            </div>
-
-                            <?php
-                            // displays potential media
-                            if (
-                                !empty($post["external_media"]) &&
-                                $display_embeds
-                            ):
-                                if (
-                                    isset($post["external_media"]["uri"]) &&
-                                    strpos(
-                                        $post["external_media"]["uri"],
-                                        "youtu",
-                                    )
-                                ):
-                                    $helpers = new BlueSky_Helpers();
-                                    $youtube_id = $helpers->get_youtube_id(
-                                        $post["external_media"]["uri"],
-                                    );
-
-                                    if ($youtube_id):
-                                        $post["external_media"]["thumb"] =
-                                            "https://i.ytimg.com/vi/" .
-                                            $youtube_id .
-                                            "/maxresdefault.jpg";
-                                    endif;
-                                endif; ?>
-
-                            <?php echo isset($post["external_media"]["uri"])
-                                ? '<a href="' .
-                                    esc_url($post["external_media"]["uri"]) .
-                                    '" class="bluesky-social-integration-embedded-record is-external_media' .
-                                    (isset($post["external_media"]["thumb"])
-                                        ? " has-image"
-                                        : "") .
-                                    '">'
-                                : ""; ?>
-                            <div class="bluesky-social-integration-last-post-content">
-
-                                <div class="bluesky-social-integration-external-image">
-                                    <?php
-                                // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                                ?>
-                                    <?php echo isset(
-                                        $post["external_media"]["thumb"],
-                                    )
-                                        ? '<img src="' .
-                                            esc_url(
-                                                $post["external_media"][
-                                                    "thumb"
-                                                ],
-                                            ) .
-                                            '" loading="lazy" alt="">'
-                                        : ""; ?>
-                                </div>
-                                <div class="bluesky-social-integration-external-content">
-                                    <?php echo isset(
-                                        $post["external_media"]["title"],
-                                    )
-                                        ? '<p class="bluesky-social-integration-external-content-title">' .
-                                            esc_html(
-                                                $post["external_media"][
-                                                    "title"
-                                                ],
-                                            ) .
-                                            "</p>"
-                                        : ""; ?>
-                                    <?php echo isset(
-                                        $post["external_media"]["description"],
-                                    )
-                                        ? '<p class="bluesky-social-integration-external-content-description">' .
-                                            esc_html(
-                                                $post["external_media"][
-                                                    "description"
-                                                ],
-                                            ) .
-                                            "</p>"
-                                        : ""; ?>
-                                    <?php echo isset(
-                                        $post["external_media"]["uri"],
-                                    )
-                                        ? '<p class="bluesky-social-integration-external-content-url"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M11.5 3a17 17 0 0 0 0 18"></path><path d="M12.5 3a17 17 0 0 1 0 18"></path></svg>' .
-                                            esc_html(
-                                                explode(
-                                                    "/",
-                                                    $post["external_media"][
-                                                        "uri"
-                                                    ],
-                                                )[2],
-                                            ) .
-                                            "</p>"
-                                        : ""; ?>
-                                </div>
-                            </div>
-                            <?php echo isset($post["external_media"]["uri"])
-                                ? "</a>"
-                                : "";
-                            endif;
-
-                            // displays potential embeds
-                            if (
-                                !empty($post["embedded_media"]) &&
-                                $display_embeds
-                            ):
-                                if (
-                                    $post["embedded_media"]["type"] === "video"
-                                ):
-                                    $video = $post["embedded_media"]; ?>
-                                <div class="blueksy-social-integration-embedded-video">
-                                    <?php
-                                    // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                                    ?>
-
-                                    <video controls playsinline poster="<?php echo esc_url(
-                                        $video["thumbnail_url"],
-                                    ); ?>">
-                                        <?php
-                                    // returns a .m3u8 playlist with at least 2 video quality 480p and 720p
-                                    ?>
-                                        <source src="<?php echo esc_url(
-                                            $video["playlist_url"],
-                                        ); ?>" type="application/x-mpegURL">
-                                        <?php
-                                    // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                                    ?>
-                                        <img src="<?php echo esc_url(
-                                            $video["thumbnail_url"],
-                                        ); ?>"  alt="<?php echo esc_attr(
-    isset($video["alt"]) ? $video["alt"] : "",
-); ?>">
-                                    </video>
-                                </div>
-                            <?php
-                                elseif (
-                                    $post["embedded_media"]["type"] === "record"
-                                ):
-                                    $hasURL =
-                                        isset($post["embedded_media"]["url"]) &&
-                                        !empty(
-                                            $post["embedded_media"]["url"]
-                                        ); ?>
-                                <<?php echo $hasURL
-                                    ? 'a href="' .
-                                        esc_url(
-                                            $post["embedded_media"]["url"],
-                                        ) .
-                                        '"'
-                                    : "div"; ?> class="bluesky-social-integration-embedded-record is-embedded_media">
-                                    <div class="bluesky-social-integration-last-post-content">
-                                        <p><small class="bluesky-social-integration-post-account-info-name"><?php echo esc_html(
-                                            $post["embedded_media"]["author"][
-                                                "display_name"
-                                            ],
-                                        ); ?></small></p>
-                                        <p><?php echo nl2br(
-                                            esc_html(
-                                                $post["embedded_media"]["text"],
-                                            ),
-                                        ); ?></p>
-                                    </div>
-                                </<?php echo $hasURL ? "a" : "div"; ?>>
-                            <?php
-                                elseif (
-                                    $post["embedded_media"]["type"] ===
-                                    "starterpack"
-                                ):
-                                    $hasURL =
-                                        isset($post["embedded_media"]["url"]) &&
-                                        !empty(
-                                            $post["embedded_media"]["url"]
-                                        ); ?>
-                            <<?php echo $hasURL
-                                ? 'a href="' .
-                                    esc_url($post["embedded_media"]["url"]) .
-                                    '"'
-                                : "div"; ?> class="bluesky-social-integration-embedded-record">
-                                <div class="bluesky-social-integration-external-image">
-                                    <svg fill="none" width="40" viewBox="0 0 24 24" height="40"><defs><linearGradient x1="0" y1="0" x2="100%" y2="0" gradientTransform="rotate(45)" id="sky_gkpWQFtGs17eaqFdD5GTv"><stop offset="0" stop-color="#0A7AFF"></stop><stop offset="1" stop-color="#59B9FF"></stop></linearGradient></defs><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M11.26 5.227 5.02 6.899c-.734.197-1.17.95-.973 1.685l1.672 6.24c.197.734.951 1.17 1.685.973l6.24-1.672c.734-.197 1.17-.951.973-1.685L12.945 6.2a1.375 1.375 0 0 0-1.685-.973Zm-6.566.459a2.632 2.632 0 0 0-1.86 3.223l1.672 6.24a2.632 2.632 0 0 0 3.223 1.861l6.24-1.672a2.631 2.631 0 0 0 1.861-3.223l-1.672-6.24a2.632 2.632 0 0 0-3.223-1.861l-6.24 1.672Z"></path><path fill="url(#sky_gkpWQFtGs17eaqFdD5GTv)" fill-rule="evenodd" clip-rule="evenodd" d="M15.138 18.411a4.606 4.606 0 1 0 0-9.211 4.606 4.606 0 0 0 0 9.211Zm0 1.257a5.862 5.862 0 1 0 0-11.724 5.862 5.862 0 0 0 0 11.724Z"></path></svg>
-                                </div>
-                                <div class="bluesky-social-integration-last-post-content">
-                                    <p>
-                                        <span class="bluesky-social-integration-post-starterpack-name"><?php echo esc_html(
-                                            $post["embedded_media"]["title"],
-                                        ); ?></span> • <small class="bluesky-social-integration-post-account-info-name"><?php echo esc_html(
-    $post["embedded_media"]["author"]["display_name"],
-); ?></small></p>
-                                    <p><?php echo nl2br(
-                                        esc_html(
-                                            $post["embedded_media"]["text"],
-                                        ),
-                                    ); ?></p>
-                                </div>
-                            </<?php echo $hasURL ? "a" : "div"; ?>>
-                        <?php
-                                endif;
-                            endif;
-                            ?>
-                        </div>
-
-                        <?php if (
-                            !$no_counters &&
-                            !empty($post["counts"]) &&
-                            ($post["counts"]["like"] > 0 ||
-                                $post["counts"]["repost"] > 0 ||
-                                $post["counts"]["reply"] > 0 ||
-                                $post["counts"]["quote"] > 0)
-                        ): ?>
-                            <div class="bluesky-social-integration-post-counters">
-                                <?php if ($post["counts"]["like"] > 0): ?>
-                                    <span class="bluesky-counter bluesky-counter-likes" title="<?php echo esc_attr(
-                                        sprintf(
-                                            _n(
-                                                "%s like",
-                                                "%s likes",
-                                                $post["counts"]["like"],
-                                                "social-integration-for-bluesky",
-                                            ),
-                                            number_format_i18n(
-                                                $post["counts"]["like"],
-                                            ),
-                                        ),
-                                    ); ?>">
-                                        <span class="bluesky-counter-icon" aria-hidden="true">❤️</span>
-                                        <span class="bluesky-counter-value"><?php echo esc_html(
-                                            number_format_i18n(
-                                                $post["counts"]["like"],
-                                            ),
-                                        ); ?></span>
-                                    </span>
-                                <?php endif; ?>
-                                <?php if ($post["counts"]["repost"] > 0): ?>
-                                    <span class="bluesky-counter bluesky-counter-reposts" title="<?php echo esc_attr(
-                                        sprintf(
-                                            _n(
-                                                "%s repost",
-                                                "%s reposts",
-                                                $post["counts"]["repost"],
-                                                "social-integration-for-bluesky",
-                                            ),
-                                            number_format_i18n(
-                                                $post["counts"]["repost"],
-                                            ),
-                                        ),
-                                    ); ?>">
-                                        <span class="bluesky-counter-icon" aria-hidden="true">🔄</span>
-                                        <span class="bluesky-counter-value"><?php echo esc_html(
-                                            number_format_i18n(
-                                                $post["counts"]["repost"],
-                                            ),
-                                        ); ?></span>
-                                    </span>
-                                <?php endif; ?>
-                                <?php if ($post["counts"]["reply"] > 0): ?>
-                                    <span class="bluesky-counter bluesky-counter-replies" title="<?php echo esc_attr(
-                                        sprintf(
-                                            _n(
-                                                "%s reply",
-                                                "%s replies",
-                                                $post["counts"]["reply"],
-                                                "social-integration-for-bluesky",
-                                            ),
-                                            number_format_i18n(
-                                                $post["counts"]["reply"],
-                                            ),
-                                        ),
-                                    ); ?>">
-                                        <span class="bluesky-counter-icon" aria-hidden="true">💬</span>
-                                        <span class="bluesky-counter-value"><?php echo esc_html(
-                                            number_format_i18n(
-                                                $post["counts"]["reply"],
-                                            ),
-                                        ); ?></span>
-                                    </span>
-                                <?php endif; ?>
-                                <?php if ($post["counts"]["quote"] > 0): ?>
-                                    <span class="bluesky-counter bluesky-counter-quotes" title="<?php echo esc_attr(
-                                        sprintf(
-                                            _n(
-                                                "%s quote",
-                                                "%s quotes",
-                                                $post["counts"]["quote"],
-                                                "social-integration-for-bluesky",
-                                            ),
-                                            number_format_i18n(
-                                                $post["counts"]["quote"],
-                                            ),
-                                        ),
-                                    ); ?>">
-                                        <span class="bluesky-counter-icon" aria-hidden="true">💭</span>
-                                        <span class="bluesky-counter-value"><?php echo esc_html(
-                                            number_format_i18n(
-                                                $post["counts"]["quote"],
-                                            ),
-                                        ); ?></span>
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php do_action(
-                            "bluesky_after_post_list_item_content",
-                            $post,
-                        ); ?>
-
-                    </li>
-
-                    <?php do_action(
-                        "bluesky_after_post_list_item_markup",
-                        $post,
-                    );
-                    endforeach;
-
-                    do_action("bluesky_after_post_list_content", $posts);
-                    ?>
-
-                </ul>
-            </aside>
-            <?php
-            do_action("bluesky_after_post_list_markup", $posts);
-            return ob_get_clean();
-
-        } else {
-
-            ob_start();
-            do_action("bluesky_before_post_list_empty_markup", $posts);
-            ?>
-
-            <div class="bluesky-social-integration-last-post<?php echo esc_attr(
-                $classes,
-            ); ?> has-no-posts">
-                <svg fill="none" width="64" viewBox="0 0 24 24" height="64">
-                    <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 4a1 1 0 0 1 1-1h1a8.003 8.003 0 0 1 7.75 6.006A7.985 7.985 0 0 1 19 6h1a1 1 0 0 1 1 1v1a8 8 0 0 1-8 8v4a1 1 0 1 1-2 0v-7a8 8 0 0 1-8-8V4Zm2 1a6 6 0 0 1 6 6 6 6 0 0 1-6-6Zm8 9a6 6 0 0 1 6-6 6 6 0 0 1-6 6Z"></path>
-                </svg>
-                <p class="bluesky-posts-block no-posts"><?php esc_html_e(
-                    "No posts available.",
-                    "social-integration-for-bluesky",
-                ); ?></p>
-            </div>
-        <?php
-        do_action("bluesky_after_post_list_empty_markup", $posts);
-        return ob_get_clean();
-
         }
+
+        // Render template
+        ob_start();
+        do_action("bluesky_before_post_list_markup", $posts);
+        add_action("wp_head", [$this, "render_inline_custom_styles_posts"]);
+
+        // Spectra plugin may remove wp_head styles for some reasons. Try in wp_footer.
+        if (defined("UAGB_PLUGIN_DIR")) {
+            add_action("wp_footer", [
+                $this,
+                "render_inline_custom_styles_posts",
+            ]);
+        }
+
+        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/posts-list.php';
+
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
+        do_action("bluesky_after_post_list_markup", $posts);
+        return ob_get_clean();
     }
 
     /**
@@ -786,6 +354,8 @@ class BlueSky_Render_Front
                 "displayavatar" => true,
                 "displaycounters" => true,
                 "displaybio" => true,
+                "account_id" => "",
+                "layout" => $this->options["styles"]["profile_layout"] ?? "default",
             ],
             $atts,
         );
@@ -808,15 +378,117 @@ class BlueSky_Render_Front
     }
 
     /**
+     * Render the profile card in compact layout
+     * @param array $profile Profile data
+     * @param array $attributes Block/shortcode attributes
+     * @param bool $is_fresh Whether the cache is fresh
+     * @param int|null $cache_timestamp Cache timestamp for stale indicator
+     * @return string HTML output
+     */
+    private function render_profile_compact($profile, $attributes, $is_fresh, $cache_timestamp)
+    {
+        $theme = $attributes["theme"] ?? ($this->options["theme"] ?? "system");
+
+        // Check for missing banner - set flag for gradient fallback
+        $needs_gradient_fallback = empty($profile['banner']);
+
+        // Build CSS classes - reuse the main profile card class with a compact modifier
+        $classes = [
+            'bluesky-social-integration-profile-card',
+            'display-compact',
+            $attributes["styleClass"] ?? "",
+            "theme-{$theme}",
+        ];
+
+        // Add display toggle classes (same as default layout)
+        $display_elements = ["banner", "avatar", "counters", "bio"];
+        foreach ($display_elements as $element) {
+            $option_key = "display" . $element;
+            if (
+                isset($attributes[$option_key]) &&
+                $attributes[$option_key] === false
+            ) {
+                $classes[] = "no-" . strtolower($element);
+            }
+        }
+
+        $aria_label = sprintf(
+            __("BlueSky Social Card of %s", "social-integration-for-bluesky"),
+            $profile["displayName"] ?? '',
+        );
+
+        ob_start();
+        do_action("bluesky_before_profile_card_markup", $profile);
+
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
+
+        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/profile-banner-compact.php';
+
+        do_action("bluesky_after_profile_card_markup", $profile);
+        return ob_get_clean();
+    }
+
+    /**
      * Render the BlueSky profile card
      * @param array $attributes Shortcode attributes
      * @return string HTML output
      */
     public function render_bluesky_profile_card($attributes = [])
     {
-        $profile = $this->api_handler->get_bluesky_profile();
+        // Extract account_id for cache scoping
+        $account_id = $attributes["account_id"] ?? "";
 
-        // TODO: write a fallback solution using cache
+        // Cache-first: check transient before making any API call
+        $helpers = new BlueSky_Helpers();
+        $profile_cache_key = $helpers->get_profile_transient_key($account_id);
+        $cached_profile = get_transient($profile_cache_key);
+        $is_fresh = BlueSky_Helpers::is_cache_fresh($profile_cache_key);
+        $cache_timestamp = null;
+
+        if ($cached_profile !== false) {
+            // Fast path: use cached profile
+            $profile = $cached_profile;
+
+            // If cache is stale, schedule background refresh
+            if (!$is_fresh) {
+                BlueSky_Helpers::schedule_cache_refresh($profile_cache_key, $account_id, []);
+                // Get cache timestamp from freshness marker
+                $freshness_key = $profile_cache_key . '_fresh';
+                $cache_timestamp = get_transient($freshness_key);
+                if (false === $cache_timestamp) {
+                    // Freshness marker expired - estimate from transient expiry
+                    $cache_timestamp = time() - 600; // Assume 10 minutes old
+                }
+            }
+        } elseif ((!defined('DOING_AJAX') || !DOING_AJAX) && (!defined('REST_REQUEST') || !REST_REQUEST)) {
+            // No cache and not AJAX/REST: return skeleton placeholder
+            $classes_arr = [
+                "bluesky-social-integration-profile-card",
+                $attributes["styleClass"] ?? "",
+            ];
+            if (isset($attributes["theme"])) {
+                $classes_arr[] = "theme-" . esc_attr($attributes["theme"]);
+            }
+            $params = wp_json_encode([
+                "theme" => $attributes["theme"] ?? ($this->options["theme"] ?? "system"),
+                "styleClass" => $attributes["styleClass"] ?? "",
+                "displaybanner" => $attributes["displaybanner"] ?? true,
+                "displayavatar" => $attributes["displayavatar"] ?? true,
+                "displaycounters" => $attributes["displaycounters"] ?? true,
+                "displaybio" => $attributes["displaybio"] ?? true,
+                "account_id" => $account_id,
+                "layout" => !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["profile_layout"] ?? "default"),
+            ]);
+            return $this->render_profile_skeleton(implode(" ", $classes_arr), $params);
+        } else {
+            // AJAX request: fetch fresh data
+            $profile = $this->api_handler->get_bluesky_profile();
+        }
+
         if (!$profile) {
             return '<p class="bluesky-social-integration-error">' .
                 esc_html__(
@@ -824,6 +496,13 @@ class BlueSky_Render_Front
                     "social-integration-for-bluesky",
                 ) .
                 "</p>";
+        }
+
+        $layout = !empty($attributes["layout"]) ? $attributes["layout"] : ($this->options["styles"]["profile_layout"] ?? "default");
+
+        // Compact layout uses a different template
+        if ($layout === "compact") {
+            return $this->render_profile_compact($profile, $attributes, $is_fresh, $cache_timestamp);
         }
 
         $classes = [
@@ -866,71 +545,18 @@ class BlueSky_Render_Front
             $profile,
         );
 
+        // Render template
         ob_start();
         do_action("bluesky_before_profile_card_markup", $profile);
         add_action("wp_head", [$this, "render_inline_custom_styles_profile"]);
-        ?>
+        include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/profile-card.php';
 
-        <aside class="<?php echo esc_attr(
-            implode(" ", $classes),
-        ); ?>" aria-label="<?php echo esc_attr($aria_label); ?>">
+        // Render stale indicator if cache is stale
+        if (!$is_fresh && null !== $cache_timestamp) {
+            $time_ago = BlueSky_Helpers::time_ago($cache_timestamp);
+            include plugin_dir_path(BLUESKY_PLUGIN_FILE) . 'templates/frontend/stale-indicator.php';
+        }
 
-            <?php do_action("bluesky_before_profile_card_content", $profile); ?>
-
-            <div class="bluesky-social-integration-image" style="--bluesky-social-integration-banner: url(<?php echo isset(
-                $profile["banner"],
-            )
-                ? esc_url($profile["banner"])
-                : BLUESKY_PLUGIN_FOLDER . "/assets/img/banner@2x.png"; ?>)">
-                <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-        ?>
-                <img class="avatar bluesky-social-integration-avatar" width="80" height="80" src="<?php echo esc_url(
-                    $profile["avatar"],
-                ); ?>" alt="">
-            </div>
-
-            <div class="bluesky-social-integration-content">
-                <p class="bluesky-social-integration-name"><?php echo esc_html(
-                    $profile["displayName"],
-                ); ?></p>
-                <p class="bluesky-social-integration-handle"><a href="https://bsky.app/profile/<?php echo esc_attr(
-                    $profile["handle"],
-                ); ?>"><span>@</span><?php echo esc_html($profile["handle"]); ?></a></p>
-                <p class="bluesky-social-integration-followers">
-                    <span class="followers"><span class="nb"><?php echo esc_html(
-                        intval($profile["followersCount"]),
-                    ) .
-                        "</span>&nbsp;" .
-                        esc_html(
-                            __("Followers", "social-integration-for-bluesky"),
-                        ); ?></span>
-                    <span class="follows"><span class="nb"><?php echo esc_html(
-                        intval($profile["followsCount"]),
-                    ) .
-                        "</span>&nbsp;" .
-                        esc_html(
-                            __("Following", "social-integration-for-bluesky"),
-                        ); ?></span>
-                    <span class="posts"><span class="nb"><?php echo esc_html(
-                        intval($profile["postsCount"]),
-                    ) .
-                        "</span>&nbsp;" .
-                        esc_html(
-                            __("Posts", "social-integration-for-bluesky"),
-                        ); ?></span>
-                </p>
-                <?php if (isset($profile["description"])) { ?>
-                    <p class="bluesky-social-integration-description"><?php echo nl2br(
-                        esc_html($profile["description"]),
-                    ); ?></p>
-                <?php } ?>
-            </div>
-
-            <?php do_action("bluesky_after_profile_card_content", $profile); ?>
-
-        </aside>
-
-        <?php
         do_action("bluesky_after_profile_card_markup", $profile);
         return ob_get_clean();
     }
@@ -1082,4 +708,70 @@ class BlueSky_Render_Front
     {
         echo $this->get_inline_custom_styles("profile");
     }
+
+    /**
+     * Render a skeleton placeholder for the posts feed
+     * @param string $theme Theme class
+     * @param string $layout Layout class
+     * @param string $params JSON-encoded render parameters
+     * @return string HTML skeleton
+     */
+    private function render_posts_skeleton($theme, $layout, $params)
+    {
+        $classes = " theme-" . esc_attr($theme);
+        $classes .= " display-" . esc_attr($layout);
+
+        ob_start();
+        ?>
+        <aside class="bluesky-social-integration-last-post<?php echo esc_attr($classes); ?> bluesky-async-placeholder" data-bluesky-async="posts" data-bluesky-params="<?php echo esc_attr($params); ?>" aria-label="<?php esc_attr_e("Loading Bluesky Posts", "social-integration-for-bluesky"); ?>">
+            <ul class="bluesky-social-integration-last-post-list">
+                <?php for ($i = 0; $i < 3; $i++): ?>
+                <li class="bluesky-social-integration-last-post-item">
+                    <div class="bluesky-social-integration-last-post-header">
+                        <span class="bluesky-skeleton-box" style="width:42px;height:42px;border-radius:50%;display:inline-block;"></span>
+                    </div>
+                    <div class="bluesky-social-integration-last-post-content">
+                        <p class="bluesky-social-integration-post-account-info-names">
+                            <span class="bluesky-skeleton-box" style="width:120px;height:1em;display:inline-block;"></span>
+                            <span class="bluesky-skeleton-box" style="width:80px;height:1em;display:inline-block;"></span>
+                        </p>
+                        <div class="bluesky-social-integration-post-content-text">
+                            <span class="bluesky-skeleton-box" style="width:100%;height:1em;display:block;margin-bottom:0.4em;"></span>
+                            <span class="bluesky-skeleton-box" style="width:75%;height:1em;display:block;"></span>
+                        </div>
+                    </div>
+                </li>
+                <?php endfor; ?>
+            </ul>
+        </aside>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Render a skeleton placeholder for the profile card
+     * @param string $classes CSS class string
+     * @param string $params JSON-encoded render parameters
+     * @return string HTML skeleton
+     */
+    private function render_profile_skeleton($classes, $params)
+    {
+        ob_start();
+        ?>
+        <aside class="<?php echo esc_attr($classes); ?> bluesky-async-placeholder" data-bluesky-async="profile" data-bluesky-params="<?php echo esc_attr($params); ?>" aria-label="<?php esc_attr_e("Loading Bluesky Profile", "social-integration-for-bluesky"); ?>">
+            <div class="bluesky-social-integration-image">
+                <span class="bluesky-skeleton-box" style="width:80px;height:80px;border-radius:50%;display:inline-block;"></span>
+            </div>
+            <div class="bluesky-social-integration-content">
+                <p class="bluesky-social-integration-name"><span class="bluesky-skeleton-box" style="width:150px;height:1.2em;display:inline-block;"></span></p>
+                <p class="bluesky-social-integration-handle"><span class="bluesky-skeleton-box" style="width:120px;height:1em;display:inline-block;"></span></p>
+                <p class="bluesky-social-integration-followers">
+                    <span class="bluesky-skeleton-box" style="width:200px;height:1em;display:inline-block;"></span>
+                </p>
+            </div>
+        </aside>
+        <?php
+        return ob_get_clean();
+    }
+
 }

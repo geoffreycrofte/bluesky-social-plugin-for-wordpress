@@ -39,7 +39,7 @@
     text-decoration: underline;
 }
 
-.bluesky-refresh-discussion.bluesky-refresh-discussion {
+.bluesky-discussion-actions .button {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -49,7 +49,11 @@
     line-height: 1.5;
 }
 
-.bluesky-refresh-discussion .dashicons {
+.bluesky-discussion-actions .button:hover {
+    background: #f0f0f1;
+}
+
+.bluesky-discussion-actions .button .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;

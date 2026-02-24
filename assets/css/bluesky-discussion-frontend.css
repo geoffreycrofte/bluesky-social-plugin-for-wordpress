@@ -8,11 +8,12 @@
    ============================================ */
 
 .bluesky-discussion-section {
+    --bluesky-discussion-primary-light: #4a9ff9;
     --bluesky-discussion-primary: #1185fe;
     --bluesky-discussion-bg: #ffffff;
     --bluesky-discussion-text: #1d2327;
     --bluesky-discussion-text-secondary: #666666;
-    --bluesky-discussion-text-muted: #999999;
+    --bluesky-discussion-text-muted: #767676;
     --bluesky-discussion-border: #e0e0e0;
     --bluesky-discussion-hover-bg: #f8f9fa;
     --bluesky-discussion-card-bg: #ffffff;
@@ -33,7 +34,7 @@
     --bluesky-discussion-bg: #1d2327;
     --bluesky-discussion-text: #f0f0f1;
     --bluesky-discussion-text-secondary: #c3c4c7;
-    --bluesky-discussion-text-muted: #999999;
+    --bluesky-discussion-text-muted: #767676;
     --bluesky-discussion-border: #3c434a;
     --bluesky-discussion-hover-bg: #2c3338;
     --bluesky-discussion-card-bg: #2c3338;
@@ -50,7 +51,7 @@
         --bluesky-discussion-bg: #1d2327;
         --bluesky-discussion-text: #f0f0f1;
         --bluesky-discussion-text-secondary: #c3c4c7;
-        --bluesky-discussion-text-muted: #999999;
+        --bluesky-discussion-text-muted: #767676;
         --bluesky-discussion-border: #3c434a;
         --bluesky-discussion-hover-bg: #2c3338;
         --bluesky-discussion-card-bg: #2c3338;
@@ -318,10 +319,10 @@
     padding: 6px 14px;
     background: color-mix(
         in srgb,
-        var(--bluesky-discussion-primary) 10%,
+        var(--bluesky-discussion-primary) 8%,
         transparent
     );
-    color: var(--bluesky-discussion-primary);
+    color: var(--bluesky-discussion-primary-light);
     text-decoration: none;
     border-radius: var(--bluesky-discussion-radius-sm);
     font-size: 13px;
@@ -334,10 +335,6 @@
     background: var(--bluesky-discussion-primary);
     color: #ffffff;
     text-decoration: none;
-}
-
-.bluesky-reply-link::before {
-    content: "↩️";
 }
 
 /* ============================================
@@ -367,7 +364,7 @@
     background: var(--bluesky-discussion-hover-bg);
     border: 1px solid var(--bluesky-discussion-border);
     border-radius: 6px;
-    color: var(--bluesky-discussion-primary);
+    color: var(--bluesky-discussion-primary-light);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -387,6 +384,7 @@
 .bluesky-toggle-replies::before {
     content: "▶ ";
     display: inline-block;
+    margin-right: 4px;
     transition: transform 0.3s ease;
 }
 
@@ -519,6 +517,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
@@ -530,6 +529,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }

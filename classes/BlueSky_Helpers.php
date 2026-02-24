@@ -20,42 +20,59 @@ class BlueSky_Helpers {
 
     /**
      * Get the profile transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_profile_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-profile';
+    public function get_profile_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-profile';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the posts transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
+     * @param int|null $limit Post limit
+     * @param bool $no_replies Exclude replies
+     * @param bool $no_reposts Exclude reposts
+     * @param string|null $layout Feed layout
      * @return string
      */
-    public function get_posts_transient_key( $limit = null, $no_replies = false, $no_reposts = false, $layout = null ) {
-        return BLUESKY_PLUGIN_TRANSIENT . '-posts-' . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . ( $no_reposts ? 'no-reposts' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
+    public function get_posts_transient_key( $account_id = null, $limit = null, $no_replies = false, $no_reposts = false, $layout = null ) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-posts-';
+        if ($account_id) {
+            $base .= $account_id . '-';
+        }
+        return $base . esc_attr( $limit ?? $this -> options['posts_limit'] ?? 5 ) . '-' . ( $no_replies ? 'no-replies' : 'all' ) . '-' . ( $no_reposts ? 'no-reposts' : 'all' ) . '-' . esc_attr( $layout ?? $this -> options['styles']['feed_layout'] ?? 'default' );
     }
 
     /**
      * Get the access token transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_access_token_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-access-token';
+    public function get_access_token_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-access-token';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the refresh token transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_refresh_token_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-refresh-token';
+    public function get_refresh_token_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-refresh-token';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
      * Get the "did" transient key
+     * @param string|null $account_id Optional account ID for multi-account scoping
      * @return string
      */
-    public function get_did_transient_key() {
-        return BLUESKY_PLUGIN_TRANSIENT . '-did';
+    public function get_did_transient_key($account_id = null) {
+        $base = BLUESKY_PLUGIN_TRANSIENT . '-did';
+        return $account_id ? $base . '-' . $account_id : $base;
     }
 
     /**
@@ -263,5 +280,124 @@ class BlueSky_Helpers {
         ob_start();
         var_dump( $var );
         return '<pre class="bluesky-var-dump"><code class="language-php">' . ob_get_clean() . '</code></pre>';
+    }
+
+    /**
+     * Generate a secure UUID v4
+     *
+     * @return string UUID string in format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+     */
+    public static function bluesky_generate_secure_uuid() {
+        // Generate 16 random bytes
+        $data = random_bytes(16);
+
+        // Set version to 0100 (UUID v4)
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+
+        // Set variant bits to 10
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+        // Format as UUID string
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
+     * Normalize a Bluesky handle input.
+     * If the value is an email address, return it as-is (Bluesky accepts email login).
+     * If it contains a dot, assume it's a full handle.
+     * Otherwise, append .bsky.social (user likely typed just the username part).
+     *
+     * @param string $handle Raw handle input
+     * @return string Normalized handle
+     */
+    public static function normalize_handle( $handle ) {
+        $handle = trim( $handle );
+        if ( empty( $handle ) ) {
+            return '';
+        }
+        // Email address — return as-is
+        if ( filter_var( $handle, FILTER_VALIDATE_EMAIL ) ) {
+            return $handle;
+        }
+        // Already a full handle (contains a dot) — return as-is
+        if ( strpos( $handle, '.' ) !== false ) {
+            return $handle;
+        }
+        // Bare username — append .bsky.social
+        return $handle . '.bsky.social';
+    }
+
+    /**
+     * Clear all cached data for a specific account
+     *
+     * @param string $account_id Account UUID to clear cache for
+     * @return void
+     */
+    public function clear_account_cache($account_id) {
+        global $wpdb;
+        $prefix = BLUESKY_PLUGIN_TRANSIENT . '-';
+        // Delete all transients containing this account_id
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            '%' . $wpdb->esc_like($prefix . '%' . $account_id) . '%'
+        ));
+    }
+
+    /**
+     * Convert Unix timestamp to human-readable "X ago" format
+     *
+     * @param int $timestamp Unix timestamp
+     * @return string Human-readable time difference
+     */
+    public static function time_ago($timestamp) {
+        if (empty($timestamp) || !is_numeric($timestamp)) {
+            return '';
+        }
+        return human_time_diff($timestamp, time());
+    }
+
+    /**
+     * Check if cache is fresh (freshness marker exists)
+     *
+     * @param string $cache_key Cache transient key
+     * @return bool True if cache is fresh, false if stale
+     */
+    public static function is_cache_fresh($cache_key) {
+        $freshness_key = $cache_key . '_fresh';
+        $fresh_marker = get_transient($freshness_key);
+        return false !== $fresh_marker;
+    }
+
+    /**
+     * Schedule cache refresh via Action Scheduler if not already scheduled
+     *
+     * @param string $cache_key Cache transient key
+     * @param string $account_id Account UUID
+     * @param array $params Fetch parameters
+     * @return void
+     */
+    public static function schedule_cache_refresh($cache_key, $account_id, $params) {
+        // Check if already refreshing
+        $refreshing_key = $cache_key . '_refreshing';
+        if (false !== get_transient($refreshing_key)) {
+            return; // Already scheduled
+        }
+
+        // Set refreshing lock (5 minutes)
+        set_transient($refreshing_key, time(), 300);
+
+        // Schedule refresh job if Action Scheduler is available
+        if (function_exists('as_schedule_single_action')) {
+            as_schedule_single_action(
+                time(),
+                'bluesky_refresh_cache',
+                [
+                    'cache_key' => $cache_key,
+                    'account_id' => $account_id,
+                    'params' => $params,
+                ],
+                'bluesky-cache-refresh'
+            );
+        }
     }
 }

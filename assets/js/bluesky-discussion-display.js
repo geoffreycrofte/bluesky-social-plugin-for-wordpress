@@ -62,6 +62,51 @@
             });
         });
 
+        // Unlink discussion button handler
+        $('#bluesky-unlink-discussion').on('click', function(e) {
+            e.preventDefault();
+
+            var confirmed = confirm(
+                'Are you sure you want to unlink this Bluesky discussion?\n\n' +
+                'This will remove the connection between this post and its Bluesky thread. ' +
+                'The discussion will no longer be displayed. This cannot be undone.'
+            );
+
+            if (!confirmed) return;
+
+            var $button = $(this);
+            var $container = $('#bluesky-discussion-container');
+
+            $button.prop('disabled', true);
+
+            $.ajax({
+                url: blueskyDiscussionData.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'unlink_bluesky_discussion',
+                    post_id: blueskyDiscussionData.postId,
+                    nonce: blueskyDiscussionData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $container.html(
+                            '<div class="notice notice-success"><p class="bluesky-discussion-unlinked-message">' +
+                            'Discussion unlinked. Reload the page to see the updated state.' +
+                            '</p></div>'
+                        );
+                        showNotice('success', 'Bluesky discussion unlinked successfully.');
+                    } else {
+                        showNotice('error', 'Failed to unlink discussion.');
+                        $button.prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    showNotice('error', 'Network error occurred.');
+                    $button.prop('disabled', false);
+                }
+            });
+        });
+
         // Auto-expand replies when clicking on reply count
         $(document).on('click', '.bluesky-reply-stat', function(e) {
             e.preventDefault();

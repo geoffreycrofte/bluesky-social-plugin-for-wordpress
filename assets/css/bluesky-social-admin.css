@@ -11,7 +11,16 @@
 }
 
 .bluesky-social-integration-admin {
+    --primary-lighter: #d8ebff;
+    --primary-light: #4a9ff9;
     --primary: #1185FE;
+    --primary-dark: #0765c9;
+    --bluesky-admin-warning-bg: #fcf0f1;
+    --bluesky-admin-warning-border: #d63638;
+    --bluesky-admin-warning-text: #d63638;
+    --bluesky-admin-muted-text: #666;
+    --bluesky-admin-spacing-sm: 4px;
+    --bluesky-admin-spacing-md: 12px;
     font-size: 14px;
     margin-left: -20px;
     line-height: 1.5;
@@ -23,6 +32,7 @@
 }
 
 .bluesky-social-integration-admin .bluesky-social-integration-profile-card {
+    align-self: flex-start;
     max-width: 560px;
     width: 100%;
 }
@@ -47,8 +57,8 @@
     font-weight: 500;
 }
 
-.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus {
-    outline: 0;
+.bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper a.active {
@@ -57,6 +67,7 @@
 
 .bluesky-social-integration-admin .privacy-settings-tabs-wrapper a:focus-visible {
     outline: 2px solid var(--primary);
+    outline-offset: -2px;
 }
 
 .bluesky-social-integration-admin-content {
@@ -146,7 +157,8 @@
     border-left-color: darkred;
 }
 
-.bluesky-social-integration-admin .form-table {
+.bluesky-social-integration-admin .form-table,
+.bluesky-category-rules-account {
     border: 24px solid white;
     border-top-width: 12px;
     border-bottom-width: 12px;
@@ -178,13 +190,39 @@
     list-style: circle;
 }
 
-.bluesky-social-integration-admin .button.button-large {
+.bluesky-social-integration-admin .button.button {
     font-size: 14px;
     padding: 4px 16px;
     border-radius: 8px;
-    background-color: var(--primary);
+    color: var(--primary-dark);
+    background-color: var(--primary-lighter);
     font-weight: bold;
     border: none;
+}
+
+.bluesky-social-integration-admin .button.button-small {
+    display: inline-block;
+    margin-block: 2px;
+    font-size: 13px;
+    padding: 0px 8px;
+    font-weight: 600;
+}
+
+.bluesky-account-action .button-small {
+    margin-inline: 2px;
+}
+
+.bluesky-account-list.bluesky-account-list td:has(.bluesky-account-action) {
+    padding-inline: 6px;
+}
+
+.bluesky-account-action {
+    display: inline-block;
+}
+
+.bluesky-social-integration-admin .button.button-primary.button-large {
+    background-color: var(--primary);
+    color: white;
 }
 
 .bluesky-metabox-description.bluesky-metabox-description.bluesky-metabox-description {
@@ -283,6 +321,7 @@
 }
 
 .bluesky-social-integration-interactive .bluesky-social-integration-last-post {
+    align-self: flex-start;
     max-width: 560px;
     width: 100%;
 }
@@ -290,6 +329,157 @@
 input.bluesky-custom-unit.bluesky-custom-unit {
     width: 4em;
     padding-right: 0;
+}
+
+/**
+ * Donation Sidebar
+ */
+.bluesky-donate-sidebar {
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(380px, 90vw);
+    transition: transform .5s;
+    z-index: 1;
+}
+
+.bluesky-donate-sidebar.is-collapsed {
+    transform: translateX(100%);
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button {
+    position: absolute;
+    left: -40px;
+    top: calc(var(--wp-admin--admin-bar--height) + 110px);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #f5a623, #e8901a);
+    color: black;
+    font-size: 1.65em;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    z-index: 1;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button:hover,
+.bluesky-donate-sidebar .bluesky-donate-button:focus-visible {
+    background: linear-gradient(135deg, #e8901a, #d47a10);
+}
+
+.bluesky-donate-sidebar .bluesky-donate-button:focus-visible {
+    outline: 2px dotted #f5a623;
+    outline-offset: 2px;
+}
+
+.bluesky-donate-sidebar-content {
+    height: 100%;
+    overflow: auto;
+    padding: 32px 48px 32px 24px;
+    background: white;
+    box-shadow: -4px 0 40px -12px rgba(0, 0, 0, .12);
+}
+
+.bluesky-donate-sidebar-content h2 {
+    color: var(--primary);
+    font-size: 1.5em;
+    margin-top: 0;
+}
+
+.bluesky-donate-sidebar-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3c434a;
+}
+
+.bluesky-donate-sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.bluesky-donate-thanks {
+    margin-top: 24px;
+    font-style: italic;
+    color: #666;
+}
+
+/**
+ * Donation Links (shared between sidebar and about section)
+ */
+.bluesky-donation-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.bluesky-donation-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+    text-decoration: none;
+}
+
+.bluesky-donation-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+}
+
+.bluesky-donation-paypal {
+    background: #ffc439;
+    color: #253b80;
+}
+
+.bluesky-donation-paypal:hover {
+    background: #f0b72e;
+    color: #253b80;
+}
+
+.bluesky-donation-revolut {
+    background: #191c1f;
+    color: #ffffff;
+}
+
+.bluesky-donation-revolut:hover {
+    background: #2c3338;
+    color: #ffffff;
+}
+
+.bluesky-donation-revolut:focus-visible {
+    outline-color: #191c1f;
+    color: #fff;
+}
+
+/**
+ * Donation Box (About section)
+ */
+.bluesky-donation-box {
+    background: linear-gradient(135deg, #fffbf0 0%, #fff7e6 100%);
+    border: 1px solid #f0e5c8;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 1.5em;
+}
+
+.bluesky-donation-box.bluesky-donation-box.bluesky-donation-box h2 {
+    margin-top: 0;
+}
+
+.bluesky-donation-box .bluesky-donation-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
 }
 
 .bluesky-debug-sidebar {
@@ -310,7 +500,7 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 .bluesky-debug-sidebar .bluesky-open-button {
     position: absolute;
     left: -40px;
-    top: var(--wp-admin--admin-bar--height);
+    top: calc(var(--wp-admin--admin-bar--height) + 64px);
     padding: 0;
     width: 40px;
     height: 40px;
@@ -342,4 +532,283 @@ input.bluesky-custom-unit.bluesky-custom-unit {
 
 .bluesky-debug-sidebar-content summary {
     font-size: 1.3em;
+}
+
+/* Multi-Account UI */
+#bluesky-multi-account-section {
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+    border-top: 1px solid #c3c4c7;
+}
+
+/* Account List Table */
+.bluesky-account-list {
+    margin-top: 1em;
+}
+
+.bluesky-social-integration-admin .bluesky-account-list th,
+.bluesky-social-integration-admin .bluesky-account-list td {
+    padding: 8px;
+}
+
+.bluesky-account-list .bluesky-account-active {
+    font-weight: bold;
+}
+
+.bluesky-account-list .column-status {
+    width: 140px;
+}
+
+.bluesky-status-pending {
+    font-weight: 400;
+}
+
+.bluesky-account-list .column-auto-syndicate {
+    width: 120px;
+    text-align: center;
+}
+
+.bluesky-account-list .column-actions {
+    width: 180px;
+}
+
+/* Status Badges */
+.bluesky-status-authenticated {
+    color: #00a32a;
+}
+
+.bluesky-status-expired {
+    color: #dba617;
+}
+
+.bluesky-status-error {
+    color: #d63638;
+}
+
+.bluesky-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.bluesky-status-badge .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Active Account Indicator */
+.bluesky-active-indicator {
+    display: inline-block;
+    background: #2271b1;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    margin-left: 8px;
+}
+
+/* Health Section */
+.bluesky-health-section {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: #f8f8f8;
+    border-left: 4px solid #646970;
+    border-radius: 8px;
+}
+
+.bluesky-health-section .bluesky-health-title {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+.bluesky-health-block {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.bluesky-health-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.bluesky-health-block h4 {
+    margin: 0 0 8px;
+}
+
+.bluesky-health-accounts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bluesky-health-accounts li {
+    padding: 4px 0;
+}
+
+.bluesky-health-accounts .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: text-bottom;
+}
+
+.bluesky-health-activity {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bluesky-health-activity li {
+    padding: 3px 0;
+    font-size: 13px;
+}
+
+.bluesky-health-activity .bluesky-activity-time {
+    color: #666;
+    margin-right: 8px;
+}
+
+/* Dashboard Health Widget */
+#bluesky_health_widget .bluesky-health-detail {
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+}
+
+#bluesky_health_widget .bluesky-health-detail:last-of-type {
+    border-bottom: none;
+}
+
+#bluesky_health_widget .bluesky-health-detail summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 0;
+    list-style: revert;
+}
+
+#bluesky_health_widget .bluesky-health-detail summary:hover {
+    color: #2271b1;
+}
+
+#bluesky_health_widget .bluesky-health-detail > p,
+#bluesky_health_widget .bluesky-health-detail > ul {
+    margin: 8px 0 4px;
+}
+
+#bluesky_health_widget .bluesky-widget-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+#bluesky_health_widget .bluesky-widget-footer .dashicons.spin {
+    animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/**
+ * Syndication & Categories
+ */
+
+.bluesky-category-rules-account {
+    margin-block-start: 2em;
+}
+
+.bluesky-category-rules-account h4 {
+    font-size: 1rem;
+    margin-block: 0.5em;
+}
+
+.bluesky-category-rules-account h4 span.account-handle {
+    font-size: 0.9em;
+    font-weight: normal;
+    color: #666;
+}
+
+.bluesky-category-fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bluesky-category-fieldset legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 0.25em;
+}
+
+.bluesky-category-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.bluesky-category-rules-account .category-include-exclude-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.bluesky-category-rules-account .categories-container {
+    max-height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.bluesky-category-rules-account .categories-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.bluesky-category-rules-account .small-description {
+    color: var(--bluesky-admin-muted-text, #666);
+    font-size: 0.9em;
+}
+
+/**
+ * Global Pause Warning
+ */
+.bluesky-global-pause-warning {
+    background: var(--bluesky-admin-warning-bg, #fcf0f1);
+    border-left: 4px solid var(--bluesky-admin-warning-border, #d63638);
+    padding: 8px var(--bluesky-admin-spacing-md, 12px);
+    margin-bottom: var(--bluesky-admin-spacing-md, 12px);
+    font-size: 13px;
+}
+
+.bluesky-global-pause-warning strong {
+    color: var(--bluesky-admin-warning-text, #d63638);
+}
+
+.bluesky-global-pause-link {
+    display: inline-block;
+    margin-top: var(--bluesky-admin-spacing-sm, 4px);
+}
+
+/**
+ * Metabox Utilities
+ */
+.bluesky-account-selection {
+    margin-top: var(--bluesky-admin-spacing-md, 12px);
+}
+
+.bluesky-account-label {
+    display: block;
+    margin: var(--bluesky-admin-spacing-sm, 4px) 0;
+}
+
+.bluesky-section-divider {
+    margin: 2em 0;
 }

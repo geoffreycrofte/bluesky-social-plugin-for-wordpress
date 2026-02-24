@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(cat:*)",
+      "Bash(node /Users/CRG/.claude/get-shit-done/bin/gsd-tools.js:*)",
+      "Bash(for plan in /Users/CRG/Local Sites/wordpress/app/public/wp-content/plugins/bluesky-social-plugin-for-wordpress/.planning/phases/01-multi-account-foundation/01-*-PLAN.md)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(cd:*)",
+      "Bash(php -l:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:docs.bsky.app)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:atproto.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ]
+  }
+}

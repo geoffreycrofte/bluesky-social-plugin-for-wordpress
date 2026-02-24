@@ -8,6 +8,16 @@ banner-772x250.png
 banner-1544x500.png
 icon.svg
 
+# Test related files
+.phpunit.result.cache
+.phpunit.phar
+.phpunit.xml
+tests/
+
+# AI Related
+.planning/
+.claude/
+
 # Optional: Ignore other common files and folders that shouldn't be deployed
 .DS_Store
 Thumbs.db

@@ -1,0 +1,6 @@
+# PHPUnit
+phpunit.phar
+.phpunit.result.cache
+
+# Test dependencies
+tests/vendor/
