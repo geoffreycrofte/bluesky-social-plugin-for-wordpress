@@ -1,0 +1,1988 @@
+# Copyright (C) 2026 Geoffrey Crofte
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Social Integration for BlueSky 2.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/social-integration-for-bluesky\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-02-25T10:44:54+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: social-integration-for-bluesky\n"
+
+#. Plugin Name of the plugin
+#: social-integration-for-bluesky.php
+#: classes/BlueSky_Settings_Service.php:68
+#: templates/admin/settings-page.php:20
+msgid "Social Integration for BlueSky"
+msgstr ""
+
+#. Description of the plugin
+#: social-integration-for-bluesky.php
+msgid "Integrates BlueSky social features into WordPress including: Post New Articles on BlueSky for you, Shortcode for Profile Card, and Widget to display your last posts. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>."
+msgstr ""
+
+#. Author of the plugin
+#: social-integration-for-bluesky.php
+msgid "Geoffrey Crofte"
+msgstr ""
+
+#. Author URI of the plugin
+#: social-integration-for-bluesky.php
+msgid "https://geoffreycrofte.com"
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:68
+msgid "BlueSky migration failed: %s"
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:254
+msgid "Account handle is required."
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:257
+msgid "App password is required."
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:268
+msgid "An account with handle \"%s\" already exists."
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:282
+#: classes/BlueSky_Account_Manager.php:414
+msgid "Failed to encrypt app password."
+msgstr ""
+
+#: classes/BlueSky_Account_Manager.php:325
+#: classes/BlueSky_Account_Manager.php:368
+#: classes/BlueSky_Account_Manager.php:393
+msgid "Account not found."
+msgstr ""
+
+#: classes/BlueSky_Activity_Logger.php:137
+msgid "%s ago"
+msgstr ""
+
+#: classes/BlueSky_Admin_Actions.php:25
+msgid "Security check failed."
+msgstr ""
+
+#: classes/BlueSky_Admin_Actions.php:36
+msgid "Successfully logged out from Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Admin_Actions.php:43
+msgid "Logout failed. Please try again."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:99
+msgid "The Bluesky account %s needs re-authentication. <a href=\"%s\">Update credentials</a>"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:114
+msgid " ...and %d more"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:118
+msgid "Bluesky accounts %s need re-authentication. <a href=\"%s\">Update credentials</a>"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:162
+#: classes/BlueSky_Error_Translator.php:174
+msgid "Bluesky requests paused due to repeated errors. Will resume automatically."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:195
+#: classes/BlueSky_Assets_Service.php:222
+#: classes/BlueSky_Error_Translator.php:165
+msgid "Syndicating to Bluesky..."
+msgstr ""
+
+#. translators: %d: number of accounts
+#: classes/BlueSky_Admin_Notices.php:205
+msgid "Successfully syndicated to %d Bluesky account."
+msgid_plural "Successfully syndicated to %d Bluesky accounts."
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Admin_Notices.php:223
+msgid "Syndication failed:"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:225
+#: classes/BlueSky_Admin_Notices.php:272
+msgid "Unknown error"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:229
+msgid "Failed to syndicate to Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:235
+#: classes/BlueSky_Assets_Service.php:228
+msgid "Retry now"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:238
+msgid "Will retry automatically."
+msgstr ""
+
+#. translators: %d: retry attempt number
+#: classes/BlueSky_Admin_Notices.php:249
+msgid "Retrying syndication to Bluesky (attempt %d)..."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:260
+msgid "Partial syndication:"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:265
+msgid "Posted successfully"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:280
+msgid "Retry failed accounts"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:283
+msgid "Will retry failed accounts automatically."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:292
+msgid "Syndication paused due to API issues. Will retry automatically in 15 minutes."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:299
+msgid "Syndication paused due to rate limiting. Will retry automatically when limit resets."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:358
+msgid "Invalid post or insufficient permissions."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:375
+msgid "No accounts found to retry."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:386
+msgid "Syndication retry scheduled."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:403
+msgid "Bluesky"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:432
+msgid "Syndicating..."
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:436
+msgid "Syndicated"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:441
+msgid "Failed"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:442
+msgid "Retry"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:447
+msgid "Partially syndicated"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:451
+msgid "Waiting for cooldown"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:455
+#: classes/BlueSky_Health_Dashboard.php:212
+#: classes/BlueSky_Settings_Service.php:1390
+msgid "Rate limited"
+msgstr ""
+
+#: classes/BlueSky_Admin_Notices.php:479
+msgid "Invalid notice key."
+msgstr ""
+
+#: classes/BlueSky_AJAX_Service.php:59
+msgid "Could not fetch posts"
+msgstr ""
+
+#: classes/BlueSky_AJAX_Service.php:76
+msgid "Could not fetch profile"
+msgstr ""
+
+#: classes/BlueSky_AJAX_Service.php:152
+#: classes/BlueSky_AJAX_Service.php:188
+msgid "Unauthorized"
+msgstr ""
+
+#: classes/BlueSky_AJAX_Service.php:193
+msgid "Account manager not available"
+msgstr ""
+
+#: classes/BlueSky_AJAX_Service.php:203
+msgid "Discussion account updated."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:86
+#: classes/BlueSky_Assets_Service.php:132
+msgid "Connection to BlueSky failed. Please check your credentials."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:87
+#: classes/BlueSky_Assets_Service.php:133
+msgid "Handle or app password is not configured."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:88
+#: classes/BlueSky_Assets_Service.php:134
+msgid "Could not reach BlueSky servers:"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:89
+#: classes/BlueSky_Assets_Service.php:135
+msgid "BlueSky rate limit exceeded. Please wait a few minutes before trying again."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:90
+#: classes/BlueSky_Assets_Service.php:136
+msgid "Resets at"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:91
+#: classes/BlueSky_Assets_Service.php:137
+msgid "BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:92
+#: classes/BlueSky_Assets_Service.php:138
+msgid "This BlueSky account has been taken down."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:93
+#: classes/BlueSky_Assets_Service.php:139
+msgid "Invalid handle or password. Please check your credentials."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:94
+#: classes/BlueSky_Assets_Service.php:140
+msgid "Connection to BlueSky successful!"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:95
+#: classes/BlueSky_Assets_Service.php:141
+msgid "Log out from this account"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:96
+#: classes/BlueSky_Assets_Service.php:142
+msgid "Could not check connection status."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:97
+#: classes/BlueSky_Assets_Service.php:143
+msgid "Unable to load Bluesky content."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:98
+#: classes/BlueSky_Assets_Service.php:144
+msgid "Connection failed:"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:223
+msgid "Successfully syndicated to Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:224
+msgid "Successfully syndicated to %d Bluesky accounts."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:225
+msgid "Failed to syndicate to Bluesky accounts: %s"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:226
+msgid "Partially syndicated: some accounts failed."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:227
+#: classes/BlueSky_Error_Translator.php:168
+msgid "Retrying syndication to Bluesky..."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:229
+msgid "Retry failed"
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:230
+msgid "Failed to retry syndication. Please try again."
+msgstr ""
+
+#: classes/BlueSky_Assets_Service.php:231
+msgid "unknown"
+msgstr ""
+
+#: classes/BlueSky_Blocks_Service.php:78
+#: classes/widgets/BlueSky_Posts_Widget.php:59
+#: classes/widgets/BlueSky_Profile_Widget.php:58
+msgid "Active Account (default)"
+msgstr ""
+
+#: classes/BlueSky_Blocks_Service.php:227
+msgid "Rounded"
+msgstr ""
+
+#: classes/BlueSky_Blocks_Service.php:232
+msgid "Outline"
+msgstr ""
+
+#: classes/BlueSky_Blocks_Service.php:236
+msgid "Squared"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Frontend.php:195
+#: classes/BlueSky_Discussion_Frontend.php:217
+#: classes/BlueSky_Discussion_Metabox.php:133
+msgid "Bluesky Discussion"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Frontend.php:205
+#: classes/BlueSky_Discussion_Frontend.php:227
+#: classes/BlueSky_Discussion_Metabox.php:233
+msgid "View on Bluesky"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Frontend.php:340
+#: classes/BlueSky_Discussion_Renderer.php:518
+msgid "No replies yet. Be the first to comment on Bluesky!"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Frontend.php:548
+msgid "Reply on Bluesky"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Frontend.php:570
+#: classes/BlueSky_Discussion_Frontend.php:586
+msgid "Show %d reply"
+msgid_plural "Show %d replies"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Frontend.php:581
+msgid "Hide replies"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:184
+msgid "Loading discussion..."
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:203
+msgid "No Bluesky post information found."
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:213
+msgid "Invalid Bluesky post data."
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:242
+#: classes/BlueSky_Health_Dashboard.php:136
+msgid "Refresh"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:249
+msgid "Unlink"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:274
+#: classes/BlueSky_Discussion_Metabox.php:306
+msgid "Invalid permissions"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Metabox.php:280
+msgid "No Bluesky post information found"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:60
+msgid "Likes"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:73
+msgid "Reposts"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:86
+msgid "Replies"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:99
+msgid "Quotes"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:123
+msgid "Discussion on Bluesky"
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:326
+msgid "Your browser does not support the video tag."
+msgstr ""
+
+#: classes/BlueSky_Discussion_Renderer.php:392
+msgid "%s second ago"
+msgid_plural "%s seconds ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:405
+msgid "%s minute ago"
+msgid_plural "%s minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:418
+msgid "%s hour ago"
+msgid_plural "%s hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:431
+msgid "%s day ago"
+msgid_plural "%s days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:444
+msgid "%s week ago"
+msgid_plural "%s weeks ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:456
+msgid "%s month ago"
+msgid_plural "%s months ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Discussion_Renderer.php:491
+msgid "Unable to fetch post data from Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:37
+msgid "We couldn't connect to Bluesky. Your credentials may have expired."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:39
+#: classes/BlueSky_Error_Translator.php:66
+#: classes/BlueSky_Error_Translator.php:85
+msgid "Go to Settings"
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:48
+msgid "Bluesky is temporarily rate limiting requests. Your post will be retried automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:56
+msgid "Couldn't reach Bluesky right now. This is usually temporary. Your post will be retried automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:64
+msgid "The Bluesky handle appears to be invalid. Please check that you entered it correctly."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:75
+msgid "Bluesky couldn't process this request. The post content may have an issue."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:83
+msgid "You don't have permission for this action on Bluesky. Your account settings may need updating."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:94
+msgid "Bluesky is experiencing issues right now. Your post will be retried automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:114
+msgid "Something went wrong while connecting to Bluesky. Please try again."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:120
+msgid "We couldn't post to Bluesky right now. Your post will be retried automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:126
+msgid "We couldn't load Bluesky content right now. Please try refreshing the page."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:133
+msgid "Something went wrong with the Bluesky connection. Please try again."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:148
+msgid "Bluesky requests are paused due to repeated errors. They'll resume automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:151
+msgid "Bluesky connection is healthy."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:171
+msgid "Rate limited — will retry automatically."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:177
+msgid "Successfully posted to Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:180
+msgid "Couldn't post to Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:183
+msgid "Posted to some Bluesky accounts. Some accounts had issues."
+msgstr ""
+
+#: classes/BlueSky_Error_Translator.php:186
+msgid "Unknown syndication status."
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:51
+msgid "Bluesky Integration Health"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:76
+#: classes/BlueSky_Settings_Service.php:1359
+msgid "Account Status"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:87
+#: classes/BlueSky_Settings_Service.php:1409
+msgid "No accounts configured."
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:93
+msgid "Last Syndication"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:99
+#: classes/BlueSky_Settings_Service.php:1418
+msgid "API Health"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:105
+#: classes/BlueSky_Settings_Service.php:1444
+msgid "Cache Status"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:111
+msgid "Pending Retries"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:117
+#: classes/BlueSky_Settings_Service.php:1508
+msgid "Recent Activity"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:128
+#: classes/BlueSky_Settings_Service.php:1524
+msgid "No recent activity recorded."
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:138
+msgid "View detailed health"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:185
+msgid "No recent syndication"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:186
+#: classes/BlueSky_Settings_Service.php:1438
+msgid "All systems operational"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:209
+#: classes/BlueSky_Settings_Service.php:1386
+msgid "Circuit open"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:215
+#: classes/BlueSky_Settings_Service.php:1394
+msgid "Auth issue"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:218
+#: classes/BlueSky_Settings_Service.php:783
+#: classes/BlueSky_Settings_Service.php:1398
+msgid "Active"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:248
+msgid "Circuit open for: %s"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:259
+msgid "Profile and posts cached"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:261
+msgid "Profile cached, posts not cached"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:263
+msgid "Posts cached, profile not cached"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:265
+msgid "No cache active"
+msgstr ""
+
+#: classes/BlueSky_Health_Dashboard.php:285
+msgid "%d post pending"
+msgid_plural "%d posts pending"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Health_Monitor.php:47
+#: classes/BlueSky_Health_Monitor.php:96
+msgid "Bluesky accounts configured"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:52
+msgid "Bluesky credentials valid"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:57
+msgid "Bluesky API connections"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:76
+msgid "No Bluesky accounts configured"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:79
+#: classes/BlueSky_Health_Monitor.php:99
+#: classes/BlueSky_Health_Monitor.php:208
+#: classes/BlueSky_Health_Monitor.php:233
+msgid "Performance"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:84
+msgid "Your site is not currently connected to any Bluesky accounts. To enable syndication and display features, add at least one account in the plugin settings."
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:89
+#: classes/BlueSky_Health_Monitor.php:163
+msgid "Go to Bluesky Settings"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:105
+msgid "Your site is connected to %d Bluesky account."
+msgid_plural "Your site is connected to %d Bluesky accounts."
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Health_Monitor.php:141
+msgid "Bluesky accounts need re-authentication"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:144
+#: classes/BlueSky_Health_Monitor.php:173
+msgid "Security"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:150
+msgid "%d Bluesky account has authentication errors and needs to be re-authenticated:"
+msgid_plural "%d Bluesky accounts have authentication errors and need to be re-authenticated:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Health_Monitor.php:170
+msgid "All Bluesky credentials valid"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:178
+msgid "All Bluesky accounts are properly authenticated and ready to use."
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:205
+msgid "Bluesky API requests paused"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:214
+msgid "%d Bluesky account has experienced repeated API failures and is currently in a cooldown period:"
+msgid_plural "%d Bluesky accounts have experienced repeated API failures and are currently in cooldown periods:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Health_Monitor.php:222
+msgid "Requests to these accounts will resume automatically after the cooldown period expires (15 minutes). This is normal behavior when the API is experiencing issues."
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:230
+msgid "Bluesky API connections healthy"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:238
+msgid "All Bluesky accounts are responding normally with no circuit breaker activations."
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:261
+msgid "Plugin Version"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:265
+msgid "Account Count"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:269
+msgid "API Endpoint"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:273
+#: classes/BlueSky_Settings_Service.php:507
+msgid "Cache Duration"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:275
+#: classes/BlueSky_Settings_Service.php:1753
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Health_Monitor.php:280
+msgid "Action Scheduler"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:282
+msgid "Available"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:283
+msgid "Not available"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:293
+msgid "Connected"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:294
+msgid "Paused (too many errors)"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:297
+msgid "Yes — waiting before retrying"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:298
+msgid "No"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:302
+msgid "Account: %s"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:306
+msgid "API Status: %s | Throttled: %s"
+msgstr ""
+
+#: classes/BlueSky_Health_Monitor.php:315
+msgid "Bluesky Integration"
+msgstr ""
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:100
+msgid "BlueSky Error: %s"
+msgstr ""
+
+#: classes/BlueSky_Helpers.php:128
+#: classes/BlueSky_Helpers.php:171
+msgid "OpenSSL encryption is not available on your server."
+msgstr ""
+
+#: classes/BlueSky_Helpers.php:149
+msgid "Encryption failed. Please check your server configuration."
+msgstr ""
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:157
+msgid "Encryption failed: %s"
+msgstr ""
+
+#: classes/BlueSky_Helpers.php:184
+msgid "Invalid encrypted data format."
+msgstr ""
+
+#: classes/BlueSky_Helpers.php:190
+msgid "Corrupted encrypted data."
+msgstr ""
+
+#: classes/BlueSky_Helpers.php:205
+msgid "Decryption failed. The data might be corrupted or the encryption key has changed."
+msgstr ""
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:213
+msgid "Decryption failed: %s"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:175
+#: blocks/bluesky-pre-publish-panel.js:305
+#: blocks/bluesky-sidebar-panel.js:268
+msgid "Bluesky Syndication"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:226
+#: blocks/bluesky-pre-publish-panel.js:317
+#: blocks/bluesky-sidebar-panel.js:277
+msgid "Syndication is globally paused."
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:227
+#: blocks/bluesky-pre-publish-panel.js:322
+#: blocks/bluesky-sidebar-panel.js:282
+msgid "Manage in Settings"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:236
+msgid "Don't syndicate this post on Bluesky"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:245
+msgid "Check to avoid sending the post on Bluesky. Uncheck to send this post on Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:277
+#: blocks/bluesky-pre-publish-panel.js:145
+#: blocks/bluesky-sidebar-panel.js:220
+msgid "Syndicate to:"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:411
+#: classes/BlueSky_Post_Metabox.php:442
+msgid "Invalid nonce"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:416
+#: classes/BlueSky_Post_Metabox.php:449
+msgid "Insufficient permissions"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:541
+msgid "Post Text:"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:547
+msgid "Characters: %d / 300"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:561
+msgid "Link Card:"
+msgstr ""
+
+#: classes/BlueSky_Post_Metabox.php:602
+msgid "No image found. The post will include a text link instead of a link card."
+msgstr ""
+
+#: classes/BlueSky_Render_Front.php:416
+#: classes/BlueSky_Render_Front.php:539
+msgid "BlueSky Social Card of %s"
+msgstr ""
+
+#: classes/BlueSky_Render_Front.php:494
+msgid "Unable to fetch BlueSky profile."
+msgstr ""
+
+#: classes/BlueSky_Render_Front.php:726
+#: templates/frontend/skeleton-posts-list.php:17
+msgid "Loading Bluesky Posts"
+msgstr ""
+
+#: classes/BlueSky_Render_Front.php:761
+msgid "Loading Bluesky Profile"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:56
+msgid "Settings"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:72
+msgid "BlueSky Settings"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:95
+msgid "BlueSky Account Settings"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:112
+#: templates/admin/settings-page.php:40
+msgid "Feed Options"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:128
+msgid "BlueSky Discussions Settings"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:362
+msgid "Account \"%s\" added and authenticated."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:369
+msgid "Account \"%s\" added but could not authenticate. Check credentials."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:443
+msgid "BlueSky Handle"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:451
+msgid "BlueSky Password"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:459
+msgid "Multi-Account Support"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:467
+msgid "Number of Posts to Display"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:475
+msgid "Do not display replies"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:483
+msgid "Do not display reposts"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:491
+msgid "Do not display embeds"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:499
+msgid "Do not display counters"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:515
+msgid "Enable Bluesky Discussions"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:523
+msgid "Discussion Thread Source"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:531
+msgid "Display Multiple Levels of Replies"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:539
+msgid "Collapse Nested Replies by Default"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:547
+msgid "Display Like and Share Counters"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:555
+msgid "Display Reply Links"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:563
+msgid "Display Images and Attachments"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:598
+msgid "Enter your BlueSky account details to enable social integration."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:613
+msgid "Start customizing how your feed and profile card are displayed."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:628
+msgid "Display Bluesky discussions on your posts. This feature only works for posts that have been syndicated to Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:649
+#: classes/BlueSky_Settings_Service.php:873
+msgid "Your e-mail address or Bluesky handle (e.g. user.bsky.social)."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:678
+msgid "Leave empty to keep the current password."
+msgstr ""
+
+#. translators: %1$s opening link tag, %2$s the closing link tag, %3$s new line insertion
+#: classes/BlueSky_Settings_Service.php:689
+msgid "Instead of using your password, you can use an %1$sApp Password%2$s available on BlueSky.%3$sNo need to authorize access to your direct messages, this plugin does not need it."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:710
+msgid "Checking connection..."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:725
+msgid "Account Manager not available."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:734
+msgid "Enable Multi-Account Support"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:737
+msgid "Connect multiple Bluesky accounts for syndication and display switching."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:743
+msgid "Connected Accounts"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:745
+msgid "Active account:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:746
+msgid "Is the default account used for widgets, shortcodes & blocks if no other account is specified."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:749
+msgid "Auto-Syndicate:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:750
+msgid "If checked, it’ll syndicate all new posts, unless you filter it by including/excluding categorie. (See Syndication tab)"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:762
+msgid "Name"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:763
+msgid "Handle"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:764
+msgid "Status"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:765
+msgid "Auto-Syndicate"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:766
+msgid "Actions"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:781
+msgid "Unknown"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:795
+msgid "Authenticated"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:801
+msgid "Credentials Configured"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:806
+msgid "Not Authenticated"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:832
+msgid "Make Active"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:842
+msgid "Remove"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:853
+msgid "No accounts connected yet."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:857
+msgid "Add New Account"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:865
+msgid "Account Name"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:867
+msgid "e.g., Personal Account"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:870
+msgid "Bluesky Handle"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:877
+msgid "App Password"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:882
+msgid "Create an %1$sApp Password%2$s on Bluesky."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:891
+msgid "Cancel"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:897
+msgid "Add Account"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:900
+msgid "Click \"Save Changes\" to save the new account."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:921
+msgid "Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:954
+msgid "Pause all syndication to Bluesky. When enabled, no posts will be syndicated to any account. Use this for maintenance or troubleshooting."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:975
+#: blocks/bluesky-posts-feed.js:116
+#: blocks/bluesky-profile-card.js:116
+msgid "System Preference"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:981
+#: blocks/bluesky-posts-feed.js:123
+#: blocks/bluesky-profile-card.js:123
+msgid "Light"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:986
+#: blocks/bluesky-posts-feed.js:127
+#: blocks/bluesky-profile-card.js:127
+msgid "Dark"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1004
+msgid "Enter the number of posts to display (1-10) - 5 is set by default"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1026
+msgid "If checked, your replies will not be displayed in your feed."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1048
+msgid "If checked, the reposts won't be displayed in your feed."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1070
+msgid "If checked, videos, images, and link cards won't be displayed in your feed."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1092
+msgid "If checked, like, repost, reply, and quote counters won't be displayed in your feed."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1119
+msgid "Days"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1131
+msgid "Hours"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1143
+msgid "Minutes"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1149
+msgid "Set to 0 in all fields to disable the cache."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1172
+msgid "Enable Bluesky discussion display below your syndicated posts."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1187
+msgid "This option is only available when multi-account support is enabled."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1197
+msgid "No accounts available. Please add an account first."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1217
+msgid "Choose which account's Bluesky thread to display for discussions."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1237
+msgid "Display multiple levels of replies (replies to replies)."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1263
+msgid "Collapse nested replies by default (only available if multiple levels are enabled)."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1287
+msgid "Display like and share counters for individual replies."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1312
+msgid "Display a link to reply on Bluesky for each reply."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1336
+msgid "Display images, videos, and other attachments in replies."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1355
+msgid "Plugin Health"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1412
+msgid "Account manager not available."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1434
+msgid "Circuit breaker open for: %s"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1453
+#: classes/BlueSky_Settings_Service.php:1568
+msgid "Profile Card Cache:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1457
+#: classes/BlueSky_Settings_Service.php:1470
+#: classes/BlueSky_Settings_Service.php:1483
+#: classes/BlueSky_Settings_Service.php:1496
+#: classes/BlueSky_Settings_Service.php:1578
+#: classes/BlueSky_Settings_Service.php:1608
+#: classes/BlueSky_Settings_Service.php:1640
+#: classes/BlueSky_Settings_Service.php:1670
+msgid "Active (expires in %s)"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1461
+#: classes/BlueSky_Settings_Service.php:1474
+#: classes/BlueSky_Settings_Service.php:1487
+#: classes/BlueSky_Settings_Service.php:1500
+#: classes/BlueSky_Settings_Service.php:1589
+#: classes/BlueSky_Settings_Service.php:1619
+#: classes/BlueSky_Settings_Service.php:1651
+#: classes/BlueSky_Settings_Service.php:1681
+msgid "Not cached"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1466
+#: classes/BlueSky_Settings_Service.php:1598
+msgid "Posts Feed Cache:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1479
+#: classes/BlueSky_Settings_Service.php:1630
+msgid "Access Token Cache:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1492
+#: classes/BlueSky_Settings_Service.php:1660
+msgid "Refresh Token Cache:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1527
+msgid "Activity logger not available."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1558
+msgid "Current cache status:"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1712
+msgid "expired"
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1725
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Settings_Service.php:1739
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Settings_Service.php:1767
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Settings_Service.php:1807
+msgid "Account removed successfully."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1810
+msgid "%d post was associated with this account."
+msgid_plural "%d posts were associated with this account."
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/BlueSky_Settings_Service.php:1850
+msgid "Active account switched successfully."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1892
+msgid "Discussion account updated successfully."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1918
+msgid "Security check failed. Please try again."
+msgstr ""
+
+#: classes/BlueSky_Settings_Service.php:1959
+msgid "Category rules updated for %d account."
+msgid_plural "Category rules updated for %d accounts."
+msgstr[0] ""
+msgstr[1] ""
+
+#: classes/widgets/BlueSky_Posts_Widget.php:11
+#: classes/widgets/BlueSky_Posts_Widget.php:36
+msgid "BlueSky Latest Posts"
+msgstr ""
+
+#: classes/widgets/BlueSky_Posts_Widget.php:12
+msgid "Displays latest BlueSky posts"
+msgstr ""
+
+#: classes/widgets/BlueSky_Posts_Widget.php:55
+#: classes/widgets/BlueSky_Profile_Widget.php:54
+msgid "Display Account:"
+msgstr ""
+
+#: classes/widgets/BlueSky_Profile_Widget.php:11
+#: classes/widgets/BlueSky_Profile_Widget.php:35
+msgid "BlueSky Profile"
+msgstr ""
+
+#: classes/widgets/BlueSky_Profile_Widget.php:12
+msgid "Displays BlueSky profile card"
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:30
+msgid "Connect at least one Bluesky account to configure category rules."
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:34
+msgid "Enable auto-syndicate on at least one account to configure category rules."
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:38
+msgid "Create categories in WordPress to set up syndication rules."
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:42
+msgid "Unknown Account"
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:61
+msgid "Include Categories"
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:64
+msgid "Only syndicate posts with at least one of these categories (OR logic)."
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:85
+msgid "Exclude Categories"
+msgstr ""
+
+#: templates/admin/settings-category-rules.php:88
+msgid "Never syndicate posts with any of these categories (higher priority than include)."
+msgstr ""
+
+#: templates/admin/settings-page.php:27
+msgid "Bluesky Settings Menu"
+msgstr ""
+
+#: templates/admin/settings-page.php:32
+msgid "Account Settings"
+msgstr ""
+
+#: templates/admin/settings-page.php:49
+msgid "Syndication"
+msgstr ""
+
+#: templates/admin/settings-page.php:55
+msgid "Discussions"
+msgstr ""
+
+#: templates/admin/settings-page.php:64
+#: templates/admin/settings-page.php:92
+msgid "Styles"
+msgstr ""
+
+#: templates/admin/settings-page.php:72
+msgid "About"
+msgstr ""
+
+#: templates/admin/settings-page.php:97
+msgid "Decide how you want your Bluesky blocks to look like!"
+msgstr ""
+
+#: templates/admin/settings-page.php:106
+#: templates/admin/settings-page.php:116
+#: blocks/bluesky-posts-feed.js:112
+#: blocks/bluesky-profile-card.js:112
+msgid "Theme"
+msgstr ""
+
+#: templates/admin/settings-page.php:148
+msgid "Profile Customization"
+msgstr ""
+
+#: templates/admin/settings-page.php:153
+msgid "Profile Layout"
+msgstr ""
+
+#: templates/admin/settings-page.php:158
+msgid "Choose the default layout for your profile card."
+msgstr ""
+
+#: templates/admin/settings-page.php:167
+msgid "Default"
+msgstr ""
+
+#: templates/admin/settings-page.php:179
+#: blocks/bluesky-posts-feed.js:70
+#: blocks/bluesky-profile-card.js:70
+msgid "Compact"
+msgstr ""
+
+#: templates/admin/settings-page.php:189
+msgid "Profile Font Styling"
+msgstr ""
+
+#: templates/admin/settings-page.php:194
+msgid "Tweak the font sizes for the profile card."
+msgstr ""
+
+#: templates/admin/settings-page.php:216
+#: templates/admin/settings-page.php:477
+msgid "Name/Pseudo"
+msgstr ""
+
+#: templates/admin/settings-page.php:228
+#: templates/admin/settings-page.php:489
+msgid "Nickhandle"
+msgstr ""
+
+#: templates/admin/settings-page.php:240
+msgid "Counters"
+msgstr ""
+
+#: templates/admin/settings-page.php:252
+msgid "Biography"
+msgstr ""
+
+#: templates/admin/settings-page.php:409
+msgid "Feed Customization"
+msgstr ""
+
+#: templates/admin/settings-page.php:414
+msgid "Feed Layout"
+msgstr ""
+
+#: templates/admin/settings-page.php:419
+msgid "Pick the layout that suits you best. Be careful, some of them could come later, and with specific pre-defined options. (e.g. \"no-replies\" by default)"
+msgstr ""
+
+#: templates/admin/settings-page.php:428
+msgid "Default layout"
+msgstr ""
+
+#: templates/admin/settings-page.php:440
+msgid "Light Weight Layout"
+msgstr ""
+
+#: templates/admin/settings-page.php:450
+msgid "Feed Font Styling"
+msgstr ""
+
+#: templates/admin/settings-page.php:455
+msgid "Tweak the font sizes for the posts feed."
+msgstr ""
+
+#: templates/admin/settings-page.php:501
+msgid "Post Content"
+msgstr ""
+
+#: templates/admin/settings-page.php:513
+msgid "External Title"
+msgstr ""
+
+#: templates/admin/settings-page.php:525
+msgid "External Description"
+msgstr ""
+
+#: templates/admin/settings-page.php:537
+msgid "External URL"
+msgstr ""
+
+#: templates/admin/settings-page.php:549
+msgid "StarterPack Name"
+msgstr ""
+
+#: templates/admin/settings-page.php:705
+msgid "Syndication Settings"
+msgstr ""
+
+#: templates/admin/settings-page.php:706
+msgid "Control global syndication behavior and configure category-based routing rules for your accounts."
+msgstr ""
+
+#: templates/admin/settings-page.php:708
+msgid "Global Syndication Control"
+msgstr ""
+
+#: templates/admin/settings-page.php:714
+msgid "Pause All Syndication"
+msgstr ""
+
+#: templates/admin/settings-page.php:728
+msgid "Category Rules"
+msgstr ""
+
+#: templates/admin/settings-page.php:729
+msgid "Configure which categories should be syndicated to which accounts. If no rules are set, all posts will be syndicated."
+msgstr ""
+
+#: templates/admin/settings-page.php:733
+msgid "%1$sInclude:%2$s Only syndicate posts with these categories.%3$s%1$sExclude%2$s: Never syndicate posts with these categories. If no rules are set, all posts syndicate."
+msgstr ""
+
+#: templates/admin/settings-page.php:749
+msgid "About this plugin"
+msgstr ""
+
+#: templates/admin/settings-page.php:756
+msgid "This plugin is written by %s."
+msgstr ""
+
+#: templates/admin/settings-page.php:761
+msgid "This extension is not an official BlueSky plugin."
+msgstr ""
+
+#: templates/admin/settings-page.php:770
+msgid "Need help with something? Have a suggestion? %1$sAsk away%2$s."
+msgstr ""
+
+#: templates/admin/settings-page.php:778
+msgid "You want to contribute to this project? %1$sHere is the Github Repository%2$s."
+msgstr ""
+
+#: templates/admin/settings-page.php:787
+msgid "Rate this plugin on WordPress.org"
+msgstr ""
+
+#: templates/admin/settings-page.php:795
+msgid "Want to support the plugin? %1$sGive a review%2$s"
+msgstr ""
+
+#: templates/admin/settings-page.php:808
+msgid "Support the Developer"
+msgstr ""
+
+#: templates/admin/settings-page.php:812
+msgid "This plugin is free and built with care on personal time. If it saves you time or brings value to your site, consider buying the developer a coffee (or two)!"
+msgstr ""
+
+#: templates/admin/settings-page.php:819
+msgid "PayPal"
+msgstr ""
+
+#: templates/admin/settings-page.php:823
+msgid "Revolut"
+msgstr ""
+
+#: templates/admin/settings-page.php:828
+msgid "Some Plugin Engine Info"
+msgstr ""
+
+#: templates/admin/settings-page.php:836
+msgid "About the shortcodes"
+msgstr ""
+
+#: templates/admin/settings-page.php:843
+msgid "You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s."
+msgstr ""
+
+#: templates/admin/settings-page.php:851
+msgid "By default, the shortcodes use the global settings, but you can decide to override them thanks to the attributes described on this page."
+msgstr ""
+
+#: templates/admin/settings-page.php:856
+msgid "You can also use the Gutenberg blocks to display the profile card and posts feed."
+msgstr ""
+
+#: templates/admin/settings-page.php:863
+msgid "Shortcodes Demo"
+msgstr ""
+
+#: templates/admin/settings-page.php:869
+msgid "Profile Card"
+msgstr ""
+
+#: templates/admin/settings-page.php:873
+msgid "The profile shortcode will display your BlueSky profile card. It uses the following attributes:"
+msgstr ""
+
+#: templates/admin/settings-page.php:878
+msgid "The layout to use. Options are \"default\" and \"compact\". Default uses the global setting."
+msgstr ""
+
+#: templates/admin/settings-page.php:882
+msgid "Whether to display the profile banner. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:886
+msgid "Whether to display the profile avatar. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:890
+msgid "Whether to display follower/following counts. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:894
+msgid "Whether to display the profile bio. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:898
+msgid "The theme to use for displaying the profile. Options are \"light\", \"dark\", and \"system\". Default is \"system\"."
+msgstr ""
+
+#: templates/admin/settings-page.php:902
+msgid "Additional CSS class to apply to the profile card."
+msgstr ""
+
+#: templates/admin/settings-page.php:907
+#: templates/admin/settings-page.php:974
+msgid "The UUID of a specific account to display. Leave empty to use the active account. %1$sFind your Bluesky DID%2$s."
+msgstr ""
+
+#: templates/admin/settings-page.php:916
+msgid "This is how your BlueSky profile card will look like:"
+msgstr ""
+
+#: templates/admin/settings-page.php:931
+msgid "Last Posts Feed"
+msgstr ""
+
+#: templates/admin/settings-page.php:936
+msgid "The last posts shortcode will display your last posts feed. It uses the following attributes:"
+msgstr ""
+
+#: templates/admin/settings-page.php:941
+msgid "Override the feed layout. Options are \"default\", \"layout_2\" or \"compact\" (compact with header). Leave empty to use the global setting."
+msgstr ""
+
+#: templates/admin/settings-page.php:945
+msgid "Whether to display embedded media in the posts. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:949
+msgid "Whether to display embedded images in the posts. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:953
+msgid "Whether to hide your replies, or include them in your feed. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:957
+msgid "Whether to hide the reposts, or include them in your feed. Default is true."
+msgstr ""
+
+#: templates/admin/settings-page.php:961
+msgid "The number of posts to display. Default is 5."
+msgstr ""
+
+#: templates/admin/settings-page.php:965
+msgid "Whether to hide like, repost, reply, and quote counters. Default is false."
+msgstr ""
+
+#: templates/admin/settings-page.php:969
+msgid "The theme to use for displaying the posts. Options are \"light\", \"dark\", and \"system\". Default is \"system\"."
+msgstr ""
+
+#: templates/admin/settings-page.php:983
+msgid "This is how your last posts feed will look like:"
+msgstr ""
+
+#: templates/admin/settings-page.php:1004
+msgid "Support the plugin"
+msgstr ""
+
+#: templates/admin/settings-page.php:1011
+msgid "Support this Plugin"
+msgstr ""
+
+#: templates/admin/settings-page.php:1015
+msgid "This plugin is free, open-source, and maintained on personal time. If it helps you connect with the Bluesky community, a small donation goes a long way!"
+msgstr ""
+
+#: templates/admin/settings-page.php:1022
+msgid "Donate via PayPal"
+msgstr ""
+
+#: templates/admin/settings-page.php:1026
+msgid "Donate via Revolut"
+msgstr ""
+
+#: templates/admin/settings-page.php:1029
+msgid "Thank you for your generosity!"
+msgstr ""
+
+#: templates/admin/settings-page.php:1043
+#: templates/admin/settings-page.php:1050
+msgid "Debug Bar"
+msgstr ""
+
+#: templates/admin/settings-page.php:1055
+msgid "Former plugin's options (kept for retro-compatibility)"
+msgstr ""
+
+#: templates/admin/settings-page.php:1062
+msgid "Multi-Account: Accounts"
+msgstr ""
+
+#: templates/admin/settings-page.php:1069
+msgid "Multi-Account: Active Account"
+msgstr ""
+
+#: templates/admin/settings-page.php:1076
+msgid "Multi-Account: Global Settings"
+msgstr ""
+
+#: templates/admin/settings-page.php:1083
+msgid "Multi-Account: Schema Version"
+msgstr ""
+
+#: templates/frontend/posts-list.php:21
+msgid "List of the latest Bluesky Posts"
+msgstr ""
+
+#: templates/frontend/posts-list.php:52
+msgid "See Bluesky Profile"
+msgstr ""
+
+#. translators: %s is the post author's display name
+#: templates/frontend/posts-list.php:83
+msgid "View post by %s on Bluesky"
+msgstr ""
+
+#: templates/frontend/posts-list.php:398
+msgid "%s like"
+msgid_plural "%s likes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/frontend/posts-list.php:420
+msgid "%s repost"
+msgid_plural "%s reposts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/frontend/posts-list.php:442
+msgid "%s reply"
+msgid_plural "%s replies"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/frontend/posts-list.php:464
+msgid "%s quote"
+msgid_plural "%s quotes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/frontend/posts-list.php:513
+msgid "No posts yet"
+msgstr ""
+
+#. translators: %s is the Bluesky handle
+#: templates/frontend/profile-banner-compact.php:43
+#: templates/frontend/profile-card.php:39
+msgid "@%s on Bluesky"
+msgstr ""
+
+#: templates/frontend/profile-banner-compact.php:57
+#: templates/frontend/profile-card.php:48
+msgid "Followers"
+msgstr ""
+
+#: templates/frontend/profile-banner-compact.php:58
+#: templates/frontend/profile-card.php:55
+msgid "Following"
+msgstr ""
+
+#: templates/frontend/profile-banner-compact.php:59
+#: templates/frontend/profile-card.php:62
+msgid "Posts"
+msgstr ""
+
+#: templates/frontend/stale-indicator.php:21
+msgid "Last updated %s ago"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:31
+#: blocks/bluesky-profile-card.js:31
+msgid "Account"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:35
+#: blocks/bluesky-profile-card.js:35
+msgid "Display Account"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:48
+msgid "Posts Display Options"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:55
+#: blocks/bluesky-profile-card.js:55
+msgid "Layout"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:59
+#: blocks/bluesky-profile-card.js:59
+msgid "Default (global setting)"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:66
+#: blocks/bluesky-profile-card.js:66
+msgid "Normal"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:80
+msgid "Display Embeds"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:88
+msgid "Hide Replies"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:96
+msgid "Hide Reposts"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:104
+msgid "Hide Counters"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:137
+msgid "Number of Posts"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:156
+msgid "BlueSky Posts Feed"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:160
+#: blocks/bluesky-profile-card.js:150
+msgid "social"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:161
+msgid "feed"
+msgstr ""
+
+#: blocks/bluesky-posts-feed.js:162
+msgid "posts"
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:97
+msgid "Unable to generate preview."
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:106
+msgid "Error loading preview."
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:173
+#: blocks/bluesky-sidebar-panel.js:251
+msgid "Category rules will prevent syndication to this account."
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:243
+#: blocks/bluesky-sidebar-panel.js:305
+msgid "Post text:"
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:249
+#: blocks/bluesky-sidebar-panel.js:312
+msgid "Auto-generated from title and excerpt"
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:277
+#: blocks/bluesky-sidebar-panel.js:333
+msgid "Reset to default"
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:327
+#: blocks/bluesky-sidebar-panel.js:287
+msgid "Don't syndicate this post"
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:351
+msgid "Loading preview..."
+msgstr ""
+
+#: blocks/bluesky-pre-publish-panel.js:391
+msgid "Refresh Preview"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:48
+msgid "Profile Display Options"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:80
+msgid "Display Banner"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:88
+msgid "Display Avatar"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:96
+msgid "Display Counters"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:104
+msgid "Display Bio"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:146
+msgid "BlueSky Profile Card"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:151
+msgid "account"
+msgstr ""
+
+#: blocks/bluesky-profile-card.js:152
+msgid "card"
+msgstr ""
+
+#: blocks/bluesky-sidebar-panel.js:347
+msgid "Preview:"
+msgstr ""
+
+#: blocks/bluesky-sidebar-panel.js:355
+msgid "(Title and excerpt will be used)"
+msgstr ""

@@ -25,3 +25,6 @@ Thumbs.db
 .idea/
 .vscode/
 README.md
+
+# Translation template (not needed at runtime)
+languages/*.pot

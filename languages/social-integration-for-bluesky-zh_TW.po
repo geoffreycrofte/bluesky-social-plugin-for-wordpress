@@ -1,0 +1,1969 @@
+# Translation of Social Integration for BlueSky in Chinese (Taiwan)
+# Copyright (C) 2026 Geoffrey Crofte
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Social Integration for BlueSky 2.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/social-integration-for-bluesky\n"
+"Last-Translator: \n"
+"Language-Team: Chinese (Taiwan)\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-02-25T10:44:54+00:00\n"
+"PO-Revision-Date: 2026-02-25 12:00+0000\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: social-integration-for-bluesky\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Plugin Name of the plugin
+#: social-integration-for-bluesky.php
+#: classes/BlueSky_Settings_Service.php:68
+#: templates/admin/settings-page.php:20
+msgid "Social Integration for BlueSky"
+msgstr "BlueSky 社群整合"
+
+#. Description of the plugin
+#: social-integration-for-bluesky.php
+msgid "Integrates BlueSky social features into WordPress including: Post New Articles on BlueSky for you, Shortcode for Profile Card, and Widget to display your last posts. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>."
+msgstr "將 BlueSky 社群功能整合至 WordPress，包括：自動將新文章發佈到 BlueSky、個人檔案卡片的 shortcode，以及顯示最新貼文的 widget。您也可以使用 shortcode <code>[bluesky_profile]</code> 和 <code>[bluesky_last_posts]</code>。"
+
+#. Author of the plugin
+#: social-integration-for-bluesky.php
+msgid "Geoffrey Crofte"
+msgstr "Geoffrey Crofte"
+
+#. Author URI of the plugin
+#: social-integration-for-bluesky.php
+msgid "https://geoffreycrofte.com"
+msgstr "https://geoffreycrofte.com"
+
+#: classes/BlueSky_Account_Manager.php:68
+msgid "BlueSky migration failed: %s"
+msgstr "BlueSky 遷移失敗：%s"
+
+#: classes/BlueSky_Account_Manager.php:254
+msgid "Account handle is required."
+msgstr "帳號代號為必填。"
+
+#: classes/BlueSky_Account_Manager.php:257
+msgid "App password is required."
+msgstr "應用程式密碼為必填。"
+
+#: classes/BlueSky_Account_Manager.php:268
+msgid "An account with handle \"%s\" already exists."
+msgstr "代號為「%s」的帳號已存在。"
+
+#: classes/BlueSky_Account_Manager.php:282
+#: classes/BlueSky_Account_Manager.php:414
+msgid "Failed to encrypt app password."
+msgstr "無法加密應用程式密碼。"
+
+#: classes/BlueSky_Account_Manager.php:325
+#: classes/BlueSky_Account_Manager.php:368
+#: classes/BlueSky_Account_Manager.php:393
+msgid "Account not found."
+msgstr "找不到帳號。"
+
+#: classes/BlueSky_Activity_Logger.php:137
+msgid "%s ago"
+msgstr "%s前"
+
+#: classes/BlueSky_Admin_Actions.php:25
+msgid "Security check failed."
+msgstr "安全性驗證失敗。"
+
+#: classes/BlueSky_Admin_Actions.php:36
+msgid "Successfully logged out from Bluesky."
+msgstr "已成功從 Bluesky 登出。"
+
+#: classes/BlueSky_Admin_Actions.php:43
+msgid "Logout failed. Please try again."
+msgstr "登出失敗，請再試一次。"
+
+#: classes/BlueSky_Admin_Notices.php:99
+msgid "The Bluesky account %s needs re-authentication. <a href=\"%s\">Update credentials</a>"
+msgstr "Bluesky 帳號 %s 需要重新驗證。<a href=\"%s\">更新憑證</a>"
+
+#: classes/BlueSky_Admin_Notices.php:114
+msgid " ...and %d more"
+msgstr " ...還有 %d 個"
+
+#: classes/BlueSky_Admin_Notices.php:118
+msgid "Bluesky accounts %s need re-authentication. <a href=\"%s\">Update credentials</a>"
+msgstr "Bluesky 帳號 %s 需要重新驗證。<a href=\"%s\">更新憑證</a>"
+
+#: classes/BlueSky_Admin_Notices.php:162
+#: classes/BlueSky_Error_Translator.php:174
+msgid "Bluesky requests paused due to repeated errors. Will resume automatically."
+msgstr "由於重複發生錯誤，Bluesky 請求已暫停，將會自動恢復。"
+
+#: classes/BlueSky_Admin_Notices.php:195
+#: classes/BlueSky_Assets_Service.php:222
+#: classes/BlueSky_Error_Translator.php:165
+msgid "Syndicating to Bluesky..."
+msgstr "正在同步到 Bluesky..."
+
+#. translators: %d: number of accounts
+#: classes/BlueSky_Admin_Notices.php:205
+msgid "Successfully syndicated to %d Bluesky account."
+msgid_plural "Successfully syndicated to %d Bluesky accounts."
+msgstr[0] "已成功同步到 %d 個 Bluesky 帳號。"
+
+#: classes/BlueSky_Admin_Notices.php:223
+msgid "Syndication failed:"
+msgstr "同步失敗："
+
+#: classes/BlueSky_Admin_Notices.php:225
+#: classes/BlueSky_Admin_Notices.php:272
+msgid "Unknown error"
+msgstr "未知錯誤"
+
+#: classes/BlueSky_Admin_Notices.php:229
+msgid "Failed to syndicate to Bluesky."
+msgstr "無法同步到 Bluesky。"
+
+#: classes/BlueSky_Admin_Notices.php:235
+#: classes/BlueSky_Assets_Service.php:228
+msgid "Retry now"
+msgstr "立即重試"
+
+#: classes/BlueSky_Admin_Notices.php:238
+msgid "Will retry automatically."
+msgstr "將自動重試。"
+
+#. translators: %d: retry attempt number
+#: classes/BlueSky_Admin_Notices.php:249
+msgid "Retrying syndication to Bluesky (attempt %d)..."
+msgstr "正在重試同步到 Bluesky（第 %d 次嘗試）..."
+
+#: classes/BlueSky_Admin_Notices.php:260
+msgid "Partial syndication:"
+msgstr "部分同步："
+
+#: classes/BlueSky_Admin_Notices.php:265
+msgid "Posted successfully"
+msgstr "發佈成功"
+
+#: classes/BlueSky_Admin_Notices.php:280
+msgid "Retry failed accounts"
+msgstr "重試失敗的帳號"
+
+#: classes/BlueSky_Admin_Notices.php:283
+msgid "Will retry failed accounts automatically."
+msgstr "將自動重試失敗的帳號。"
+
+#: classes/BlueSky_Admin_Notices.php:292
+msgid "Syndication paused due to API issues. Will retry automatically in 15 minutes."
+msgstr "由於 API 問題，同步已暫停，將在 15 分鐘後自動重試。"
+
+#: classes/BlueSky_Admin_Notices.php:299
+msgid "Syndication paused due to rate limiting. Will retry automatically when limit resets."
+msgstr "由於速率限制，同步已暫停，將在限制重設後自動重試。"
+
+#: classes/BlueSky_Admin_Notices.php:358
+msgid "Invalid post or insufficient permissions."
+msgstr "無效的文章或權限不足。"
+
+#: classes/BlueSky_Admin_Notices.php:375
+msgid "No accounts found to retry."
+msgstr "找不到可重試的帳號。"
+
+#: classes/BlueSky_Admin_Notices.php:386
+msgid "Syndication retry scheduled."
+msgstr "已排程重新同步。"
+
+#: classes/BlueSky_Admin_Notices.php:403
+msgid "Bluesky"
+msgstr "Bluesky"
+
+#: classes/BlueSky_Admin_Notices.php:432
+msgid "Syndicating..."
+msgstr "同步中..."
+
+#: classes/BlueSky_Admin_Notices.php:436
+msgid "Syndicated"
+msgstr "已同步"
+
+#: classes/BlueSky_Admin_Notices.php:441
+msgid "Failed"
+msgstr "失敗"
+
+#: classes/BlueSky_Admin_Notices.php:442
+msgid "Retry"
+msgstr "重試"
+
+#: classes/BlueSky_Admin_Notices.php:447
+msgid "Partially syndicated"
+msgstr "部分已同步"
+
+#: classes/BlueSky_Admin_Notices.php:451
+msgid "Waiting for cooldown"
+msgstr "等待冷卻中"
+
+#: classes/BlueSky_Admin_Notices.php:455
+#: classes/BlueSky_Health_Dashboard.php:212
+#: classes/BlueSky_Settings_Service.php:1390
+msgid "Rate limited"
+msgstr "已達速率限制"
+
+#: classes/BlueSky_Admin_Notices.php:479
+msgid "Invalid notice key."
+msgstr "無效的通知金鑰。"
+
+#: classes/BlueSky_AJAX_Service.php:59
+msgid "Could not fetch posts"
+msgstr "無法取得貼文"
+
+#: classes/BlueSky_AJAX_Service.php:76
+msgid "Could not fetch profile"
+msgstr "無法取得個人檔案"
+
+#: classes/BlueSky_AJAX_Service.php:152
+#: classes/BlueSky_AJAX_Service.php:188
+msgid "Unauthorized"
+msgstr "未授權"
+
+#: classes/BlueSky_AJAX_Service.php:193
+msgid "Account manager not available"
+msgstr "帳號管理員不可用"
+
+#: classes/BlueSky_AJAX_Service.php:203
+msgid "Discussion account updated."
+msgstr "討論帳號已更新。"
+
+#: classes/BlueSky_Assets_Service.php:86
+#: classes/BlueSky_Assets_Service.php:132
+msgid "Connection to BlueSky failed. Please check your credentials."
+msgstr "連線到 BlueSky 失敗，請檢查您的憑證。"
+
+#: classes/BlueSky_Assets_Service.php:87
+#: classes/BlueSky_Assets_Service.php:133
+msgid "Handle or app password is not configured."
+msgstr "代號或應用程式密碼尚未設定。"
+
+#: classes/BlueSky_Assets_Service.php:88
+#: classes/BlueSky_Assets_Service.php:134
+msgid "Could not reach BlueSky servers:"
+msgstr "無法連線到 BlueSky 伺服器："
+
+#: classes/BlueSky_Assets_Service.php:89
+#: classes/BlueSky_Assets_Service.php:135
+msgid "BlueSky rate limit exceeded. Please wait a few minutes before trying again."
+msgstr "已超過 BlueSky 速率限制，請稍候幾分鐘後再試。"
+
+#: classes/BlueSky_Assets_Service.php:90
+#: classes/BlueSky_Assets_Service.php:136
+msgid "Resets at"
+msgstr "重設時間"
+
+#: classes/BlueSky_Assets_Service.php:91
+#: classes/BlueSky_Assets_Service.php:137
+msgid "BlueSky requires email 2FA verification. Use an App Password instead to bypass 2FA."
+msgstr "BlueSky 需要電子郵件雙重驗證。請改用應用程式密碼來略過雙重驗證。"
+
+#: classes/BlueSky_Assets_Service.php:92
+#: classes/BlueSky_Assets_Service.php:138
+msgid "This BlueSky account has been taken down."
+msgstr "此 BlueSky 帳號已被停用。"
+
+#: classes/BlueSky_Assets_Service.php:93
+#: classes/BlueSky_Assets_Service.php:139
+msgid "Invalid handle or password. Please check your credentials."
+msgstr "無效的代號或密碼，請檢查您的憑證。"
+
+#: classes/BlueSky_Assets_Service.php:94
+#: classes/BlueSky_Assets_Service.php:140
+msgid "Connection to BlueSky successful!"
+msgstr "已成功連線到 BlueSky！"
+
+#: classes/BlueSky_Assets_Service.php:95
+#: classes/BlueSky_Assets_Service.php:141
+msgid "Log out from this account"
+msgstr "從此帳號登出"
+
+#: classes/BlueSky_Assets_Service.php:96
+#: classes/BlueSky_Assets_Service.php:142
+msgid "Could not check connection status."
+msgstr "無法檢查連線狀態。"
+
+#: classes/BlueSky_Assets_Service.php:97
+#: classes/BlueSky_Assets_Service.php:143
+msgid "Unable to load Bluesky content."
+msgstr "無法載入 Bluesky 內容。"
+
+#: classes/BlueSky_Assets_Service.php:98
+#: classes/BlueSky_Assets_Service.php:144
+msgid "Connection failed:"
+msgstr "連線失敗："
+
+#: classes/BlueSky_Assets_Service.php:223
+msgid "Successfully syndicated to Bluesky."
+msgstr "已成功同步到 Bluesky。"
+
+#: classes/BlueSky_Assets_Service.php:224
+msgid "Successfully syndicated to %d Bluesky accounts."
+msgstr "已成功同步到 %d 個 Bluesky 帳號。"
+
+#: classes/BlueSky_Assets_Service.php:225
+msgid "Failed to syndicate to Bluesky accounts: %s"
+msgstr "無法同步到 Bluesky 帳號：%s"
+
+#: classes/BlueSky_Assets_Service.php:226
+msgid "Partially syndicated: some accounts failed."
+msgstr "部分同步：部分帳號失敗。"
+
+#: classes/BlueSky_Assets_Service.php:227
+#: classes/BlueSky_Error_Translator.php:168
+msgid "Retrying syndication to Bluesky..."
+msgstr "正在重試同步到 Bluesky..."
+
+#: classes/BlueSky_Assets_Service.php:229
+msgid "Retry failed"
+msgstr "重試失敗"
+
+#: classes/BlueSky_Assets_Service.php:230
+msgid "Failed to retry syndication. Please try again."
+msgstr "無法重試同步，請再試一次。"
+
+#: classes/BlueSky_Assets_Service.php:231
+msgid "unknown"
+msgstr "未知"
+
+#: classes/BlueSky_Blocks_Service.php:78
+#: classes/widgets/BlueSky_Posts_Widget.php:59
+#: classes/widgets/BlueSky_Profile_Widget.php:58
+msgid "Active Account (default)"
+msgstr "使用中帳號（預設）"
+
+#: classes/BlueSky_Blocks_Service.php:227
+msgid "Rounded"
+msgstr "圓角"
+
+#: classes/BlueSky_Blocks_Service.php:232
+msgid "Outline"
+msgstr "外框"
+
+#: classes/BlueSky_Blocks_Service.php:236
+msgid "Squared"
+msgstr "方角"
+
+#: classes/BlueSky_Discussion_Frontend.php:195
+#: classes/BlueSky_Discussion_Frontend.php:217
+#: classes/BlueSky_Discussion_Metabox.php:133
+msgid "Bluesky Discussion"
+msgstr "Bluesky 討論"
+
+#: classes/BlueSky_Discussion_Frontend.php:205
+#: classes/BlueSky_Discussion_Frontend.php:227
+#: classes/BlueSky_Discussion_Metabox.php:233
+msgid "View on Bluesky"
+msgstr "在 Bluesky 上查看"
+
+#: classes/BlueSky_Discussion_Frontend.php:340
+#: classes/BlueSky_Discussion_Renderer.php:518
+msgid "No replies yet. Be the first to comment on Bluesky!"
+msgstr "尚無回覆，快來成為第一個在 Bluesky 上留言的人！"
+
+#: classes/BlueSky_Discussion_Frontend.php:548
+msgid "Reply on Bluesky"
+msgstr "在 Bluesky 上回覆"
+
+#: classes/BlueSky_Discussion_Frontend.php:570
+#: classes/BlueSky_Discussion_Frontend.php:586
+msgid "Show %d reply"
+msgid_plural "Show %d replies"
+msgstr[0] "顯示 %d 則回覆"
+
+#: classes/BlueSky_Discussion_Frontend.php:581
+msgid "Hide replies"
+msgstr "隱藏回覆"
+
+#: classes/BlueSky_Discussion_Metabox.php:184
+msgid "Loading discussion..."
+msgstr "正在載入討論..."
+
+#: classes/BlueSky_Discussion_Metabox.php:203
+msgid "No Bluesky post information found."
+msgstr "找不到 Bluesky 貼文資訊。"
+
+#: classes/BlueSky_Discussion_Metabox.php:213
+msgid "Invalid Bluesky post data."
+msgstr "無效的 Bluesky 貼文資料。"
+
+#: classes/BlueSky_Discussion_Metabox.php:242
+#: classes/BlueSky_Health_Dashboard.php:136
+msgid "Refresh"
+msgstr "重新整理"
+
+#: classes/BlueSky_Discussion_Metabox.php:249
+msgid "Unlink"
+msgstr "取消連結"
+
+#: classes/BlueSky_Discussion_Metabox.php:274
+#: classes/BlueSky_Discussion_Metabox.php:306
+msgid "Invalid permissions"
+msgstr "無效的權限"
+
+#: classes/BlueSky_Discussion_Metabox.php:280
+msgid "No Bluesky post information found"
+msgstr "找不到 Bluesky 貼文資訊"
+
+#: classes/BlueSky_Discussion_Renderer.php:60
+msgid "Likes"
+msgstr "讚"
+
+#: classes/BlueSky_Discussion_Renderer.php:73
+msgid "Reposts"
+msgstr "轉貼"
+
+#: classes/BlueSky_Discussion_Renderer.php:86
+msgid "Replies"
+msgstr "回覆"
+
+#: classes/BlueSky_Discussion_Renderer.php:99
+msgid "Quotes"
+msgstr "引用"
+
+#: classes/BlueSky_Discussion_Renderer.php:123
+msgid "Discussion on Bluesky"
+msgstr "Bluesky 上的討論"
+
+#: classes/BlueSky_Discussion_Renderer.php:326
+msgid "Your browser does not support the video tag."
+msgstr "您的瀏覽器不支援影片標籤。"
+
+#: classes/BlueSky_Discussion_Renderer.php:392
+msgid "%s second ago"
+msgid_plural "%s seconds ago"
+msgstr[0] "%s 秒前"
+
+#: classes/BlueSky_Discussion_Renderer.php:405
+msgid "%s minute ago"
+msgid_plural "%s minutes ago"
+msgstr[0] "%s 分鐘前"
+
+#: classes/BlueSky_Discussion_Renderer.php:418
+msgid "%s hour ago"
+msgid_plural "%s hours ago"
+msgstr[0] "%s 小時前"
+
+#: classes/BlueSky_Discussion_Renderer.php:431
+msgid "%s day ago"
+msgid_plural "%s days ago"
+msgstr[0] "%s 天前"
+
+#: classes/BlueSky_Discussion_Renderer.php:444
+msgid "%s week ago"
+msgid_plural "%s weeks ago"
+msgstr[0] "%s 週前"
+
+#: classes/BlueSky_Discussion_Renderer.php:456
+msgid "%s month ago"
+msgid_plural "%s months ago"
+msgstr[0] "%s 個月前"
+
+#: classes/BlueSky_Discussion_Renderer.php:491
+msgid "Unable to fetch post data from Bluesky."
+msgstr "無法從 Bluesky 取得貼文資料。"
+
+#: classes/BlueSky_Error_Translator.php:37
+msgid "We couldn't connect to Bluesky. Your credentials may have expired."
+msgstr "無法連線到 Bluesky，您的憑證可能已過期。"
+
+#: classes/BlueSky_Error_Translator.php:39
+#: classes/BlueSky_Error_Translator.php:66
+#: classes/BlueSky_Error_Translator.php:85
+msgid "Go to Settings"
+msgstr "前往設定"
+
+#: classes/BlueSky_Error_Translator.php:48
+msgid "Bluesky is temporarily rate limiting requests. Your post will be retried automatically."
+msgstr "Bluesky 暫時限制了請求速率，您的貼文將自動重試。"
+
+#: classes/BlueSky_Error_Translator.php:56
+msgid "Couldn't reach Bluesky right now. This is usually temporary. Your post will be retried automatically."
+msgstr "目前無法連線到 Bluesky，這通常是暫時性的。您的貼文將自動重試。"
+
+#: classes/BlueSky_Error_Translator.php:64
+msgid "The Bluesky handle appears to be invalid. Please check that you entered it correctly."
+msgstr "Bluesky 代號似乎無效，請確認您輸入的內容是否正確。"
+
+#: classes/BlueSky_Error_Translator.php:75
+msgid "Bluesky couldn't process this request. The post content may have an issue."
+msgstr "Bluesky 無法處理此請求，貼文內容可能有問題。"
+
+#: classes/BlueSky_Error_Translator.php:83
+msgid "You don't have permission for this action on Bluesky. Your account settings may need updating."
+msgstr "您沒有在 Bluesky 上執行此操作的權限，您的帳號設定可能需要更新。"
+
+#: classes/BlueSky_Error_Translator.php:94
+msgid "Bluesky is experiencing issues right now. Your post will be retried automatically."
+msgstr "Bluesky 目前遇到問題，您的貼文將自動重試。"
+
+#: classes/BlueSky_Error_Translator.php:114
+msgid "Something went wrong while connecting to Bluesky. Please try again."
+msgstr "連線到 Bluesky 時發生錯誤，請再試一次。"
+
+#: classes/BlueSky_Error_Translator.php:120
+msgid "We couldn't post to Bluesky right now. Your post will be retried automatically."
+msgstr "目前無法發佈到 Bluesky，您的貼文將自動重試。"
+
+#: classes/BlueSky_Error_Translator.php:126
+msgid "We couldn't load Bluesky content right now. Please try refreshing the page."
+msgstr "目前無法載入 Bluesky 內容，請嘗試重新整理頁面。"
+
+#: classes/BlueSky_Error_Translator.php:133
+msgid "Something went wrong with the Bluesky connection. Please try again."
+msgstr "Bluesky 連線發生問題，請再試一次。"
+
+#: classes/BlueSky_Error_Translator.php:148
+msgid "Bluesky requests are paused due to repeated errors. They'll resume automatically."
+msgstr "由於重複發生錯誤，Bluesky 請求已暫停，將會自動恢復。"
+
+#: classes/BlueSky_Error_Translator.php:151
+msgid "Bluesky connection is healthy."
+msgstr "Bluesky 連線正常。"
+
+#: classes/BlueSky_Error_Translator.php:171
+msgid "Rate limited — will retry automatically."
+msgstr "已達速率限制 — 將自動重試。"
+
+#: classes/BlueSky_Error_Translator.php:177
+msgid "Successfully posted to Bluesky."
+msgstr "已成功發佈到 Bluesky。"
+
+#: classes/BlueSky_Error_Translator.php:180
+msgid "Couldn't post to Bluesky."
+msgstr "無法發佈到 Bluesky。"
+
+#: classes/BlueSky_Error_Translator.php:183
+msgid "Posted to some Bluesky accounts. Some accounts had issues."
+msgstr "已發佈到部分 Bluesky 帳號，某些帳號遇到問題。"
+
+#: classes/BlueSky_Error_Translator.php:186
+msgid "Unknown syndication status."
+msgstr "未知的同步狀態。"
+
+#: classes/BlueSky_Health_Dashboard.php:51
+msgid "Bluesky Integration Health"
+msgstr "Bluesky 整合健康狀態"
+
+#: classes/BlueSky_Health_Dashboard.php:76
+#: classes/BlueSky_Settings_Service.php:1359
+msgid "Account Status"
+msgstr "帳號狀態"
+
+#: classes/BlueSky_Health_Dashboard.php:87
+#: classes/BlueSky_Settings_Service.php:1409
+msgid "No accounts configured."
+msgstr "尚未設定任何帳號。"
+
+#: classes/BlueSky_Health_Dashboard.php:93
+msgid "Last Syndication"
+msgstr "上次同步"
+
+#: classes/BlueSky_Health_Dashboard.php:99
+#: classes/BlueSky_Settings_Service.php:1418
+msgid "API Health"
+msgstr "API 健康狀態"
+
+#: classes/BlueSky_Health_Dashboard.php:105
+#: classes/BlueSky_Settings_Service.php:1444
+msgid "Cache Status"
+msgstr "快取狀態"
+
+#: classes/BlueSky_Health_Dashboard.php:111
+msgid "Pending Retries"
+msgstr "待重試"
+
+#: classes/BlueSky_Health_Dashboard.php:117
+#: classes/BlueSky_Settings_Service.php:1508
+msgid "Recent Activity"
+msgstr "最近活動"
+
+#: classes/BlueSky_Health_Dashboard.php:128
+#: classes/BlueSky_Settings_Service.php:1524
+msgid "No recent activity recorded."
+msgstr "沒有記錄到最近的活動。"
+
+#: classes/BlueSky_Health_Dashboard.php:138
+msgid "View detailed health"
+msgstr "查看詳細健康狀態"
+
+#: classes/BlueSky_Health_Dashboard.php:185
+msgid "No recent syndication"
+msgstr "沒有最近的同步"
+
+#: classes/BlueSky_Health_Dashboard.php:186
+#: classes/BlueSky_Settings_Service.php:1438
+msgid "All systems operational"
+msgstr "所有系統運作正常"
+
+#: classes/BlueSky_Health_Dashboard.php:209
+#: classes/BlueSky_Settings_Service.php:1386
+msgid "Circuit open"
+msgstr "斷路器開啟"
+
+#: classes/BlueSky_Health_Dashboard.php:215
+#: classes/BlueSky_Settings_Service.php:1394
+msgid "Auth issue"
+msgstr "驗證問題"
+
+#: classes/BlueSky_Health_Dashboard.php:218
+#: classes/BlueSky_Settings_Service.php:783
+#: classes/BlueSky_Settings_Service.php:1398
+msgid "Active"
+msgstr "使用中"
+
+#: classes/BlueSky_Health_Dashboard.php:248
+msgid "Circuit open for: %s"
+msgstr "斷路器開啟：%s"
+
+#: classes/BlueSky_Health_Dashboard.php:259
+msgid "Profile and posts cached"
+msgstr "個人檔案與貼文已快取"
+
+#: classes/BlueSky_Health_Dashboard.php:261
+msgid "Profile cached, posts not cached"
+msgstr "個人檔案已快取，貼文未快取"
+
+#: classes/BlueSky_Health_Dashboard.php:263
+msgid "Posts cached, profile not cached"
+msgstr "貼文已快取，個人檔案未快取"
+
+#: classes/BlueSky_Health_Dashboard.php:265
+msgid "No cache active"
+msgstr "沒有啟用快取"
+
+#: classes/BlueSky_Health_Dashboard.php:285
+msgid "%d post pending"
+msgid_plural "%d posts pending"
+msgstr[0] "%d 篇貼文待處理"
+
+#: classes/BlueSky_Health_Monitor.php:47
+#: classes/BlueSky_Health_Monitor.php:96
+msgid "Bluesky accounts configured"
+msgstr "已設定的 Bluesky 帳號"
+
+#: classes/BlueSky_Health_Monitor.php:52
+msgid "Bluesky credentials valid"
+msgstr "Bluesky 憑證有效"
+
+#: classes/BlueSky_Health_Monitor.php:57
+msgid "Bluesky API connections"
+msgstr "Bluesky API 連線"
+
+#: classes/BlueSky_Health_Monitor.php:76
+msgid "No Bluesky accounts configured"
+msgstr "尚未設定 Bluesky 帳號"
+
+#: classes/BlueSky_Health_Monitor.php:79
+#: classes/BlueSky_Health_Monitor.php:99
+#: classes/BlueSky_Health_Monitor.php:208
+#: classes/BlueSky_Health_Monitor.php:233
+msgid "Performance"
+msgstr "效能"
+
+#: classes/BlueSky_Health_Monitor.php:84
+msgid "Your site is not currently connected to any Bluesky accounts. To enable syndication and display features, add at least one account in the plugin settings."
+msgstr "您的網站目前未連結任何 Bluesky 帳號。若要啟用同步與顯示功能，請在外掛設定中新增至少一個帳號。"
+
+#: classes/BlueSky_Health_Monitor.php:89
+#: classes/BlueSky_Health_Monitor.php:163
+msgid "Go to Bluesky Settings"
+msgstr "前往 Bluesky 設定"
+
+#: classes/BlueSky_Health_Monitor.php:105
+msgid "Your site is connected to %d Bluesky account."
+msgid_plural "Your site is connected to %d Bluesky accounts."
+msgstr[0] "您的網站已連結 %d 個 Bluesky 帳號。"
+
+#: classes/BlueSky_Health_Monitor.php:141
+msgid "Bluesky accounts need re-authentication"
+msgstr "Bluesky 帳號需要重新驗證"
+
+#: classes/BlueSky_Health_Monitor.php:144
+#: classes/BlueSky_Health_Monitor.php:173
+msgid "Security"
+msgstr "安全性"
+
+#: classes/BlueSky_Health_Monitor.php:150
+msgid "%d Bluesky account has authentication errors and needs to be re-authenticated:"
+msgid_plural "%d Bluesky accounts have authentication errors and need to be re-authenticated:"
+msgstr[0] "%d 個 Bluesky 帳號有驗證錯誤，需要重新驗證："
+
+#: classes/BlueSky_Health_Monitor.php:170
+msgid "All Bluesky credentials valid"
+msgstr "所有 Bluesky 憑證有效"
+
+#: classes/BlueSky_Health_Monitor.php:178
+msgid "All Bluesky accounts are properly authenticated and ready to use."
+msgstr "所有 Bluesky 帳號已正確驗證，可以使用。"
+
+#: classes/BlueSky_Health_Monitor.php:205
+msgid "Bluesky API requests paused"
+msgstr "Bluesky API 請求已暫停"
+
+#: classes/BlueSky_Health_Monitor.php:214
+msgid "%d Bluesky account has experienced repeated API failures and is currently in a cooldown period:"
+msgid_plural "%d Bluesky accounts have experienced repeated API failures and are currently in cooldown periods:"
+msgstr[0] "%d 個 Bluesky 帳號遇到重複的 API 失敗，目前正在冷卻期間："
+
+#: classes/BlueSky_Health_Monitor.php:222
+msgid "Requests to these accounts will resume automatically after the cooldown period expires (15 minutes). This is normal behavior when the API is experiencing issues."
+msgstr "這些帳號的請求將在冷卻期結束後（15 分鐘）自動恢復。這是 API 遇到問題時的正常行為。"
+
+#: classes/BlueSky_Health_Monitor.php:230
+msgid "Bluesky API connections healthy"
+msgstr "Bluesky API 連線正常"
+
+#: classes/BlueSky_Health_Monitor.php:238
+msgid "All Bluesky accounts are responding normally with no circuit breaker activations."
+msgstr "所有 Bluesky 帳號回應正常，未觸發任何斷路器。"
+
+#: classes/BlueSky_Health_Monitor.php:261
+msgid "Plugin Version"
+msgstr "外掛版本"
+
+#: classes/BlueSky_Health_Monitor.php:265
+msgid "Account Count"
+msgstr "帳號數量"
+
+#: classes/BlueSky_Health_Monitor.php:269
+msgid "API Endpoint"
+msgstr "API 端點"
+
+#: classes/BlueSky_Health_Monitor.php:273
+#: classes/BlueSky_Settings_Service.php:507
+msgid "Cache Duration"
+msgstr "快取時間"
+
+#: classes/BlueSky_Health_Monitor.php:275
+#: classes/BlueSky_Settings_Service.php:1753
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d 分鐘"
+
+#: classes/BlueSky_Health_Monitor.php:280
+msgid "Action Scheduler"
+msgstr "Action Scheduler"
+
+#: classes/BlueSky_Health_Monitor.php:282
+msgid "Available"
+msgstr "可用"
+
+#: classes/BlueSky_Health_Monitor.php:283
+msgid "Not available"
+msgstr "不可用"
+
+#: classes/BlueSky_Health_Monitor.php:293
+msgid "Connected"
+msgstr "已連線"
+
+#: classes/BlueSky_Health_Monitor.php:294
+msgid "Paused (too many errors)"
+msgstr "已暫停（錯誤過多）"
+
+#: classes/BlueSky_Health_Monitor.php:297
+msgid "Yes — waiting before retrying"
+msgstr "是 — 等待後重試"
+
+#: classes/BlueSky_Health_Monitor.php:298
+msgid "No"
+msgstr "否"
+
+#: classes/BlueSky_Health_Monitor.php:302
+msgid "Account: %s"
+msgstr "帳號：%s"
+
+#: classes/BlueSky_Health_Monitor.php:306
+msgid "API Status: %s | Throttled: %s"
+msgstr "API 狀態：%s | 限流：%s"
+
+#: classes/BlueSky_Health_Monitor.php:315
+msgid "Bluesky Integration"
+msgstr "Bluesky 整合"
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:100
+msgid "BlueSky Error: %s"
+msgstr "BlueSky 錯誤：%s"
+
+#: classes/BlueSky_Helpers.php:128
+#: classes/BlueSky_Helpers.php:171
+msgid "OpenSSL encryption is not available on your server."
+msgstr "您的伺服器不支援 OpenSSL 加密。"
+
+#: classes/BlueSky_Helpers.php:149
+msgid "Encryption failed. Please check your server configuration."
+msgstr "加密失敗，請檢查您的伺服器設定。"
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:157
+msgid "Encryption failed: %s"
+msgstr "加密失敗：%s"
+
+#: classes/BlueSky_Helpers.php:184
+msgid "Invalid encrypted data format."
+msgstr "無效的加密資料格式。"
+
+#: classes/BlueSky_Helpers.php:190
+msgid "Corrupted encrypted data."
+msgstr "加密資料已損毀。"
+
+#: classes/BlueSky_Helpers.php:205
+msgid "Decryption failed. The data might be corrupted or the encryption key has changed."
+msgstr "解密失敗。資料可能已損毀或加密金鑰已變更。"
+
+#. translators: %s is the error message
+#: classes/BlueSky_Helpers.php:213
+msgid "Decryption failed: %s"
+msgstr "解密失敗：%s"
+
+#: classes/BlueSky_Post_Metabox.php:175
+#: blocks/bluesky-pre-publish-panel.js:305
+#: blocks/bluesky-sidebar-panel.js:268
+msgid "Bluesky Syndication"
+msgstr "Bluesky 同步"
+
+#: classes/BlueSky_Post_Metabox.php:226
+#: blocks/bluesky-pre-publish-panel.js:317
+#: blocks/bluesky-sidebar-panel.js:277
+msgid "Syndication is globally paused."
+msgstr "同步已全域暫停。"
+
+#: classes/BlueSky_Post_Metabox.php:227
+#: blocks/bluesky-pre-publish-panel.js:322
+#: blocks/bluesky-sidebar-panel.js:282
+msgid "Manage in Settings"
+msgstr "在設定中管理"
+
+#: classes/BlueSky_Post_Metabox.php:236
+msgid "Don't syndicate this post on Bluesky"
+msgstr "不要將此文章同步到 Bluesky"
+
+#: classes/BlueSky_Post_Metabox.php:245
+msgid "Check to avoid sending the post on Bluesky. Uncheck to send this post on Bluesky."
+msgstr "勾選以避免將文章發送到 Bluesky。取消勾選以將此文章發送到 Bluesky。"
+
+#: classes/BlueSky_Post_Metabox.php:277
+#: blocks/bluesky-pre-publish-panel.js:145
+#: blocks/bluesky-sidebar-panel.js:220
+msgid "Syndicate to:"
+msgstr "同步至："
+
+#: classes/BlueSky_Post_Metabox.php:411
+#: classes/BlueSky_Post_Metabox.php:442
+msgid "Invalid nonce"
+msgstr "無效的 nonce"
+
+#: classes/BlueSky_Post_Metabox.php:416
+#: classes/BlueSky_Post_Metabox.php:449
+msgid "Insufficient permissions"
+msgstr "權限不足"
+
+#: classes/BlueSky_Post_Metabox.php:541
+msgid "Post Text:"
+msgstr "貼文內容："
+
+#: classes/BlueSky_Post_Metabox.php:547
+msgid "Characters: %d / 300"
+msgstr "字元數：%d / 300"
+
+#: classes/BlueSky_Post_Metabox.php:561
+msgid "Link Card:"
+msgstr "連結卡片："
+
+#: classes/BlueSky_Post_Metabox.php:602
+msgid "No image found. The post will include a text link instead of a link card."
+msgstr "找不到圖片。文章將包含文字連結，而非連結卡片。"
+
+#: classes/BlueSky_Render_Front.php:416
+#: classes/BlueSky_Render_Front.php:539
+msgid "BlueSky Social Card of %s"
+msgstr "%s 的 BlueSky 社群卡片"
+
+#: classes/BlueSky_Render_Front.php:494
+msgid "Unable to fetch BlueSky profile."
+msgstr "無法取得 BlueSky 個人檔案。"
+
+#: classes/BlueSky_Render_Front.php:726
+#: templates/frontend/skeleton-posts-list.php:17
+msgid "Loading Bluesky Posts"
+msgstr "正在載入 Bluesky 貼文"
+
+#: classes/BlueSky_Render_Front.php:761
+msgid "Loading Bluesky Profile"
+msgstr "正在載入 Bluesky 個人檔案"
+
+#: classes/BlueSky_Settings_Service.php:56
+msgid "Settings"
+msgstr "設定"
+
+#: classes/BlueSky_Settings_Service.php:72
+msgid "BlueSky Settings"
+msgstr "BlueSky 設定"
+
+#: classes/BlueSky_Settings_Service.php:95
+msgid "BlueSky Account Settings"
+msgstr "BlueSky 帳號設定"
+
+#: classes/BlueSky_Settings_Service.php:112
+#: templates/admin/settings-page.php:40
+msgid "Feed Options"
+msgstr "動態牆選項"
+
+#: classes/BlueSky_Settings_Service.php:128
+msgid "BlueSky Discussions Settings"
+msgstr "BlueSky 討論設定"
+
+#: classes/BlueSky_Settings_Service.php:362
+msgid "Account \"%s\" added and authenticated."
+msgstr "帳號「%s」已新增並完成驗證。"
+
+#: classes/BlueSky_Settings_Service.php:369
+msgid "Account \"%s\" added but could not authenticate. Check credentials."
+msgstr "帳號「%s」已新增，但無法完成驗證。請檢查憑證。"
+
+#: classes/BlueSky_Settings_Service.php:443
+msgid "BlueSky Handle"
+msgstr "BlueSky 代號"
+
+#: classes/BlueSky_Settings_Service.php:451
+msgid "BlueSky Password"
+msgstr "BlueSky 密碼"
+
+#: classes/BlueSky_Settings_Service.php:459
+msgid "Multi-Account Support"
+msgstr "多帳號支援"
+
+#: classes/BlueSky_Settings_Service.php:467
+msgid "Number of Posts to Display"
+msgstr "顯示貼文數量"
+
+#: classes/BlueSky_Settings_Service.php:475
+msgid "Do not display replies"
+msgstr "不顯示回覆"
+
+#: classes/BlueSky_Settings_Service.php:483
+msgid "Do not display reposts"
+msgstr "不顯示轉貼"
+
+#: classes/BlueSky_Settings_Service.php:491
+msgid "Do not display embeds"
+msgstr "不顯示嵌入內容"
+
+#: classes/BlueSky_Settings_Service.php:499
+msgid "Do not display counters"
+msgstr "不顯示計數器"
+
+#: classes/BlueSky_Settings_Service.php:515
+msgid "Enable Bluesky Discussions"
+msgstr "啟用 Bluesky 討論"
+
+#: classes/BlueSky_Settings_Service.php:523
+msgid "Discussion Thread Source"
+msgstr "討論串來源"
+
+#: classes/BlueSky_Settings_Service.php:531
+msgid "Display Multiple Levels of Replies"
+msgstr "顯示多層回覆"
+
+#: classes/BlueSky_Settings_Service.php:539
+msgid "Collapse Nested Replies by Default"
+msgstr "預設收合巢狀回覆"
+
+#: classes/BlueSky_Settings_Service.php:547
+msgid "Display Like and Share Counters"
+msgstr "顯示按讚與分享計數器"
+
+#: classes/BlueSky_Settings_Service.php:555
+msgid "Display Reply Links"
+msgstr "顯示回覆連結"
+
+#: classes/BlueSky_Settings_Service.php:563
+msgid "Display Images and Attachments"
+msgstr "顯示圖片與附件"
+
+#: classes/BlueSky_Settings_Service.php:598
+msgid "Enter your BlueSky account details to enable social integration."
+msgstr "輸入您的 BlueSky 帳號資訊以啟用社群整合。"
+
+#: classes/BlueSky_Settings_Service.php:613
+msgid "Start customizing how your feed and profile card are displayed."
+msgstr "開始自訂動態牆與個人檔案卡片的顯示方式。"
+
+#: classes/BlueSky_Settings_Service.php:628
+msgid "Display Bluesky discussions on your posts. This feature only works for posts that have been syndicated to Bluesky."
+msgstr "在您的文章下方顯示 Bluesky 討論。此功能僅適用於已同步到 Bluesky 的文章。"
+
+#: classes/BlueSky_Settings_Service.php:649
+#: classes/BlueSky_Settings_Service.php:873
+msgid "Your e-mail address or Bluesky handle (e.g. user.bsky.social)."
+msgstr "您的電子郵件地址或 Bluesky 代號（例如 user.bsky.social）。"
+
+#: classes/BlueSky_Settings_Service.php:678
+msgid "Leave empty to keep the current password."
+msgstr "留空以保留目前的密碼。"
+
+#. translators: %1$s opening link tag, %2$s the closing link tag, %3$s new line insertion
+#: classes/BlueSky_Settings_Service.php:689
+msgid "Instead of using your password, you can use an %1$sApp Password%2$s available on BlueSky.%3$sNo need to authorize access to your direct messages, this plugin does not need it."
+msgstr "您可以使用 BlueSky 上的%1$s應用程式密碼%2$s來取代您的密碼。%3$s不需要授權存取您的私訊，此外掛不需要該權限。"
+
+#: classes/BlueSky_Settings_Service.php:710
+msgid "Checking connection..."
+msgstr "正在檢查連線..."
+
+#: classes/BlueSky_Settings_Service.php:725
+msgid "Account Manager not available."
+msgstr "帳號管理員不可用。"
+
+#: classes/BlueSky_Settings_Service.php:734
+msgid "Enable Multi-Account Support"
+msgstr "啟用多帳號支援"
+
+#: classes/BlueSky_Settings_Service.php:737
+msgid "Connect multiple Bluesky accounts for syndication and display switching."
+msgstr "連結多個 Bluesky 帳號，用於同步與切換顯示。"
+
+#: classes/BlueSky_Settings_Service.php:743
+msgid "Connected Accounts"
+msgstr "已連結的帳號"
+
+#: classes/BlueSky_Settings_Service.php:745
+msgid "Active account:"
+msgstr "使用中帳號："
+
+#: classes/BlueSky_Settings_Service.php:746
+msgid "Is the default account used for widgets, shortcodes & blocks if no other account is specified."
+msgstr "若未指定其他帳號，此為 widget、shortcode 和區塊使用的預設帳號。"
+
+#: classes/BlueSky_Settings_Service.php:749
+msgid "Auto-Syndicate:"
+msgstr "自動同步："
+
+#: classes/BlueSky_Settings_Service.php:750
+msgid "If checked, it'll syndicate all new posts, unless you filter it by including/excluding categorie. (See Syndication tab)"
+msgstr "若勾選，將同步所有新文章，除非您透過包含/排除分類來篩選。（請參閱同步分頁）"
+
+#: classes/BlueSky_Settings_Service.php:762
+msgid "Name"
+msgstr "名稱"
+
+#: classes/BlueSky_Settings_Service.php:763
+msgid "Handle"
+msgstr "代號"
+
+#: classes/BlueSky_Settings_Service.php:764
+msgid "Status"
+msgstr "狀態"
+
+#: classes/BlueSky_Settings_Service.php:765
+msgid "Auto-Syndicate"
+msgstr "自動同步"
+
+#: classes/BlueSky_Settings_Service.php:766
+msgid "Actions"
+msgstr "操作"
+
+#: classes/BlueSky_Settings_Service.php:781
+msgid "Unknown"
+msgstr "未知"
+
+#: classes/BlueSky_Settings_Service.php:795
+msgid "Authenticated"
+msgstr "已驗證"
+
+#: classes/BlueSky_Settings_Service.php:801
+msgid "Credentials Configured"
+msgstr "憑證已設定"
+
+#: classes/BlueSky_Settings_Service.php:806
+msgid "Not Authenticated"
+msgstr "未驗證"
+
+#: classes/BlueSky_Settings_Service.php:832
+msgid "Make Active"
+msgstr "設為使用中"
+
+#: classes/BlueSky_Settings_Service.php:842
+msgid "Remove"
+msgstr "移除"
+
+#: classes/BlueSky_Settings_Service.php:853
+msgid "No accounts connected yet."
+msgstr "尚未連結任何帳號。"
+
+#: classes/BlueSky_Settings_Service.php:857
+msgid "Add New Account"
+msgstr "新增帳號"
+
+#: classes/BlueSky_Settings_Service.php:865
+msgid "Account Name"
+msgstr "帳號名稱"
+
+#: classes/BlueSky_Settings_Service.php:867
+msgid "e.g., Personal Account"
+msgstr "例如：個人帳號"
+
+#: classes/BlueSky_Settings_Service.php:870
+msgid "Bluesky Handle"
+msgstr "Bluesky 代號"
+
+#: classes/BlueSky_Settings_Service.php:877
+msgid "App Password"
+msgstr "應用程式密碼"
+
+#: classes/BlueSky_Settings_Service.php:882
+msgid "Create an %1$sApp Password%2$s on Bluesky."
+msgstr "在 Bluesky 上建立%1$s應用程式密碼%2$s。"
+
+#: classes/BlueSky_Settings_Service.php:891
+msgid "Cancel"
+msgstr "取消"
+
+#: classes/BlueSky_Settings_Service.php:897
+msgid "Add Account"
+msgstr "新增帳號"
+
+#: classes/BlueSky_Settings_Service.php:900
+msgid "Click \"Save Changes\" to save the new account."
+msgstr "點選「儲存變更」以儲存新帳號。"
+
+#: classes/BlueSky_Settings_Service.php:921
+msgid "Automatically syndicate new posts to BlueSky. You can change this behaviour post by post while editing it."
+msgstr "自動將新文章同步到 BlueSky。您可以在編輯時逐篇文章更改此行為。"
+
+#: classes/BlueSky_Settings_Service.php:954
+msgid "Pause all syndication to Bluesky. When enabled, no posts will be syndicated to any account. Use this for maintenance or troubleshooting."
+msgstr "暫停所有到 Bluesky 的同步。啟用後，不會將任何文章同步到任何帳號。可用於維護或故障排除。"
+
+#: classes/BlueSky_Settings_Service.php:975
+#: blocks/bluesky-posts-feed.js:116
+#: blocks/bluesky-profile-card.js:116
+msgid "System Preference"
+msgstr "系統偏好"
+
+#: classes/BlueSky_Settings_Service.php:981
+#: blocks/bluesky-posts-feed.js:123
+#: blocks/bluesky-profile-card.js:123
+msgid "Light"
+msgstr "淺色"
+
+#: classes/BlueSky_Settings_Service.php:986
+#: blocks/bluesky-posts-feed.js:127
+#: blocks/bluesky-profile-card.js:127
+msgid "Dark"
+msgstr "深色"
+
+#: classes/BlueSky_Settings_Service.php:1004
+msgid "Enter the number of posts to display (1-10) - 5 is set by default"
+msgstr "輸入要顯示的貼文數量（1-10）- 預設為 5"
+
+#: classes/BlueSky_Settings_Service.php:1026
+msgid "If checked, your replies will not be displayed in your feed."
+msgstr "若勾選，您的回覆將不會顯示在動態牆中。"
+
+#: classes/BlueSky_Settings_Service.php:1048
+msgid "If checked, the reposts won't be displayed in your feed."
+msgstr "若勾選，轉貼將不會顯示在動態牆中。"
+
+#: classes/BlueSky_Settings_Service.php:1070
+msgid "If checked, videos, images, and link cards won't be displayed in your feed."
+msgstr "若勾選，影片、圖片和連結卡片將不會顯示在動態牆中。"
+
+#: classes/BlueSky_Settings_Service.php:1092
+msgid "If checked, like, repost, reply, and quote counters won't be displayed in your feed."
+msgstr "若勾選，按讚、轉貼、回覆和引用計數器將不會顯示在動態牆中。"
+
+#: classes/BlueSky_Settings_Service.php:1119
+msgid "Days"
+msgstr "天"
+
+#: classes/BlueSky_Settings_Service.php:1131
+msgid "Hours"
+msgstr "小時"
+
+#: classes/BlueSky_Settings_Service.php:1143
+msgid "Minutes"
+msgstr "分鐘"
+
+#: classes/BlueSky_Settings_Service.php:1149
+msgid "Set to 0 in all fields to disable the cache."
+msgstr "將所有欄位設為 0 以停用快取。"
+
+#: classes/BlueSky_Settings_Service.php:1172
+msgid "Enable Bluesky discussion display below your syndicated posts."
+msgstr "在已同步的文章下方啟用 Bluesky 討論顯示。"
+
+#: classes/BlueSky_Settings_Service.php:1187
+msgid "This option is only available when multi-account support is enabled."
+msgstr "此選項僅在啟用多帳號支援時可用。"
+
+#: classes/BlueSky_Settings_Service.php:1197
+msgid "No accounts available. Please add an account first."
+msgstr "沒有可用的帳號，請先新增帳號。"
+
+#: classes/BlueSky_Settings_Service.php:1217
+msgid "Choose which account's Bluesky thread to display for discussions."
+msgstr "選擇要顯示哪個帳號的 Bluesky 討論串。"
+
+#: classes/BlueSky_Settings_Service.php:1237
+msgid "Display multiple levels of replies (replies to replies)."
+msgstr "顯示多層回覆（回覆的回覆）。"
+
+#: classes/BlueSky_Settings_Service.php:1263
+msgid "Collapse nested replies by default (only available if multiple levels are enabled)."
+msgstr "預設收合巢狀回覆（僅在啟用多層時可用）。"
+
+#: classes/BlueSky_Settings_Service.php:1287
+msgid "Display like and share counters for individual replies."
+msgstr "顯示每則回覆的按讚與分享計數器。"
+
+#: classes/BlueSky_Settings_Service.php:1312
+msgid "Display a link to reply on Bluesky for each reply."
+msgstr "為每則回覆顯示「在 Bluesky 上回覆」的連結。"
+
+#: classes/BlueSky_Settings_Service.php:1336
+msgid "Display images, videos, and other attachments in replies."
+msgstr "在回覆中顯示圖片、影片及其他附件。"
+
+#: classes/BlueSky_Settings_Service.php:1355
+msgid "Plugin Health"
+msgstr "外掛健康狀態"
+
+#: classes/BlueSky_Settings_Service.php:1412
+msgid "Account manager not available."
+msgstr "帳號管理員不可用。"
+
+#: classes/BlueSky_Settings_Service.php:1434
+msgid "Circuit breaker open for: %s"
+msgstr "斷路器已開啟：%s"
+
+#: classes/BlueSky_Settings_Service.php:1453
+#: classes/BlueSky_Settings_Service.php:1568
+msgid "Profile Card Cache:"
+msgstr "個人檔案卡片快取："
+
+#: classes/BlueSky_Settings_Service.php:1457
+#: classes/BlueSky_Settings_Service.php:1470
+#: classes/BlueSky_Settings_Service.php:1483
+#: classes/BlueSky_Settings_Service.php:1496
+#: classes/BlueSky_Settings_Service.php:1578
+#: classes/BlueSky_Settings_Service.php:1608
+#: classes/BlueSky_Settings_Service.php:1640
+#: classes/BlueSky_Settings_Service.php:1670
+msgid "Active (expires in %s)"
+msgstr "使用中（%s 後到期）"
+
+#: classes/BlueSky_Settings_Service.php:1461
+#: classes/BlueSky_Settings_Service.php:1474
+#: classes/BlueSky_Settings_Service.php:1487
+#: classes/BlueSky_Settings_Service.php:1500
+#: classes/BlueSky_Settings_Service.php:1589
+#: classes/BlueSky_Settings_Service.php:1619
+#: classes/BlueSky_Settings_Service.php:1651
+#: classes/BlueSky_Settings_Service.php:1681
+msgid "Not cached"
+msgstr "未快取"
+
+#: classes/BlueSky_Settings_Service.php:1466
+#: classes/BlueSky_Settings_Service.php:1598
+msgid "Posts Feed Cache:"
+msgstr "貼文動態牆快取："
+
+#: classes/BlueSky_Settings_Service.php:1479
+#: classes/BlueSky_Settings_Service.php:1630
+msgid "Access Token Cache:"
+msgstr "存取權杖快取："
+
+#: classes/BlueSky_Settings_Service.php:1492
+#: classes/BlueSky_Settings_Service.php:1660
+msgid "Refresh Token Cache:"
+msgstr "重新整理權杖快取："
+
+#: classes/BlueSky_Settings_Service.php:1527
+msgid "Activity logger not available."
+msgstr "活動記錄器不可用。"
+
+#: classes/BlueSky_Settings_Service.php:1558
+msgid "Current cache status:"
+msgstr "目前快取狀態："
+
+#: classes/BlueSky_Settings_Service.php:1712
+msgid "expired"
+msgstr "已過期"
+
+#: classes/BlueSky_Settings_Service.php:1725
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d 天"
+
+#: classes/BlueSky_Settings_Service.php:1739
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d 小時"
+
+#: classes/BlueSky_Settings_Service.php:1767
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d 秒"
+
+#: classes/BlueSky_Settings_Service.php:1807
+msgid "Account removed successfully."
+msgstr "帳號已成功移除。"
+
+#: classes/BlueSky_Settings_Service.php:1810
+msgid "%d post was associated with this account."
+msgid_plural "%d posts were associated with this account."
+msgstr[0] "%d 篇文章與此帳號相關聯。"
+
+#: classes/BlueSky_Settings_Service.php:1850
+msgid "Active account switched successfully."
+msgstr "使用中帳號已成功切換。"
+
+#: classes/BlueSky_Settings_Service.php:1892
+msgid "Discussion account updated successfully."
+msgstr "討論帳號已成功更新。"
+
+#: classes/BlueSky_Settings_Service.php:1918
+msgid "Security check failed. Please try again."
+msgstr "安全性驗證失敗，請再試一次。"
+
+#: classes/BlueSky_Settings_Service.php:1959
+msgid "Category rules updated for %d account."
+msgid_plural "Category rules updated for %d accounts."
+msgstr[0] "已為 %d 個帳號更新分類規則。"
+
+#: classes/widgets/BlueSky_Posts_Widget.php:11
+#: classes/widgets/BlueSky_Posts_Widget.php:36
+msgid "BlueSky Latest Posts"
+msgstr "BlueSky 最新貼文"
+
+#: classes/widgets/BlueSky_Posts_Widget.php:12
+msgid "Displays latest BlueSky posts"
+msgstr "顯示最新的 BlueSky 貼文"
+
+#: classes/widgets/BlueSky_Posts_Widget.php:55
+#: classes/widgets/BlueSky_Profile_Widget.php:54
+msgid "Display Account:"
+msgstr "顯示帳號："
+
+#: classes/widgets/BlueSky_Profile_Widget.php:11
+#: classes/widgets/BlueSky_Profile_Widget.php:35
+msgid "BlueSky Profile"
+msgstr "BlueSky 個人檔案"
+
+#: classes/widgets/BlueSky_Profile_Widget.php:12
+msgid "Displays BlueSky profile card"
+msgstr "顯示 BlueSky 個人檔案卡片"
+
+#: templates/admin/settings-category-rules.php:30
+msgid "Connect at least one Bluesky account to configure category rules."
+msgstr "請至少連結一個 Bluesky 帳號以設定分類規則。"
+
+#: templates/admin/settings-category-rules.php:34
+msgid "Enable auto-syndicate on at least one account to configure category rules."
+msgstr "請至少在一個帳號上啟用自動同步，才能設定分類規則。"
+
+#: templates/admin/settings-category-rules.php:38
+msgid "Create categories in WordPress to set up syndication rules."
+msgstr "在 WordPress 中建立分類以設定同步規則。"
+
+#: templates/admin/settings-category-rules.php:42
+msgid "Unknown Account"
+msgstr "未知帳號"
+
+#: templates/admin/settings-category-rules.php:61
+msgid "Include Categories"
+msgstr "包含分類"
+
+#: templates/admin/settings-category-rules.php:64
+msgid "Only syndicate posts with at least one of these categories (OR logic)."
+msgstr "僅同步包含至少一個這些分類的文章（OR 邏輯）。"
+
+#: templates/admin/settings-category-rules.php:85
+msgid "Exclude Categories"
+msgstr "排除分類"
+
+#: templates/admin/settings-category-rules.php:88
+msgid "Never syndicate posts with any of these categories (higher priority than include)."
+msgstr "永不同步包含任何這些分類的文章（優先權高於包含）。"
+
+#: templates/admin/settings-page.php:27
+msgid "Bluesky Settings Menu"
+msgstr "Bluesky 設定選單"
+
+#: templates/admin/settings-page.php:32
+msgid "Account Settings"
+msgstr "帳號設定"
+
+#: templates/admin/settings-page.php:49
+msgid "Syndication"
+msgstr "同步"
+
+#: templates/admin/settings-page.php:55
+msgid "Discussions"
+msgstr "討論"
+
+#: templates/admin/settings-page.php:64
+#: templates/admin/settings-page.php:92
+msgid "Styles"
+msgstr "樣式"
+
+#: templates/admin/settings-page.php:72
+msgid "About"
+msgstr "關於"
+
+#: templates/admin/settings-page.php:97
+msgid "Decide how you want your Bluesky blocks to look like!"
+msgstr "決定您希望 Bluesky 區塊呈現的外觀！"
+
+#: templates/admin/settings-page.php:106
+#: templates/admin/settings-page.php:116
+#: blocks/bluesky-posts-feed.js:112
+#: blocks/bluesky-profile-card.js:112
+msgid "Theme"
+msgstr "佈景主題"
+
+#: templates/admin/settings-page.php:148
+msgid "Profile Customization"
+msgstr "個人檔案自訂"
+
+#: templates/admin/settings-page.php:153
+msgid "Profile Layout"
+msgstr "個人檔案版面"
+
+#: templates/admin/settings-page.php:158
+msgid "Choose the default layout for your profile card."
+msgstr "選擇個人檔案卡片的預設版面。"
+
+#: templates/admin/settings-page.php:167
+msgid "Default"
+msgstr "預設"
+
+#: templates/admin/settings-page.php:179
+#: blocks/bluesky-posts-feed.js:70
+#: blocks/bluesky-profile-card.js:70
+msgid "Compact"
+msgstr "精簡"
+
+#: templates/admin/settings-page.php:189
+msgid "Profile Font Styling"
+msgstr "個人檔案字型樣式"
+
+#: templates/admin/settings-page.php:194
+msgid "Tweak the font sizes for the profile card."
+msgstr "調整個人檔案卡片的字型大小。"
+
+#: templates/admin/settings-page.php:216
+#: templates/admin/settings-page.php:477
+msgid "Name/Pseudo"
+msgstr "名稱/暱稱"
+
+#: templates/admin/settings-page.php:228
+#: templates/admin/settings-page.php:489
+msgid "Nickhandle"
+msgstr "Nickhandle"
+
+#: templates/admin/settings-page.php:240
+msgid "Counters"
+msgstr "計數器"
+
+#: templates/admin/settings-page.php:252
+msgid "Biography"
+msgstr "個人簡介"
+
+#: templates/admin/settings-page.php:409
+msgid "Feed Customization"
+msgstr "動態牆自訂"
+
+#: templates/admin/settings-page.php:414
+msgid "Feed Layout"
+msgstr "動態牆版面"
+
+#: templates/admin/settings-page.php:419
+msgid "Pick the layout that suits you best. Be careful, some of them could come later, and with specific pre-defined options. (e.g. \"no-replies\" by default)"
+msgstr "選擇最適合您的版面。請注意，部分版面可能日後才會推出，且會有特定的預設選項。（例如預設「不顯示回覆」）"
+
+#: templates/admin/settings-page.php:428
+msgid "Default layout"
+msgstr "預設版面"
+
+#: templates/admin/settings-page.php:440
+msgid "Light Weight Layout"
+msgstr "輕量版面"
+
+#: templates/admin/settings-page.php:450
+msgid "Feed Font Styling"
+msgstr "動態牆字型樣式"
+
+#: templates/admin/settings-page.php:455
+msgid "Tweak the font sizes for the posts feed."
+msgstr "調整貼文動態牆的字型大小。"
+
+#: templates/admin/settings-page.php:501
+msgid "Post Content"
+msgstr "貼文內容"
+
+#: templates/admin/settings-page.php:513
+msgid "External Title"
+msgstr "外部標題"
+
+#: templates/admin/settings-page.php:525
+msgid "External Description"
+msgstr "外部說明"
+
+#: templates/admin/settings-page.php:537
+msgid "External URL"
+msgstr "外部網址"
+
+#: templates/admin/settings-page.php:549
+msgid "StarterPack Name"
+msgstr "StarterPack 名稱"
+
+#: templates/admin/settings-page.php:705
+msgid "Syndication Settings"
+msgstr "同步設定"
+
+#: templates/admin/settings-page.php:706
+msgid "Control global syndication behavior and configure category-based routing rules for your accounts."
+msgstr "控制全域同步行為，並為您的帳號設定以分類為基礎的路由規則。"
+
+#: templates/admin/settings-page.php:708
+msgid "Global Syndication Control"
+msgstr "全域同步控制"
+
+#: templates/admin/settings-page.php:714
+msgid "Pause All Syndication"
+msgstr "暫停所有同步"
+
+#: templates/admin/settings-page.php:728
+msgid "Category Rules"
+msgstr "分類規則"
+
+#: templates/admin/settings-page.php:729
+msgid "Configure which categories should be syndicated to which accounts. If no rules are set, all posts will be syndicated."
+msgstr "設定哪些分類應同步到哪些帳號。若未設定規則，所有文章都會被同步。"
+
+#: templates/admin/settings-page.php:733
+msgid "%1$sInclude:%2$s Only syndicate posts with these categories.%3$s%1$sExclude%2$s: Never syndicate posts with these categories. If no rules are set, all posts syndicate."
+msgstr "%1$s包含：%2$s 僅同步具有這些分類的文章。%3$s%1$s排除%2$s：永不同步具有這些分類的文章。若未設定規則，所有文章都會被同步。"
+
+#: templates/admin/settings-page.php:749
+msgid "About this plugin"
+msgstr "關於此外掛"
+
+#: templates/admin/settings-page.php:756
+msgid "This plugin is written by %s."
+msgstr "此外掛由 %s 開發。"
+
+#: templates/admin/settings-page.php:761
+msgid "This extension is not an official BlueSky plugin."
+msgstr "此擴充功能並非 BlueSky 官方外掛。"
+
+#: templates/admin/settings-page.php:770
+msgid "Need help with something? Have a suggestion? %1$sAsk away%2$s."
+msgstr "需要幫助嗎？有建議嗎？%1$s歡迎提問%2$s。"
+
+#: templates/admin/settings-page.php:778
+msgid "You want to contribute to this project? %1$sHere is the Github Repository%2$s."
+msgstr "想要貢獻此專案嗎？%1$s這是 Github 儲存庫%2$s。"
+
+#: templates/admin/settings-page.php:787
+msgid "Rate this plugin on WordPress.org"
+msgstr "在 WordPress.org 上為此外掛評分"
+
+#: templates/admin/settings-page.php:795
+msgid "Want to support the plugin? %1$sGive a review%2$s"
+msgstr "想要支持此外掛嗎？%1$s留下評論%2$s"
+
+#: templates/admin/settings-page.php:808
+msgid "Support the Developer"
+msgstr "支持開發者"
+
+#: templates/admin/settings-page.php:812
+msgid "This plugin is free and built with care on personal time. If it saves you time or brings value to your site, consider buying the developer a coffee (or two)!"
+msgstr "此外掛是免費的，由開發者利用個人時間用心打造。如果它為您節省了時間或為您的網站帶來價值，歡迎請開發者喝杯咖啡！"
+
+#: templates/admin/settings-page.php:819
+msgid "PayPal"
+msgstr "PayPal"
+
+#: templates/admin/settings-page.php:823
+msgid "Revolut"
+msgstr "Revolut"
+
+#: templates/admin/settings-page.php:828
+msgid "Some Plugin Engine Info"
+msgstr "外掛引擎資訊"
+
+#: templates/admin/settings-page.php:836
+msgid "About the shortcodes"
+msgstr "關於 shortcode"
+
+#: templates/admin/settings-page.php:843
+msgid "You can use the following shortcodes to display your BlueSky profile and posts: %1$s and %2$s."
+msgstr "您可以使用以下 shortcode 來顯示您的 BlueSky 個人檔案和貼文：%1$s 和 %2$s。"
+
+#: templates/admin/settings-page.php:851
+msgid "By default, the shortcodes use the global settings, but you can decide to override them thanks to the attributes described on this page."
+msgstr "shortcode 預設使用全域設定，但您可以透過此頁面上描述的屬性來覆蓋它們。"
+
+#: templates/admin/settings-page.php:856
+msgid "You can also use the Gutenberg blocks to display the profile card and posts feed."
+msgstr "您也可以使用 Gutenberg 區塊來顯示個人檔案卡片和貼文動態牆。"
+
+#: templates/admin/settings-page.php:863
+msgid "Shortcodes Demo"
+msgstr "Shortcode 示範"
+
+#: templates/admin/settings-page.php:869
+msgid "Profile Card"
+msgstr "個人檔案卡片"
+
+#: templates/admin/settings-page.php:873
+msgid "The profile shortcode will display your BlueSky profile card. It uses the following attributes:"
+msgstr "個人檔案 shortcode 將顯示您的 BlueSky 個人檔案卡片。它使用以下屬性："
+
+#: templates/admin/settings-page.php:878
+msgid "The layout to use. Options are \"default\" and \"compact\". Default uses the global setting."
+msgstr "使用的版面配置。選項為「default」和「compact」。預設使用全域設定。"
+
+#: templates/admin/settings-page.php:882
+msgid "Whether to display the profile banner. Default is true."
+msgstr "是否顯示個人檔案橫幅。預設為 true。"
+
+#: templates/admin/settings-page.php:886
+msgid "Whether to display the profile avatar. Default is true."
+msgstr "是否顯示個人檔案頭像。預設為 true。"
+
+#: templates/admin/settings-page.php:890
+msgid "Whether to display follower/following counts. Default is true."
+msgstr "是否顯示追蹤者/追蹤中的數量。預設為 true。"
+
+#: templates/admin/settings-page.php:894
+msgid "Whether to display the profile bio. Default is true."
+msgstr "是否顯示個人簡介。預設為 true。"
+
+#: templates/admin/settings-page.php:898
+msgid "The theme to use for displaying the profile. Options are \"light\", \"dark\", and \"system\". Default is \"system\"."
+msgstr "顯示個人檔案使用的佈景主題。選項為「light」、「dark」和「system」。預設為「system」。"
+
+#: templates/admin/settings-page.php:902
+msgid "Additional CSS class to apply to the profile card."
+msgstr "套用到個人檔案卡片的額外 CSS 類別。"
+
+#: templates/admin/settings-page.php:907
+#: templates/admin/settings-page.php:974
+msgid "The UUID of a specific account to display. Leave empty to use the active account. %1$sFind your Bluesky DID%2$s."
+msgstr "要顯示的特定帳號 UUID。留空以使用使用中帳號。%1$s查詢您的 Bluesky DID%2$s。"
+
+#: templates/admin/settings-page.php:916
+msgid "This is how your BlueSky profile card will look like:"
+msgstr "您的 BlueSky 個人檔案卡片將會呈現如下："
+
+#: templates/admin/settings-page.php:931
+msgid "Last Posts Feed"
+msgstr "最新貼文動態牆"
+
+#: templates/admin/settings-page.php:936
+msgid "The last posts shortcode will display your last posts feed. It uses the following attributes:"
+msgstr "最新貼文 shortcode 將顯示您的最新貼文動態牆。它使用以下屬性："
+
+#: templates/admin/settings-page.php:941
+msgid "Override the feed layout. Options are \"default\", \"layout_2\" or \"compact\" (compact with header). Leave empty to use the global setting."
+msgstr "覆蓋動態牆版面。選項為「default」、「layout_2」或「compact」（含標題的精簡版）。留空以使用全域設定。"
+
+#: templates/admin/settings-page.php:945
+msgid "Whether to display embedded media in the posts. Default is true."
+msgstr "是否在貼文中顯示嵌入的媒體。預設為 true。"
+
+#: templates/admin/settings-page.php:949
+msgid "Whether to display embedded images in the posts. Default is true."
+msgstr "是否在貼文中顯示嵌入的圖片。預設為 true。"
+
+#: templates/admin/settings-page.php:953
+msgid "Whether to hide your replies, or include them in your feed. Default is true."
+msgstr "是否隱藏您的回覆，或將其包含在動態牆中。預設為 true。"
+
+#: templates/admin/settings-page.php:957
+msgid "Whether to hide the reposts, or include them in your feed. Default is true."
+msgstr "是否隱藏轉貼，或將其包含在動態牆中。預設為 true。"
+
+#: templates/admin/settings-page.php:961
+msgid "The number of posts to display. Default is 5."
+msgstr "要顯示的貼文數量。預設為 5。"
+
+#: templates/admin/settings-page.php:965
+msgid "Whether to hide like, repost, reply, and quote counters. Default is false."
+msgstr "是否隱藏按讚、轉貼、回覆和引用計數器。預設為 false。"
+
+#: templates/admin/settings-page.php:969
+msgid "The theme to use for displaying the posts. Options are \"light\", \"dark\", and \"system\". Default is \"system\"."
+msgstr "顯示貼文使用的佈景主題。選項為「light」、「dark」和「system」。預設為「system」。"
+
+#: templates/admin/settings-page.php:983
+msgid "This is how your last posts feed will look like:"
+msgstr "您的最新貼文動態牆將會呈現如下："
+
+#: templates/admin/settings-page.php:1004
+msgid "Support the plugin"
+msgstr "支持此外掛"
+
+#: templates/admin/settings-page.php:1011
+msgid "Support this Plugin"
+msgstr "支持此外掛"
+
+#: templates/admin/settings-page.php:1015
+msgid "This plugin is free, open-source, and maintained on personal time. If it helps you connect with the Bluesky community, a small donation goes a long way!"
+msgstr "此外掛是免費且開源的，由開發者利用個人時間維護。如果它幫助您連結了 Bluesky 社群，一點小額捐款將會帶來很大的幫助！"
+
+#: templates/admin/settings-page.php:1022
+msgid "Donate via PayPal"
+msgstr "透過 PayPal 捐款"
+
+#: templates/admin/settings-page.php:1026
+msgid "Donate via Revolut"
+msgstr "透過 Revolut 捐款"
+
+#: templates/admin/settings-page.php:1029
+msgid "Thank you for your generosity!"
+msgstr "感謝您的慷慨支持！"
+
+#: templates/admin/settings-page.php:1043
+#: templates/admin/settings-page.php:1050
+msgid "Debug Bar"
+msgstr "除錯工具列"
+
+#: templates/admin/settings-page.php:1055
+msgid "Former plugin's options (kept for retro-compatibility)"
+msgstr "舊版外掛選項（保留以維持向下相容性）"
+
+#: templates/admin/settings-page.php:1062
+msgid "Multi-Account: Accounts"
+msgstr "多帳號：帳號"
+
+#: templates/admin/settings-page.php:1069
+msgid "Multi-Account: Active Account"
+msgstr "多帳號：使用中帳號"
+
+#: templates/admin/settings-page.php:1076
+msgid "Multi-Account: Global Settings"
+msgstr "多帳號：全域設定"
+
+#: templates/admin/settings-page.php:1083
+msgid "Multi-Account: Schema Version"
+msgstr "多帳號：結構版本"
+
+#: templates/frontend/posts-list.php:21
+msgid "List of the latest Bluesky Posts"
+msgstr "最新 Bluesky 貼文列表"
+
+#: templates/frontend/posts-list.php:52
+msgid "See Bluesky Profile"
+msgstr "查看 Bluesky 個人檔案"
+
+#. translators: %s is the post author's display name
+#: templates/frontend/posts-list.php:83
+msgid "View post by %s on Bluesky"
+msgstr "在 Bluesky 上查看 %s 的貼文"
+
+#: templates/frontend/posts-list.php:398
+msgid "%s like"
+msgid_plural "%s likes"
+msgstr[0] "%s 個讚"
+
+#: templates/frontend/posts-list.php:420
+msgid "%s repost"
+msgid_plural "%s reposts"
+msgstr[0] "%s 則轉貼"
+
+#: templates/frontend/posts-list.php:442
+msgid "%s reply"
+msgid_plural "%s replies"
+msgstr[0] "%s 則回覆"
+
+#: templates/frontend/posts-list.php:464
+msgid "%s quote"
+msgid_plural "%s quotes"
+msgstr[0] "%s 則引用"
+
+#: templates/frontend/posts-list.php:513
+msgid "No posts yet"
+msgstr "尚無貼文"
+
+#. translators: %s is the Bluesky handle
+#: templates/frontend/profile-banner-compact.php:43
+#: templates/frontend/profile-card.php:39
+msgid "@%s on Bluesky"
+msgstr "@%s 在 Bluesky 上"
+
+#: templates/frontend/profile-banner-compact.php:57
+#: templates/frontend/profile-card.php:48
+msgid "Followers"
+msgstr "追蹤者"
+
+#: templates/frontend/profile-banner-compact.php:58
+#: templates/frontend/profile-card.php:55
+msgid "Following"
+msgstr "追蹤中"
+
+#: templates/frontend/profile-banner-compact.php:59
+#: templates/frontend/profile-card.php:62
+msgid "Posts"
+msgstr "貼文"
+
+#: templates/frontend/stale-indicator.php:21
+msgid "Last updated %s ago"
+msgstr "上次更新於 %s 前"
+
+#: blocks/bluesky-posts-feed.js:31
+#: blocks/bluesky-profile-card.js:31
+msgid "Account"
+msgstr "帳號"
+
+#: blocks/bluesky-posts-feed.js:35
+#: blocks/bluesky-profile-card.js:35
+msgid "Display Account"
+msgstr "顯示帳號"
+
+#: blocks/bluesky-posts-feed.js:48
+msgid "Posts Display Options"
+msgstr "貼文顯示選項"
+
+#: blocks/bluesky-posts-feed.js:55
+#: blocks/bluesky-profile-card.js:55
+msgid "Layout"
+msgstr "版面"
+
+#: blocks/bluesky-posts-feed.js:59
+#: blocks/bluesky-profile-card.js:59
+msgid "Default (global setting)"
+msgstr "預設（全域設定）"
+
+#: blocks/bluesky-posts-feed.js:66
+#: blocks/bluesky-profile-card.js:66
+msgid "Normal"
+msgstr "一般"
+
+#: blocks/bluesky-posts-feed.js:80
+msgid "Display Embeds"
+msgstr "顯示嵌入內容"
+
+#: blocks/bluesky-posts-feed.js:88
+msgid "Hide Replies"
+msgstr "隱藏回覆"
+
+#: blocks/bluesky-posts-feed.js:96
+msgid "Hide Reposts"
+msgstr "隱藏轉貼"
+
+#: blocks/bluesky-posts-feed.js:104
+msgid "Hide Counters"
+msgstr "隱藏計數器"
+
+#: blocks/bluesky-posts-feed.js:137
+msgid "Number of Posts"
+msgstr "貼文數量"
+
+#: blocks/bluesky-posts-feed.js:156
+msgid "BlueSky Posts Feed"
+msgstr "BlueSky 貼文動態牆"
+
+#: blocks/bluesky-posts-feed.js:160
+#: blocks/bluesky-profile-card.js:150
+msgid "social"
+msgstr "社群"
+
+#: blocks/bluesky-posts-feed.js:161
+msgid "feed"
+msgstr "動態牆"
+
+#: blocks/bluesky-posts-feed.js:162
+msgid "posts"
+msgstr "貼文"
+
+#: blocks/bluesky-pre-publish-panel.js:97
+msgid "Unable to generate preview."
+msgstr "無法產生預覽。"
+
+#: blocks/bluesky-pre-publish-panel.js:106
+msgid "Error loading preview."
+msgstr "載入預覽時發生錯誤。"
+
+#: blocks/bluesky-pre-publish-panel.js:173
+#: blocks/bluesky-sidebar-panel.js:251
+msgid "Category rules will prevent syndication to this account."
+msgstr "分類規則將阻止同步到此帳號。"
+
+#: blocks/bluesky-pre-publish-panel.js:243
+#: blocks/bluesky-sidebar-panel.js:305
+msgid "Post text:"
+msgstr "貼文內容："
+
+#: blocks/bluesky-pre-publish-panel.js:249
+#: blocks/bluesky-sidebar-panel.js:312
+msgid "Auto-generated from title and excerpt"
+msgstr "自動從標題與摘要產生"
+
+#: blocks/bluesky-pre-publish-panel.js:277
+#: blocks/bluesky-sidebar-panel.js:333
+msgid "Reset to default"
+msgstr "重設為預設值"
+
+#: blocks/bluesky-pre-publish-panel.js:327
+#: blocks/bluesky-sidebar-panel.js:287
+msgid "Don't syndicate this post"
+msgstr "不要同步此文章"
+
+#: blocks/bluesky-pre-publish-panel.js:351
+msgid "Loading preview..."
+msgstr "正在載入預覽..."
+
+#: blocks/bluesky-pre-publish-panel.js:391
+msgid "Refresh Preview"
+msgstr "重新整理預覽"
+
+#: blocks/bluesky-profile-card.js:48
+msgid "Profile Display Options"
+msgstr "個人檔案顯示選項"
+
+#: blocks/bluesky-profile-card.js:80
+msgid "Display Banner"
+msgstr "顯示橫幅"
+
+#: blocks/bluesky-profile-card.js:88
+msgid "Display Avatar"
+msgstr "顯示頭像"
+
+#: blocks/bluesky-profile-card.js:96
+msgid "Display Counters"
+msgstr "顯示計數器"
+
+#: blocks/bluesky-profile-card.js:104
+msgid "Display Bio"
+msgstr "顯示個人簡介"
+
+#: blocks/bluesky-profile-card.js:146
+msgid "BlueSky Profile Card"
+msgstr "BlueSky 個人檔案卡片"
+
+#: blocks/bluesky-profile-card.js:151
+msgid "account"
+msgstr "帳號"
+
+#: blocks/bluesky-profile-card.js:152
+msgid "card"
+msgstr "卡片"
+
+#: blocks/bluesky-sidebar-panel.js:347
+msgid "Preview:"
+msgstr "預覽："
+
+#: blocks/bluesky-sidebar-panel.js:355
+msgid "(Title and excerpt will be used)"
+msgstr "（將使用標題與摘要）"
