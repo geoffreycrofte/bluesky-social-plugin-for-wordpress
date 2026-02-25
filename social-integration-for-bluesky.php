@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Social Integration for BlueSky
-Description: Integrates BlueSky social features into WordPress including: Post New Articles on BlueSky for you, Shortcode for Profile Card, and Widget to display your last posts. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>.
-Version: 2.0.2
+Description: Integrates BlueSky social features into WordPress supporting multi-account: Post New Articles on BlueSky, BlueSky Profile Card Block, BlueSky Last Post feed block, and widgets. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>.
+Version: 2.1.0
 Requires at least: 5.0
 Requires PHP: 7.4
 Author: Geoffrey Crofte

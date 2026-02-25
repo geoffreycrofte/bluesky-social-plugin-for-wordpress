@@ -5,13 +5,13 @@
 - Requires at least: 5.0
 - Tested up to: 6.9.1
 - Requires PHP: 7.4
-- Stable tag: 2.0.2
+- Stable tag: 2.1.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
 
 
-> Provides auto syndication (optional), a profile banner, and a list of your latest posts on BlueSky as Gutenberg blocks. It also adds the ability to link syndicated WordPress posts in the comment section, "importing" BlueSky discussions.
+> Provides auto syndication, a profile banner, and a list of your latest posts on BlueSky as Gutenberg blocks. It also adds the ability to link syndicated WordPress posts in the comment section, "importing" your BlueSky discussions.
 
 ## Description
 
@@ -55,6 +55,21 @@ Some other included features:
 * Asynchronous load of data from BlueSky for a better UX.
 * Dark/Light mode (by default system/user choice).
 * Custom font sizing for both blocks/shortcodes.
+
+## Available Languages
+
+* Arabic
+* Chinese (traditional & simplified)
+* English (default)
+* French
+* German
+* Italian
+* Japanese
+* Korean
+* Portuguese (Brazil)
+* Spanish
+* Thai 
+* Turkish
 
 ## Shortcode usage
 
@@ -140,6 +155,21 @@ No it is not. But I'm always happy when core team developers suggest new feature
 16. [The syndication options to associate categories and auto-syndication by account.](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-16.jpg)
 
 ## Changelog
+### 2.1.0
+Major translation improvements with the inclusion of multiple languages:
+* Arabic
+* Chinese (traditional & simplified)
+* English (default)
+* French
+* German
+* Italian
+* Japanese
+* Korean
+* Portuguese (Brazil)
+* Spanish
+* Thai 
+* Turkish
+These languages are added thanks to the power of AI translations. If you want to fine tune these, you [can contribute](https://translate.wordpress.org/projects/wp-plugins/social-integration-for-bluesky).
 
 ### 2.0.2
 Testing the Playground Live preview of the plugin (not visible from your website)
@@ -295,10 +325,3 @@ This plugin is open source and licensed under GPLv2 or later. Contributions are 
 ### Planned Improvements
 
 Follow the roadmap on [Github Project](https://github.com/users/geoffreycrofte/projects/1/views/2).
-
-* Enhance customization options for profile cards and posts.
-* Add color scheme options for the profile card and posts.
-* ~~Add support for Open Graph Image on Post Cards~~
-* ~~Add support links and hashtag being real links~~
-* ~~Add support for the embedded records options in the posts feed.~~
-* ~~Adds an option within the post review to disable the syndication, post by post.~~

@@ -35,7 +35,7 @@ class BlueSky_Settings_Service
      * @param BlueSky_API_Handler $api_handler API handler instance
      * @param BlueSky_Account_Manager $account_manager Account manager instance
      */
-    public function __construct(BlueSky_API_Handler $api_handler, BlueSky_Account_Manager $account_manager = null)
+    public function __construct(BlueSky_API_Handler $api_handler, ?BlueSky_Account_Manager $account_manager = null)
     {
         $this->api_handler = $api_handler;
         $this->account_manager = $account_manager;
