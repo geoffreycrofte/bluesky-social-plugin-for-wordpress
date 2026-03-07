@@ -47,6 +47,8 @@
 }
 
 .bluesky-social-integration-last-post.has-no-posts svg {
+    width: auto;
+    height: auto;
     padding: 16px;
     color: color-mix(
         in srgb,
@@ -139,6 +141,15 @@
         --bluesky-posts-custom-external-content-url-fs,
         0.875em
     ) !important;
+}
+
+.bluesky-social-integration-external-content-url::before {
+    content: none!important;
+}
+
+.bluesky-social-integration-external-content-url svg {
+    width: 1.2em;
+    height: 1.2em;
 }
 
 .bluesky-social-integration-embedded-record.has-image
