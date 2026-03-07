@@ -9,7 +9,7 @@ Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Provides auto syndication, a profile banner, and a list of your latest posts on BlueSky as Gutenberg blocks. It also adds the ability to link syndicated WordPress posts in the comment section, "importing" your BlueSky discussions.
+Provides auto syndication, a profile banner, and a list of your latest posts on BlueSky as Gutenberg blocks. It also adds the ability to link syndicated WordPress posts in the comment section, importing your BlueSky discussions.
 
 == Description ==
 
