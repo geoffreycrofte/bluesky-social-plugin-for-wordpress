@@ -486,6 +486,11 @@ class BlueSky_Account_Manager {
             $post_category_ids[] = $category->term_id;
         }
 
+        // If rules are set but post has no categories, don't syndicate
+        if (empty($post_category_ids)) {
+            return false;
+        }
+
         // Check exclude rules first (higher priority)
         if (!empty($exclude_rules)) {
             foreach ($post_category_ids as $cat_id) {

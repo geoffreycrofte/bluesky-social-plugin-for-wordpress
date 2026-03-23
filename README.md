@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.9.1
 - Requires PHP: 7.4
-- Stable tag: 2.2.0
+- Stable tag: 2.2.1
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -156,6 +156,11 @@ No it is not. But I'm always happy when core team developers suggest new feature
 16. [The syndication options to associate categories and auto-syndication by account.](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-16.jpg)
 
 ## Changelog
+
+### 2.2.1
+* **Bug fix**
+  * Multi-account VS Simple account set up were not managing Category Rules the same way.
+  * Improve the embedded "external-media" aspect of the media box in the Post Feed. (PDF, XLS, or any document shared in a BlueSky post)
 
 ### 2.2.0
 * **New Feature**

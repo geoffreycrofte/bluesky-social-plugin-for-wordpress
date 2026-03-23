@@ -89,7 +89,15 @@ class BlueSky_Syndication_Service
                 return;
             }
 
-            // Multi-account branching
+            // In REST API (Gutenberg) context, transition_post_status fires before
+            // handle_terms() and update_additional_fields_for_response() run, so both
+            // post terms and post meta are not yet saved. Defer everything to
+            // rest_after_insert_post which fires after all data is persisted.
+            if (defined('REST_REQUEST') && REST_REQUEST) {
+                return;
+            }
+
+            // Classic editor: terms and meta are already saved at this point.
             $account_manager = new BlueSky_Account_Manager();
 
             if ($account_manager->is_multi_account_enabled()) {
@@ -97,7 +105,7 @@ class BlueSky_Syndication_Service
                 return;
             }
 
-            // Single-account syndication (existing code unchanged)
+            // Single-account syndication (classic editor — terms already saved)
             $permalink = get_permalink($post_id);
 
             do_action("bluesky_before_syndicating_post", $post_id);
@@ -127,6 +135,11 @@ class BlueSky_Syndication_Service
                 true,
             );
             if ($is_syndicated) {
+                return;
+            }
+
+            // Check category rules
+            if (!$account_manager->should_syndicate_to_account($post_id, 'default')) {
                 return;
             }
 
@@ -417,5 +430,95 @@ class BlueSky_Syndication_Service
 
             do_action("bluesky_after_syndicating_post", $post_id, $post_meta);
         }
+    }
+
+    /**
+     * Handle single-account syndication for REST API (Gutenberg) posts.
+     *
+     * transition_post_status fires before WordPress's handle_terms() saves categories
+     * in REST API context, so get_the_category() returns empty there. This hook fires
+     * after handle_terms(), so category rules are evaluated against the correct terms.
+     *
+     * @param WP_Post         $post     Fully saved post object
+     * @param WP_REST_Request $request  REST request
+     * @param bool            $creating True if creating, false if updating
+     */
+    public function syndicate_post_rest_after_insert($post, $_request, $_creating) {
+        if ('post' !== $post->post_type || 'publish' !== $post->post_status) {
+            return;
+        }
+
+        $post_id = $post->ID;
+
+        $options = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+        if (!empty($options['global_pause'])) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        $account_manager = new BlueSky_Account_Manager();
+
+        // Multi-account: meta and terms are both saved at this point, so the selected
+        // accounts and category rules will be read correctly.
+        if ($account_manager->is_multi_account_enabled()) {
+            $this->syndicate_post_multi_account($post_id, $post);
+            return;
+        }
+
+        // Single-account path
+        do_action('bluesky_before_syndicating_post', $post_id);
+
+        $dont_syndicate = get_post_meta($post_id, '_bluesky_dont_syndicate', true);
+        if ($dont_syndicate) {
+            return;
+        }
+
+        // Prevent double-syndication (e.g. if classic editor path already ran)
+        $is_syndicated = get_post_meta($post_id, '_bluesky_syndicated', true);
+        if ($is_syndicated) {
+            return;
+        }
+
+        // Category rules — terms are saved at this point
+        if (!$account_manager->should_syndicate_to_account($post_id, 'default')) {
+            return;
+        }
+
+        $permalink  = get_permalink($post_id);
+        $excerpt    = !empty($post->post_excerpt)
+            ? $post->post_excerpt
+            : wp_trim_words($post->post_content, 30, '...');
+        $image_url  = '';
+
+        if (has_post_thumbnail($post_id)) {
+            $image_url = get_the_post_thumbnail_url($post_id, 'large');
+        }
+        if (empty($image_url)) {
+            preg_match('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $post->post_content, $matches);
+            if (!empty($matches[1])) {
+                $image_url = $matches[1];
+            }
+        }
+
+        $custom_text          = get_post_meta($post_id, '_bluesky_syndication_text', true);
+        $post_title_for_bluesky = !empty($custom_text) ? $custom_text : $post->post_title;
+
+        $bluesky_post_info = $this->api_handler->syndicate_post_to_bluesky(
+            $post_title_for_bluesky,
+            $permalink,
+            $excerpt,
+            $image_url
+        );
+
+        $post_meta = add_post_meta($post_id, '_bluesky_syndicated', true, true);
+
+        if ($bluesky_post_info !== false && is_array($bluesky_post_info)) {
+            update_post_meta($post_id, '_bluesky_syndication_bs_post_info', wp_json_encode($bluesky_post_info));
+        }
+
+        do_action('bluesky_after_syndicating_post', $post_id, $post_meta);
     }
 }

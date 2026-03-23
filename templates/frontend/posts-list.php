@@ -190,98 +190,69 @@ if (!defined("ABSPATH")) {
                     !empty($post["external_media"]) &&
                     $display_embeds
                 ):
-                    if (
-                        isset($post["external_media"]["uri"]) &&
-                        strpos(
-                            $post["external_media"]["uri"],
-                            "youtu",
-                        )
-                    ):
-                        $helpers = new BlueSky_Helpers();
-                        $youtube_id = $helpers->get_youtube_id(
-                            $post["external_media"]["uri"],
-                        );
+                    $ext_uri   = $post["external_media"]["uri"] ?? "";
+                    $ext_thumb = $post["external_media"]["thumb"] ?? "";
+                    $ext_title = $post["external_media"]["title"] ?? "";
+                    $ext_desc  = $post["external_media"]["description"] ?? "";
 
-                        if ($youtube_id):
-                            $post["external_media"]["thumb"] =
-                                "https://i.ytimg.com/vi/" .
-                                $youtube_id .
-                                "/maxresdefault.jpg";
-                        endif;
-                    endif; ?>
+                    // YouTube: override thumb with maxres image
+                    if ($ext_uri && strpos($ext_uri, "youtu") !== false) {
+                        $helpers    = new BlueSky_Helpers();
+                        $youtube_id = $helpers->get_youtube_id($ext_uri);
+                        if ($youtube_id) {
+                            $ext_thumb = "https://i.ytimg.com/vi/" . $youtube_id . "/maxresdefault.jpg";
+                        }
+                    }
 
-                <?php echo isset($post["external_media"]["uri"])
-                    ? '<a href="' .
-                        esc_url($post["external_media"]["uri"]) .
-                        '" class="bluesky-social-integration-embedded-record is-external_media' .
-                        (!empty($post["external_media"]["thumb"])
-                            ? " has-image"
-                            : "") .
-                        '">'
-                    : ""; ?>
+                    // Detect file attachments (PDF, Office docs, archives…)
+                    $uri_path      = parse_url($ext_uri, PHP_URL_PATH) ?? "";
+                    $file_ext      = strtolower(pathinfo($uri_path, PATHINFO_EXTENSION));
+                    $file_ext_list = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar"];
+                    $is_file       = in_array($file_ext, $file_ext_list, true);
+                    $filename      = $is_file ? basename($uri_path) : "";
+
+                    $record_classes = "bluesky-social-integration-embedded-record is-external_media";
+                    if ($is_file) {
+                        $record_classes .= " is-file";
+                    } elseif (!empty($ext_thumb)) {
+                        $record_classes .= " has-image";
+                    }
+                ?>
+                <?php if ($ext_uri): ?>
+                <a href="<?php echo esc_url($ext_uri); ?>" class="<?php echo esc_attr($record_classes); ?>">
+                <?php endif; ?>
                 <div class="bluesky-social-integration-last-post-content">
-
-                    <div class="bluesky-social-integration-external-image">
-                        <?php
-                    // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
-                    ?>
-                        <?php echo isset(
-                            $post["external_media"]["thumb"],
-                        )
-                            ? '<img src="' .
-                                esc_url(
-                                    $post["external_media"][
-                                        "thumb"
-                                    ],
-                                ) .
-                                '" loading="lazy" alt="' . esc_attr(
-                                    $post["external_media"]["title"] ?? ""
-                                ) . '">'
-                            : ""; ?>
-                    </div>
+                    <?php if ($is_file): ?>
                     <div class="bluesky-social-integration-external-content">
-                        <?php echo isset(
-                            $post["external_media"]["title"],
-                        )
-                            ? '<p class="bluesky-social-integration-external-content-title">' .
-                                esc_html(
-                                    $post["external_media"][
-                                        "title"
-                                    ],
-                                ) .
-                                "</p>"
-                            : ""; ?>
-                        <?php echo isset(
-                            $post["external_media"]["description"],
-                        )
-                            ? '<p class="bluesky-social-integration-external-content-description">' .
-                                esc_html(
-                                    $post["external_media"][
-                                        "description"
-                                    ],
-                                ) .
-                                "</p>"
-                            : ""; ?>
-                        <?php echo isset(
-                            $post["external_media"]["uri"],
-                        )
-                            ? '<p class="bluesky-social-integration-external-content-url"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M11.5 3a17 17 0 0 0 0 18"></path><path d="M12.5 3a17 17 0 0 1 0 18"></path></svg>' .
-                                esc_html(
-                                    explode(
-                                        "/",
-                                        $post["external_media"][
-                                            "uri"
-                                        ],
-                                    )[2],
-                                ) .
-                                "</p>"
-                            : ""; ?>
+                        <p class="bluesky-social-integration-external-content-title">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            <?php echo esc_html($filename ?: $ext_title); ?>
+                        </p>
                     </div>
+                    <?php else: ?>
+                    <?php if (!empty($ext_thumb)): ?>
+                    <div class="bluesky-social-integration-external-image">
+                        <?php // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage ?>
+                        <img src="<?php echo esc_url($ext_thumb); ?>" loading="lazy" alt="<?php echo esc_attr($ext_title); ?>">
+                    </div>
+                    <?php endif; ?>
+                    <div class="bluesky-social-integration-external-content">
+                        <?php if (!empty($ext_title)): ?>
+                        <p class="bluesky-social-integration-external-content-title"><?php echo esc_html($ext_title); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($ext_desc)): ?>
+                        <p class="bluesky-social-integration-external-content-description"><?php echo esc_html($ext_desc); ?></p>
+                        <?php endif; ?>
+                        <?php if ($ext_uri): ?>
+                        <p class="bluesky-social-integration-external-content-url"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M11.5 3a17 17 0 0 0 0 18"></path><path d="M12.5 3a17 17 0 0 1 0 18"></path></svg><?php echo esc_html(parse_url($ext_uri, PHP_URL_HOST) ?? ""); ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php echo isset($post["external_media"]["uri"])
-                    ? "</a>"
-                    : "";
-                endif;
+                <?php if ($ext_uri): ?>
+                </a>
+                <?php endif; ?>
+                <?php endif;
 
                 // displays potential embeds
                 if (

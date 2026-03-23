@@ -2,7 +2,7 @@
 /*
 Plugin Name: Social Integration for BlueSky
 Description: BlueSky social features into WordPress supporting multi-account: Post New Articles on BlueSky, Profile Card Block, Last Post feed block, and widgets.
-Version: 2.2.0
+Version: 2.2.1
 Requires at least: 5.0
 Requires PHP: 7.4
 Author: Geoffrey Crofte
@@ -18,7 +18,7 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-define("BLUESKY_PLUGIN_VERSION", "2.2.0");
+define("BLUESKY_PLUGIN_VERSION", "2.2.1");
 define("BLUESKY_PLUGIN_FILE", __FILE__);
 define("BLUESKY_PLUGIN_BASENAME", plugin_basename(__FILE__));
 define("BLUESKY_PLUGIN_FOLDER", plugin_dir_url(__FILE__));
