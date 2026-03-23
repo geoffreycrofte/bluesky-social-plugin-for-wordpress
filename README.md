@@ -5,7 +5,7 @@
 - Requires at least: 5.0
 - Tested up to: 6.9.1
 - Requires PHP: 7.4
-- Stable tag: 2.1.1
+- Stable tag: 2.2.0
 - License: GPLv2 or later
 - License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - Official WordPress link: https://wordpress.org/plugins/social-integration-for-bluesky/
@@ -42,6 +42,7 @@ Some other included features:
   * Edit the future BlueSky post right in the Gutenberg editor's sidebar if needed.
   * Syndication can be triggered based on post categories: associate one or multiple account to one or multiple categories. (Include/exclude mechanics)
   * You have a "stop all syndication" option, just in case.
+  * In case you unlink, or wanna link former posts, a "Link to Bluesky" feature is available right from the post editor.
  
 * **Make BlueSky discussions for syndicated posts visible**
   * Activate the "Discussions" option to display Bluesky discussion even if the comment section of your posts is deactivated.
@@ -155,6 +156,16 @@ No it is not. But I'm always happy when core team developers suggest new feature
 16. [The syndication options to associate categories and auto-syndication by account.](https://github.com/geoffreycrofte/bluesky-social-plugin-for-wordpress/blob/main/screenshot-16.jpg)
 
 ## Changelog
+
+### 2.2.0
+* **New Feature**
+  * In case you unlink, or wanna link former posts, a "Link to Bluesky" feature is available right from the post editor.
+* **Bug fix**
+  * In single account set up, the categories were never saved in some cases. This is now fixed.
+  * The last-post widget/block was displaying an empty link-block with no image. This should be fixed.
+  * Some themes were messing with the plugin's icons. This should be fixed now.
+* **Improvements**
+  * Admin UX improvement.
 
 ### 2.1.1
 Minor CSS improvement for some theme compatibilities.

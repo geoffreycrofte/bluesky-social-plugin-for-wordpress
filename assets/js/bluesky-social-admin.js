@@ -134,6 +134,17 @@
           closeSidebar();
         }
       });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !sidebar.classList.contains(closeclass) &&
+          !sidebar.contains(e.target) &&
+          e.target !== debugbtn &&
+          !debugbtn.contains(e.target)
+        ) {
+          closeSidebar();
+        }
+      });
     }
 
     /**
@@ -169,6 +180,17 @@
         if (
           !donateSidebar.classList.contains("is-collapsed") &&
           e.key === "Escape"
+        ) {
+          closeDonate();
+        }
+      });
+
+      document.addEventListener("click", (e) => {
+        if (
+          !donateSidebar.classList.contains("is-collapsed") &&
+          !donateSidebar.contains(e.target) &&
+          e.target !== donatebtn &&
+          !donatebtn.contains(e.target)
         ) {
           closeDonate();
         }

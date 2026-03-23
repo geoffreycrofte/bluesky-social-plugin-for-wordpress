@@ -25,6 +25,10 @@ Thumbs.db
 .idea/
 .vscode/
 README.md
+node_modules/
+hookdoc.json
+package-lock.json
+package.json
 
 # Translation template (not needed at runtime)
 languages/*.pot

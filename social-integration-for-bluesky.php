@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Social Integration for BlueSky
-Description: Integrates BlueSky social features into WordPress supporting multi-account: Post New Articles on BlueSky, BlueSky Profile Card Block, BlueSky Last Post feed block, and widgets. You can also use shortcodes <code>[bluesky_profile]</code> and <code>[bluesky_last_posts]</code>.
-Version: 2.1.1
+Description: BlueSky social features into WordPress supporting multi-account: Post New Articles on BlueSky, Profile Card Block, Last Post feed block, and widgets.
+Version: 2.2.0
 Requires at least: 5.0
 Requires PHP: 7.4
 Author: Geoffrey Crofte
@@ -18,7 +18,7 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-define("BLUESKY_PLUGIN_VERSION", "2.1.1");
+define("BLUESKY_PLUGIN_VERSION", "2.2.0");
 define("BLUESKY_PLUGIN_FILE", __FILE__);
 define("BLUESKY_PLUGIN_BASENAME", plugin_basename(__FILE__));
 define("BLUESKY_PLUGIN_FOLDER", plugin_dir_url(__FILE__));
@@ -52,6 +52,7 @@ require_once "classes/BlueSky_Admin_Actions.php"; // V.1.4.0
 require_once "classes/BlueSky_Discussion_Renderer.php"; // V.1.5.0
 require_once "classes/BlueSky_Discussion_Metabox.php"; // V.1.5.0
 require_once "classes/BlueSky_Discussion_Frontend.php"; // V.1.5.0
+require_once "classes/BlueSky_Link_Metabox.php"; // V.2.2.0
 
 // Widgets
 require_once "classes/widgets/BlueSky_Posts_Widget.php";
@@ -72,3 +73,4 @@ new BlueSky_Post_Metabox(); // V.1.1.0
 $bluesky_discussion_renderer = new BlueSky_Discussion_Renderer($bluesky_api_handler, $bluesky_account_manager);
 $bluesky_discussion_metabox = new BlueSky_Discussion_Metabox($bluesky_api_handler, $bluesky_account_manager, $bluesky_discussion_renderer);
 $bluesky_discussion_frontend = new BlueSky_Discussion_Frontend($bluesky_api_handler, $bluesky_account_manager, $bluesky_discussion_renderer);
+new BlueSky_Link_Metabox(); // V.2.2.0
