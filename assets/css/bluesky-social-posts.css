@@ -125,6 +125,31 @@
     ) !important;
 }
 
+/* File attachment layout (PDF, DOC, ZIP…) */
+.bluesky-social-integration-embedded-record.is-file {
+    padding: var(--padding-block, 16px) var(--padding-inline, 8px);
+}
+
+.bluesky-social-integration-embedded-record.is-file
+    .bluesky-social-integration-external-content-title {
+    display: flex !important;
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(
+        --bluesky-posts-custom-external-content-title-fs,
+        15px
+    ) !important;
+    word-break: break-all;
+}
+
+.bluesky-social-integration-embedded-record.is-file
+    .bluesky-social-integration-external-content-title svg {
+    flex-shrink: 0;
+    width: 1.25em !important;
+    height: 1.25em !important;
+    fill: none !important;
+}
+
 .bluesky-social-integration-external-content-description {
     font-size: var(
         --bluesky-posts-custom-external-content-description-fs,

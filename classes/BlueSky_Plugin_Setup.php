@@ -168,6 +168,14 @@ class BlueSky_Plugin_Setup
             3,
         );
 
+        // REST API (Gutenberg) syndication — fires after handle_terms() so categories are correct
+        add_action(
+            "rest_after_insert_post",
+            [$this->syndication, "syndicate_post_rest_after_insert"],
+            10,
+            3,
+        );
+
         // Messaging & Noticing
         add_action("admin_notices", [$this->settings, "display_bluesky_logout_message"]);
     }
