@@ -214,7 +214,7 @@ if (!defined("ABSPATH")) {
                     ? '<a href="' .
                         esc_url($post["external_media"]["uri"]) .
                         '" class="bluesky-social-integration-embedded-record is-external_media' .
-                        (isset($post["external_media"]["thumb"])
+                        (!empty($post["external_media"]["thumb"])
                             ? " has-image"
                             : "") .
                         '">'

@@ -148,8 +148,9 @@
 }
 
 .bluesky-social-integration-external-content-url svg {
-    width: 1.2em;
-    height: 1.2em;
+    width: 1.2em !important;
+    height: 1.2em !important;
+    fill: none !important;
 }
 
 .bluesky-social-integration-embedded-record.has-image
