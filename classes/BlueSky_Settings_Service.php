@@ -408,12 +408,22 @@ class BlueSky_Settings_Service
                     $exclude_categories = [];
                 }
 
-                $this->account_manager->update_account($acct_id, [
-                    'category_rules' => [
+                // For single-account mode, store category_rules in $sanitized so the
+                // Settings API persists them when it calls update_option(BLUESKY_PLUGIN_OPTIONS).
+                // For multi-account, update_account() writes to the bluesky_accounts option directly.
+                if ($acct_id === 'default' && !$this->account_manager->is_multi_account_enabled()) {
+                    $sanitized['category_rules'] = [
                         'include' => $include_categories,
                         'exclude' => $exclude_categories
-                    ]
-                ]);
+                    ];
+                } else {
+                    $this->account_manager->update_account($acct_id, [
+                        'category_rules' => [
+                            'include' => $include_categories,
+                            'exclude' => $exclude_categories
+                        ]
+                    ]);
+                }
             }
         }
 

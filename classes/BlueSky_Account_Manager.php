@@ -112,6 +112,7 @@ class BlueSky_Account_Manager {
             'did' => $did ?: '',
             'is_active' => true,
             'auto_syndicate' => true,
+            'category_rules' => !empty($old_settings['category_rules']) ? $old_settings['category_rules'] : ['include' => [], 'exclude' => []],
             'owner_id' => 0,
             'created_at' => time()
         ];
@@ -197,7 +198,8 @@ class BlueSky_Account_Manager {
                         'app_password' => $settings['app_password'],
                         'did' => !empty($settings['did']) ? $settings['did'] : get_transient((new BlueSky_Helpers())->get_did_transient_key()),
                         'is_active' => true,
-                        'auto_syndicate' => true,
+                        'auto_syndicate' => !empty($settings['auto_syndicate']) ? (bool) $settings['auto_syndicate'] : true,
+                        'category_rules' => !empty($settings['category_rules']) ? $settings['category_rules'] : ['include' => [], 'exclude' => []],
                         'owner_id' => 0,
                         'created_at' => 0
                     ]
@@ -206,7 +208,18 @@ class BlueSky_Account_Manager {
             return [];
         }
 
-        return get_option('bluesky_accounts', []);
+        $accounts = get_option('bluesky_accounts', []);
+
+        // Normalize: ensure all accounts have a category_rules field
+        // (accounts migrated before this field was introduced won't have it)
+        foreach ($accounts as $id => &$account) {
+            if (!isset($account['category_rules'])) {
+                $account['category_rules'] = ['include' => [], 'exclude' => []];
+            }
+        }
+        unset($account);
+
+        return $accounts;
     }
 
     /**
@@ -387,6 +400,22 @@ class BlueSky_Account_Manager {
      * @return bool|WP_Error True on success, WP_Error on failure
      */
     public function update_account($account_id, $data) {
+        // Handle the synthetic 'default' account (single-account mode)
+        if ($account_id === 'default' && !$this->is_multi_account_enabled()) {
+            $settings = get_option(BLUESKY_PLUGIN_OPTIONS, []);
+            if (isset($data['category_rules'])) {
+                $settings['category_rules'] = [
+                    'include' => array_map('intval', $data['category_rules']['include'] ?? []),
+                    'exclude' => array_map('intval', $data['category_rules']['exclude'] ?? [])
+                ];
+            }
+            if (isset($data['auto_syndicate'])) {
+                $settings['auto_syndicate'] = (bool) $data['auto_syndicate'];
+            }
+            update_option(BLUESKY_PLUGIN_OPTIONS, $settings);
+            return true;
+        }
+
         $accounts = get_option('bluesky_accounts', []);
 
         if (!isset($accounts[$account_id])) {
